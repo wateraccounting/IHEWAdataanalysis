@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Main command group for WaterAccounting Report's CLI.
+Main command group for WaterAccounting Data Analysis's CLI.
 
 """
 # import logging

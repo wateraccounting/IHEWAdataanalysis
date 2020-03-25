@@ -1,7 +1,7 @@
-IHEWAreport
-===========
+IHEWAdataanalysis
+=================
 
 .. toctree::
    :maxdepth: 4
 
-   IHEWAreport
+   IHEWAdataanalysis

@@ -5,7 +5,7 @@ console script. To run this script uncomment the following lines in the
 [options.entry_points] section in setup.cfg:
 
     console_scripts =
-         fibonacci = IHEWAreport.skeleton:run
+         fibonacci = IHEWAdataanalysis.skeleton:run
 
 Then run `python setup.py install` which will install the command `fibonacci`
 inside your current environment.
@@ -21,7 +21,7 @@ import argparse
 import logging
 import sys
 
-from IHEWAreport import __version__
+from IHEWAdataanalysis import __version__
 
 __author__ = "Quan Pan"
 __copyright__ = "Quan Pan"

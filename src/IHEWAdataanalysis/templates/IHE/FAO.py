@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
+"""
+
+`example
+<https://matplotlib.org/3.2.0/gallery/lines_bars_and_markers/scatter_hist.html#sphx-glr-gallery-lines-bars-and-markers-scatter-hist-py>`_
+
+"""
 import inspect
 import os
 import yaml
-import numpy as np
 
-from pylatex import Document, Section, Subsection, Tabular, Math, TikZ, Axis, \
-    Plot, Figure, Matrix, Alignat
-from pylatex.utils import italic
+import numpy as np
+import pandas as pd
 
 try:
     # IHEClassInitError, IHEStringError, IHETypeError, IHEKeyError, IHEFileError
     from .exception import IHEClassInitError
 except ImportError:
-    from IHEWAreport.exception import IHEClassInitError
+    from IHEWAdataanalysis.exception import IHEClassInitError
 
 
 class Template(object):
@@ -26,7 +30,7 @@ class Template(object):
     def __init__(self, conf):
         """Class instantiation
         """
-        template = 'ADB.yml'
+        template = 'FAO.yml'
         path = os.path.join(
             os.getcwd(),
             os.path.dirname(

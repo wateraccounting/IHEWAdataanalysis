@@ -1,10 +1,10 @@
-===========
-IHEWAreport
-===========
+=================
+IHEWAdataanalysis
+=================
 
-This is the documentation of **IHEWAreport**.
+This is the documentation of **IHEWAdataanalysis**.
 
-**IHEWAreport** is a Reportion of tools to write standard report.
+**IHEWAdataanalysis** is a Reportion of tools to write standard report.
 This project is fully developed by Water Accounting team at IHE-Delft.
 
 `MiKTeX <https://miktex.org/>`_ is required to generate tex and pdf file.
@@ -20,7 +20,7 @@ This project is fully developed by Water Accounting team at IHE-Delft.
     Set gdal executable files to system "PATH".
 
     Must contain **config.yml** file,
-    see `config.yml-example <https://github.com/wateraccounting/IHEWAreport/tree/master/examples>`_.
+    see `config.yml-example <https://github.com/wateraccounting/IHEWAdataanalysis/tree/master/examples>`_.
 
 
 Installation
@@ -29,25 +29,25 @@ Installation
 Install from pip
 ^^^^^^^^^^^^^^^^
 
-IHEWAreport Python package is hosted on `Python Package Index (PyPI)
-<https://pypi.org/project/IHEWAreport/>`_.
+IHEWAdataanalysis Python package is hosted on `Python Package Index (PyPI)
+<https://pypi.org/project/IHEWAdataanalysis/>`_.
 
 Install from pip.
 
 .. code-block:: console
 
-    $ pip install IHEWAreport
+    $ pip install IHEWAdataanalysis
 
 Install from source code
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 Download source code from `Github
-<https://github.com/wateraccounting/IHEWAreport>`_.
+<https://github.com/wateraccounting/IHEWAdataanalysis>`_.
 
 .. code-block:: console
 
-    $ git clone https://github.com/wateraccounting/IHEWAreport.git
-    $ cd IHEWAreport
+    $ git clone https://github.com/wateraccounting/IHEWAdataanalysis.git
+    $ cd IHEWAdataanalysis
 
 Install from source code.
 
@@ -55,12 +55,12 @@ Install from source code.
 
     $ python setup.py install
 
-Uninstall IHEWAreport
+Uninstall IHEWAdataanalysis
 ^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: console
 
-    $ pip uninstall IHEWAreport
+    $ pip uninstall IHEWAdataanalysis
 
 
 Docker
@@ -70,18 +70,18 @@ Set "System -> Base Memory" to max capacity in Virtual Machine.
 
 Set "Shared Folders" in Virtual Machine.
 
-- Folder Path: D:\\IHEWAreport
-- Folder Name: d/IHEWAreport
+- Folder Path: D:\\IHEWAdataanalysis
+- Folder Name: d/IHEWAdataanalysis
 - Auto-mount: Yes
 - Make Permanent: Yes
 
 Download source code from `Github
-<https://github.com/wateraccounting/IHEWAreport>`_.
+<https://github.com/wateraccounting/IHEWAdataanalysis>`_.
 
 .. code-block:: console
 
-    $ git clone https://github.com/wateraccounting/IHEWAreport.git
-    $ cd IHEWAreport
+    $ git clone https://github.com/wateraccounting/IHEWAdataanalysis.git
+    $ cd IHEWAdataanalysis
 
 Restart Docker Virtual Machine image.
 
@@ -89,17 +89,17 @@ Restart Docker Virtual Machine image.
 
     $ docker-machine restart
 
-Pull the IHEWAreport image.
+Pull the IHEWAdataanalysis image.
 
 .. code-block:: console
 
-    $ docker pull wateraccounting/ihewareport
+    $ docker pull wateraccounting/ihewadataanalysis
 
 Or build from source code.
 
 .. code-block:: console
 
-    $ docker build -t wateraccounting/ihewareport .
+    $ docker build -t wateraccounting/ihewadataanalysis .
 
 Check images.
 
@@ -118,7 +118,7 @@ Run the image with Jupyter Notebook. To access Jupyter http://192.168.99.100:888
 
 .. code-block:: console
 
-    $ docker run -it --name ihewareport -p 8888:8888 -v /d/IHEWAreport:/notebooks wateraccounting/ihewareport
+    $ docker run -it --name ihewadataanalysis -p 8888:8888 -v /d/IHEWAdataanalysis:/notebooks wateraccounting/ihewadataanalysis
 
 Check running image (container), in the new cmd window.
 
@@ -130,7 +130,7 @@ Access to running image, in the new cmd window.
 
 .. code-block:: console
 
-    $ docker exec -it ihewareport bash
+    $ docker exec -it ihewadataanalysis bash
 
     $ cd /notebooks/
 
@@ -147,26 +147,26 @@ Remove image.
 
 .. code-block:: console
 
-    $ docker rmi wateraccounting/ihewareport
+    $ docker rmi wateraccounting/ihewadataanalysis
 
 
 Use
 ===
 
 Examples can be found at `examples
-<https://github.com/wateraccounting/IHEWAreport/tree/master/examples>`_.
+<https://github.com/wateraccounting/IHEWAdataanalysis/tree/master/examples>`_.
 
 .. code-block:: python
 
     import os
-    import IHEWAreport
+    import IHEWAdataanalysis
 
     path = os.getcwd()
     config = 'config.yml'
     file_config = os.path.join(path, config)
 
     if os.path.exists(file_config):
-        IHEWAreport.Report(workspace=path,
+        IHEWAdataanalysis.Report(workspace=path,
                            config=config)
 )
 
@@ -177,12 +177,12 @@ Development
 In the PyCharm, change "Project Structure -> Source Folders" to "src"
 
 Download source code from `Github
-<https://github.com/wateraccounting/IHEWAreport>`_.
+<https://github.com/wateraccounting/IHEWAdataanalysis>`_.
 
 .. code-block:: console
 
-    $ git clone https://github.com/wateraccounting/IHEWAreport.git
-    $ cd IHEWAreport
+    $ git clone https://github.com/wateraccounting/IHEWAdataanalysis.git
+    $ cd IHEWAdataanalysis
 
 From the root of the project
 
@@ -194,7 +194,7 @@ Format scripts by PEP8
 
 .. code-block:: console
 
-    $ autopep8 --in-place --aggressive src/IHEWAreport/base/base.py
+    $ autopep8 --in-place --aggressive src/IHEWAdataanalysis/base/base.py
 
 Flake8, pre-commit
 
@@ -234,8 +234,8 @@ Upload to PyPI
 4. In IDE, **Tag window -> Tag Name**, type "**v0.0.1**"
 
 5. In cmd, build package, type ``python setup.py sdist bdist_wheel``
-6. In cmd, validate build, type ``twine check dist/IHEWAreport-0.0.1*``
-7. In cmd, upload build, type ``twine upload dist/IHEWAreport-0.0.1*``
+6. In cmd, validate build, type ``twine check dist/IHEWAdataanalysis-0.0.1*``
+7. In cmd, upload build, type ``twine upload dist/IHEWAdataanalysis-0.0.1*``
 
 8. In IDE, **push** the commit, with Tag label: "*HEAD*", "*master*", "*v0.0.1*"
 9. In Github, select **Release** to "create a new release" or "Draft a new release"
@@ -248,7 +248,7 @@ Templates
 =========
 
 Details can be found at `Templates
-<https://IHEWAreport.readthedocs.io/en/latest/templates.html>`_.
+<https://IHEWAdataanalysis.readthedocs.io/en/latest/templates.html>`_.
 
 
 Code of Conduct

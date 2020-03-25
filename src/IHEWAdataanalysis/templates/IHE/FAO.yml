@@ -1,0 +1,8 @@
+figure:
+  fig1:
+    name: 'fig'
+    num: 1
+    figsize: [6.4, 4.8]
+    dpi: 300
+    layout:
+

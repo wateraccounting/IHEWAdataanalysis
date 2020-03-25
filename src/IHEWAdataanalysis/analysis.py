@@ -5,18 +5,11 @@
 Before use this module, create ``accounts.yml`` file.
 And edit account information in the file.
 """
-import inspect
 import os
-import sys
-import datetime
 import importlib
+import datetime
 
 import yaml
-import numpy as np
-
-from pylatex import Document, Section, Subsection, Tabular, Math, TikZ, Axis, \
-    Plot, Figure, Matrix, Alignat
-from pylatex.utils import italic
 
 # PyCharm
 # if __name__ == "__main__":
@@ -29,10 +22,10 @@ from pylatex.utils import italic
 # ModuleNotFoundError
 #
 # PyCharm->Project Structure->"Sources": WaterAccounting\""
-# from src.IHEWAreport.base.base import Base
+# from src.IHEWAdataanalysis.base.base import Base
 # OK
 #
-# PyCharm->Project Structure->"Sources": IHEWAreport\"src\IHEWAreport"
+# PyCharm->Project Structure->"Sources": IHEWAdataanalysis\"src\IHEWAdataanalysis"
 # >>> from base import Base
 # OK
 
@@ -40,7 +33,7 @@ try:
     # IHEClassInitError, IHEStringError, IHETypeError, IHEKeyError, IHEFileError
     from .exception import IHEClassInitError
 except ImportError:
-    from IHEWAreport.exception import IHEClassInitError
+    from IHEWAdataanalysis.exception import IHEClassInitError
 
 
 class Base(object):
@@ -61,7 +54,7 @@ class Base(object):
         pass
 
 
-class Report(Base):
+class Analysis(Base):
     """Download class
 
     After initialise the class, data downloading will automatically start.
@@ -75,10 +68,8 @@ class Report(Base):
         """Class instantiation
         """
         self.allow_keys = {
-            'doc': ['name', 'saveas'],
             'template': ['provider', 'name'],
-            'page': ['header', 'footer'],
-            'content': ['cover', 'title', 'section']
+            'data': ['PCP', 'ET', 'dS', 'Q']
         }
 
         self.__status = {
@@ -93,10 +84,7 @@ class Report(Base):
                 'end': None
             },
             'data': {
-                'doc': {},
-                'template': None,
-                'page': {},
-                'context': {}
+                'template': None
             }
         }
         self.__tmp = {
@@ -136,7 +124,7 @@ class Report(Base):
 
         if self.__status['code'] != 0:
             print('Status', self.__status['code'])
-            raise IHEClassInitError('Report') from None
+            raise IHEClassInitError('Analysis') from None
 
     def _conf(self) -> int:
         status_code = 0
@@ -147,10 +135,10 @@ class Report(Base):
             data = yaml.load(fp, Loader=yaml.FullLoader)
 
         if data is not None:
-            status_code += self._conf_keys('doc', data)
+            # status_code += self._conf_keys('doc', data)
             status_code += self._conf_keys('template', data)
-            status_code += self._conf_keys('page', data)
-            status_code += self._conf_keys('content', data)
+            # status_code += self._conf_keys('page', data)
+            # status_code += self._conf_keys('content', data)
         else:
             status_code = 1
 
@@ -237,27 +225,30 @@ class Report(Base):
                         status_code = 1
                     else:
                         template['module'] = module_obj
-                        print('Reloaded module.{nam}'.format(nam=template['name']))
+                        print('Reloaded module.{nam}'.format(
+                            nam=template['name']))
                         status_code = 0
                 else:
                     try:
-                        # importlib.import_module('.FAO',
-                        #                         '.templates.IHE')
+                        # importlib.import_module('.FAO', '.templates.IHE')
                         #
                         # importlib.import_module('templates.IHE.FAO')
-
-                        # importlib.import_module('IHEWAreport.templates.IHE.FAO')
+                        #
+                        # importlib.import_module('IHEWAdataanalysis.templates.IHE.FAO')
                         module_obj = \
-                            importlib.import_module('.{n}'.format(n=module_template),
-                                                    '.templates.{p}'.format(p=module_provider))
-                        print('Loaded module from .templates.{nam}'.format(
-                            nam=template['name']))
+                            importlib.import_module(
+                                '.{n}'.format(n=module_template),
+                                '.templates.{p}'.format(p=module_provider))
+                        print('Loaded module from '
+                              '.templates.{nam}'.format(nam=template['name']))
                     except ImportError:
                         module_obj = \
-                            importlib.import_module('IHEWAreport.templates.{nam}'.format(
-                                nam=template['name']))
-                        print('Loaded module from IHEWAreport.templates.{nam}'.format(
-                            nam=template['name']))
+                            importlib.import_module(
+                                'IHEWAdataanalysis.templates.{nam}'.format(
+                                    nam=template['name']))
+                        print('Loaded module from '
+                              'IHEWAdataanalysis.templates.{nam}'.format(
+                                  nam=template['name']))
                         status_code = 1
                     finally:
                         if module_obj is not None:
@@ -274,22 +265,3 @@ class Report(Base):
     @staticmethod
     def get_config(self):
         print(self.__conf)
-
-
-if __name__ == "__main__":
-    print('\nReport\n=====')
-    # path = os.path.join(
-    #     os.getcwd(),
-    #     os.path.dirname(
-    #         inspect.getfile(
-    #             inspect.currentframe())),
-    #     '../', '../', 'tests'
-    # )
-    #
-    # report = Report(path, 'test_report.yml')
-
-    # report.get_config()
-    # print(report._Report__conf['path'], '\n',
-    #       report._Report__conf['name'], '\n',
-    #       report._Report__conf['time'], '\n',
-    #       report._Report__conf['data'])

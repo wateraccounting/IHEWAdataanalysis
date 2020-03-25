@@ -2,12 +2,12 @@
 """
 **utils**
 
-Utilities for IHEWAreport template modules.
+Utilities for IHEWAdataanalysis template modules.
 
 **Examples:**
 ::
 
-    from IHEWAreport.templates.util import Plot
+    from IHEWAdataanalysis.templates.util import Plot
 """
 
 

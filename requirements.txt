@@ -18,11 +18,15 @@
 # Export installed requirements to requirements.txt:
 # pip3 freeze > requirements.txt
 
+GDAL>=3.0
 jupyterlab==1.1.4
+matplotlib>=3.1
+netCDF4>=1.5
 numpy>=1.11
 pandas>=0.20
-pylatex>=1.3
-quantities>=0.12
 scikit-image>=0.15
+scikit-learn>=0.21
 scipy>=1.0
-sphinx_rtd_theme
+seaborn>=0.9
+sphinx_rtd_theme>=0.4
+xarray>=0.14

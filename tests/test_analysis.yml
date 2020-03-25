@@ -1,0 +1,27 @@
+template:
+  provider: IHE
+  name: FAO
+  # name: Manual
+
+data:
+  Basin:
+    file: '.shp'
+  PCP:
+    CHIRPS:
+      folder: ''
+      ftype: 'NetCDF'
+    TRMM:
+      folder: ''
+      ftype: 'GTiff'
+  ETA:
+    CMRSET:
+      folder: ''
+      ftype: 'NetCDF'
+  dS:
+    GSFC:
+      folder: ''
+      ftype: 'NetCDF'
+  Q:
+    FloodObservatory:
+      folder: ''
+      ftype: 'NetCDF'

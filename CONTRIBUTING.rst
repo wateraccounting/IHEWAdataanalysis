@@ -2,13 +2,13 @@
 Contributing
 ============
 
-Welcome to the IHE WaterAccounting Report Tool (IHEWAreport) project.
+Welcome to the IHE WaterAccounting Report Tool (IHEWAdataanalysis) project.
 Here's how we work.
 
 Code of Conduct
 ---------------
 
-First of all: the IHEWAreport project has a code of conduct. Please read the
+First of all: the IHEWAdataanalysis project has a code of conduct. Please read the
 CODE_OF_CONDUCT.txt file, it's important to all of us.
 
 Rights
@@ -20,7 +20,7 @@ all contributions.
 Issue Conventions
 -----------------
 
-The IHEWAreport issue tracker is for actionable issues.
+The IHEWAdataanalysis issue tracker is for actionable issues.
 
 Questions about installation, distribution, and usage should be taken to
 the project's `wateraccounting.slack.com#issue
@@ -28,17 +28,17 @@ the project's `wateraccounting.slack.com#issue
 Opened issues which fall into one of these three categories may be
 perfunctorily closed.
 
-Questions about development of IHEWAreport, brainstorming, requests for comment,
+Questions about development of IHEWAdataanalysis, brainstorming, requests for comment,
 and not-yet-actionable proposals are welcome in the project's
 `wateraccounting.slack.com#idea
 <https://app.slack.com/client/TQP20VD3N/CQG1S6909>`__.
 
-IHEWAreport is a relatively new project and highly active. We have bugs, both
+IHEWAdataanalysis is a relatively new project and highly active. We have bugs, both
 known and unknown.
 
 Please search existing issues, open and closed, before creating a new one.
 
-IHEWAreport employs Geospatial modules, so bug reports very often hinge on the
+IHEWAdataanalysis employs Geospatial modules, so bug reports very often hinge on the
 following details:
 
 - Operating system type and version (Windows? Ubuntu 12.04? 14.04?)
@@ -50,7 +50,7 @@ Dataset Objects
 Our term for the kind of object that allows read and write access to raster data
 is *dataset object*. A dataset object might be an instance of `DatasetReader`
 or `DatasetWriter`. The canonical way to create a dataset object is by using the
-`IHEWAreport.GIS.OpenAsArray()` function.
+`IHEWAdataanalysis.GIS.OpenAsArray()` function.
 
 This is analogous to Python's use of
 `file object <https://docs.python.org/3/glossary.html#term-file-object>`__.
@@ -60,10 +60,10 @@ Git Conventions
 
 We use a variant of centralized workflow described in the `Git Book
 <https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows>`__.  We
-have no 1.0 release for IHEWAreport yet and we are tagging and releasing from the
+have no 1.0 release for IHEWAdataanalysis yet and we are tagging and releasing from the
 master branch. Our post-1.0 workflow is to be decided.
 
-Work on features in a new branch of the mapbox/IHEWAreport repo or in a branch on
+Work on features in a new branch of the mapbox/IHEWAdataanalysis repo or in a branch on
 a fork. Create a `GitHub pull request
 <https://help.github.com/articles/using-pull-requests/>`__ when the changes are
 ready for review.  We recommend creating a pull request as early as possible
@@ -73,7 +73,7 @@ early feedback.
 Code Conventions
 ----------------
 
-IHEWAreport supports Python 2 and Python 3 in the same code base, which is
+IHEWAdataanalysis supports Python 2 and Python 3 in the same code base, which is
 aided by an internal compatibility module named ``compat.py``. It functions
 similarly to the more widely known `six <https://six.readthedocs.io/>`__ but
 we only use a small portion of the features so it eliminates a dependency.
@@ -84,12 +84,12 @@ We strongly prefer code adhering to `PEP8
 Tests are mandatory for new features. We use `pytest <https://pytest.org>`__.
 
 We aspire to 100% coverage for Python modules `Coveralls
-<https://coveralls.io/github/wateraccounting/ihewareport>`__.
+<https://coveralls.io/github/wateraccounting/ihewadataanalysis>`__.
 
 Development Environment
 -----------------------
 
-Developing IHEWAreport requires Python 2.7 or any final release after and
+Developing IHEWAdataanalysis requires Python 2.7 or any final release after and
 including 3.4.  We prefer developing with the most recent version of Python
 but recognize this is not possible for all contributors.
 See the Windows install instructions in the `readme
@@ -98,11 +98,11 @@ See the Windows install instructions in the `readme
 Initial Setup
 ^^^^^^^^^^^^^
 
-First, clone IHEWAreport's ``git`` repo:
+First, clone IHEWAdataanalysis's ``git`` repo:
 
 .. code-block:: console
 
-    $ git clone https://github.com/wateraccounting/ihewareport.git
+    $ git clone https://github.com/wateraccounting/ihewadataanalysis.git
 
 Development should occur within a `virtual environment
 <http://docs.python-guide.org/en/latest/dev/virtualenvs/>`__ to better isolate
@@ -116,7 +116,7 @@ environment.
 Installing GDAL
 ^^^^^^^^^^^^^^^
 
-The GDAL library and its headers are required to build IHEWAreport. We do not
+The GDAL library and its headers are required to build IHEWAdataanalysis. We do not
 have currently have guidance for any platforms other than Linux and OS X.
 
 On Linux, GDAL and its headers should be available through your distro's
@@ -137,9 +137,9 @@ On OS X, Homebrew is a reliable way to get GDAL.
 Python build requirements
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Provision a virtualenv with IHEWAreport's build requirements.  IHEWAreport's
+Provision a virtualenv with IHEWAdataanalysis's build requirements.  IHEWAdataanalysis's
 ``setup.py`` script will not run unless Cython and Numpy are installed, so do
-this first from the IHEWAreport repo directory.
+this first from the IHEWAdataanalysis repo directory.
 
 Linux users may need to install some additional Numpy dependencies:
 
@@ -154,27 +154,27 @@ then:
     $ pip install -U pip
     $ pip install -r requirements-dev.txt
 
-Installing IHEWAreport
-^^^^^^^^^^^^^^^^^^^^^^
+Installing IHEWAdataanalysis
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Installing IHEWAreport in editable mode while
+Installing IHEWAdataanalysis in editable mode while
 developing is very convenient but only affects the Python files.
 
 .. code-block:: console
 
     $ python setup.py install
 
-Uninstalling IHEWAreport
-^^^^^^^^^^^^^^^^^^^^^^^^
+Uninstalling IHEWAdataanalysis
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: console
 
-    $ pip uninstall IHEWAreport
+    $ pip uninstall IHEWAdataanalysis
 
 Running the tests
 ^^^^^^^^^^^^^^^^^
 
-IHEWAreport's tests live in ``python setup.py test`` and generally match the main
+IHEWAdataanalysis's tests live in ``python setup.py test`` and generally match the main
 package layout.
 
 To run the entire suite and the code coverage report:
