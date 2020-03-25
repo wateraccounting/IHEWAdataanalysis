@@ -1,0 +1,90 @@
+layout:
+  paper: 'a4paper'
+  layout: 'a4paper'
+  includehead: True
+  includefoot: True
+
+page:
+  header:
+    left: 'Manual'
+    center: ''
+    right: 'IHE'
+  footer:
+    left: ''
+    center: ''
+    right: 'page_number'
+
+content:
+  # Cover
+  cover:
+    title: 'Water Account
+            in the Litani River Basin'
+
+  # Title
+  title:
+    title: 'Report'
+    author: 'WA+ team'
+    date: True
+
+  # Preamble
+  acknowledgement:
+    title: 'Acknowledgements'
+    paragraph:
+      1: 'Acknowledgements Paragraph 1'
+
+  abbreviation:
+    title: 'Abbreviations and Acronyms'
+    paragraph:
+      1: 'Abbreviations and acronyms Paragraph 1'
+
+  summary:
+    title: 'Executive summary'
+    paragraph:
+      1: 'Executive summary Paragraph 1'
+
+  # Section
+  section:
+    1:
+      title: 'Introduction'
+      paragraph:
+        1-1: 'Section 1 Paragraph 1'
+        1-2: 'Section 1 Paragraph 2'
+        1-3: IHEWAreport-fig1
+        1-4: IHEWAreport-tab1
+        1-5: IHEWAreport-eqa1
+        1-6: IHEWAreport-ref1
+        1-7: 'Paragraph 7'
+      1.1:
+        title: 'Subsection 1.1'
+        paragraph:
+          1.1-1: 'Subsection 1.1 Paragraph 1 {val[min]}'
+          1.1-2: 'Subsection 1.1 Paragraph 2 {val[max]}'
+        1.1.1:
+          title: 'Subsection 1.1.1'
+          paragraph:
+            1.1.1-1: 'Subsection 1.1.1 Paragraph 1 {val[min]}'
+            1.1.1-2: 'Subsection 1.1.1 Paragraph 2 {val[max]}'
+    2:
+      title: 'Methodology'
+      paragraph:
+        2-1: 'Section 2 Paragraph 1'
+        2-2: 'Section 2 Paragraph 2'
+      2.1:
+        title: 'WaPOR database'
+        paragraph:
+          2.1-1: 'Subsection 2.1 Paragraph 1 {val[mean]}'
+          2.1-2: 'Subsection 2.1 Paragraph 2'
+        2.1.1:
+          title: 'Precipitation'
+          paragraph:
+            2.1.1-1: 'Subsection 2.1.1 Paragraph 1 {val[mean]}'
+            2.1.1-2: 'Subsection 2.1.1 Paragraph 2'
+
+  reference:
+    title: 'References'
+    file: 'IHE.bib'
+
+  annex:
+    title: 'Annexes'
+    paragraph:
+      1: 'Annexes 1'

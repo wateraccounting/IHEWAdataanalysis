@@ -1,0 +1,286 @@
+PWD D:\IHEProjects\TempDev\IHEWAreport\tests
+INPUT C:\Users\qpa001\AppData\Local\MiKTeX\2.9\miktex\data\le\pdftex\pdflatex.fmt
+INPUT test_report_can_delete.tex
+OUTPUT test_report_can_delete.log
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\article.cls
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\article.cls
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\size10.clo
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\size10.clo
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\fontenc.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\fontenc.sty
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\jknappen\ec\ecrm1000.tfm
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\inputenc.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\inputenc.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\lmodern.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\lmodern.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\textcomp.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\textcomp.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\lastpage\lastpage.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\lastpage\lastpage.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\geometry\geometry.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\geometry\geometry.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics\keyval.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics\keyval.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\generic\iftex\ifvtex.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\generic\iftex\ifvtex.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\generic\iftex\iftex.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\generic\iftex\iftex.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\geometry\geometry.cfg
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\geometry\geometry.cfg
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\fancyhdr\fancyhdr.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\fancyhdr\fancyhdr.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\ragged2e\ragged2e.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\ragged2e\ragged2e.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\ms\everysel.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\ms\everysel.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\hyperref.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\hyperref.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\ltxcmds\ltxcmds.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\ltxcmds\ltxcmds.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\pdftexcmds\pdftexcmds.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\pdftexcmds\pdftexcmds.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\infwarerr\infwarerr.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\infwarerr\infwarerr.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\kvsetkeys\kvsetkeys.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\kvsetkeys\kvsetkeys.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\kvdefinekeys\kvdefinekeys.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\kvdefinekeys\kvdefinekeys.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\pdfescape\pdfescape.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\pdfescape\pdfescape.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\hycolor\hycolor.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\hycolor\hycolor.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\letltxmacro\letltxmacro.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\letltxmacro\letltxmacro.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\auxhook\auxhook.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\auxhook\auxhook.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\kvoptions\kvoptions.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\kvoptions\kvoptions.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\pd1enc.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\pd1enc.def
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\intcalc\intcalc.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\intcalc\intcalc.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\etexcmds\etexcmds.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\etexcmds\etexcmds.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\url\url.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\url\url.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\bitset\bitset.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\bitset\bitset.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\bigintcalc\bigintcalc.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\bigintcalc\bigintcalc.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\atbegshi\atbegshi.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\atbegshi\atbegshi.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\hpdftex.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\hpdftex.def
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\atveryend\atveryend.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\atveryend\atveryend.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\rerunfilecheck\rerunfilecheck.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\rerunfilecheck\rerunfilecheck.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\uniquecounter\uniquecounter.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\uniquecounter\uniquecounter.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\etoolbox\etoolbox.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\etoolbox\etoolbox.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\logreq\logreq.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\logreq\logreq.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\logreq\logreq.def
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\logreq\logreq.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\ifthen.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\ifthen.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\blx-dm.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\blx-dm.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\blx-compat.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\blx-compat.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\bbx\authoryear.bbx
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\bbx\authoryear.bbx
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\bbx\standard.bbx
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\bbx\standard.bbx
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\cbx\authoryear.cbx
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\cbx\authoryear.cbx
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.cfg
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.cfg
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\tools\longtable.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\tools\longtable.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\tabu\tabu.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\tabu\tabu.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\tools\array.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\tools\array.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\varwidth\varwidth.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\varwidth\varwidth.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphicx.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphicx.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphics.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphics.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics\trig.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics\trig.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics-cfg\graphics.cfg
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics-cfg\graphics.cfg
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics-def\pdftex.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics-def\pdftex.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsmath.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsmath.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amstext.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amstext.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsgen.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsgen.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsbsy.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsbsy.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsopn.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\amsmath\amsopn.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\siunitx\siunitx.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\siunitx\siunitx.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\l3kernel\expl3.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\l3kernel\expl3.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\l3backend\l3backend-pdfmode.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\l3backend\l3backend-pdfmode.def
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\l3packages\xparse\xparse.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\l3packages\xparse\xparse.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\l3packages\l3keys2e\l3keys2e.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\l3packages\l3keys2e\l3keys2e.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\translator\translator.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\translator\translator.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\translator\translator.sty
+INPUT test_report_can_delete.aux
+INPUT test_report_can_delete.aux
+OUTPUT test_report_can_delete.aux
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\t1lmr.fd
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\t1lmr.fd
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmr10.tfm
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\nameref.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\nameref.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\refcount\refcount.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\refcount\refcount.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\gettitlestring\gettitlestring.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\generic\gettitlestring\gettitlestring.sty
+INPUT test_report_can_delete.out
+INPUT test_report_can_delete.out
+INPUT test_report_can_delete.out
+INPUT test_report_can_delete.out
+OUTPUT test_report_can_delete.pdf
+INPUT .\test_report_can_delete.out
+INPUT .\test_report_can_delete.out
+OUTPUT test_report_can_delete.out
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\lbx\english.lbx
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\lbx\english.lbx
+OUTPUT test_report_can_delete.bcf
+INPUT test_report_can_delete.bbl
+INPUT test_report_can_delete.bbl
+INPUT test_report_can_delete.bbl
+INPUT C:\Program Files\MiKTeX 2.9\tex\context\base\mkii\supp-pdf.mkii
+INPUT C:\Program Files\MiKTeX 2.9\tex\context\base\mkii\supp-pdf.mkii
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\epstopdf-pkg\epstopdf-base.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\epstopdf-pkg\epstopdf-base.sty
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\translator\translator-basic-dictionary-English.dict
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\translator\translator-basic-dictionary-English.dict
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\siunitx\siunitx-abbreviations.cfg
+INPUT C:\Users\qpa001\AppData\Roaming\MiKTeX\2.9\tex\latex\siunitx\siunitx-abbreviations.cfg
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\ot1lmr.fd
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\ot1lmr.fd
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmr10.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmr7.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmr5.tfm
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\omllmm.fd
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\omllmm.fd
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmmi10.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmmi7.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmmi5.tfm
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\omslmsy.fd
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\omslmsy.fd
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmsy10.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmsy7.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmsy5.tfm
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\omxlmex.fd
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\omxlmex.fd
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmex10.tfm
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\ot1lmss.fd
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\ot1lmss.fd
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmss10.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmss8.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmss8.tfm
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\ot1lmtt.fd
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\ot1lmtt.fd
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmtt10.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmtt8.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmtt8.tfm
+INPUT C:\Users\qpa001\AppData\Local\MiKTeX\2.9\pdftex\config\pdftex.map
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmr17.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmr12.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmr12.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmr8.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmr6.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmmi12.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmmi8.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmmi6.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmsy10.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmsy8.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\lmsy6.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmss12.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmss8.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmss8.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmtt12.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmtt8.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\rm-lmtt8.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmr12.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmbx12.tfm
+INPUT test_report_can_delete.toc
+INPUT test_report_can_delete.toc
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmbx10.tfm
+OUTPUT test_report_can_delete.toc
+INPUT test_report_can_delete.lof
+INPUT test_report_can_delete.lof
+OUTPUT test_report_can_delete.lof
+INPUT test_report_can_delete.lot
+INPUT test_report_can_delete.lot
+OUTPUT test_report_can_delete.lot
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmbx12.tfm
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\ts1lmr.fd
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\ts1lmr.fd
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ts1-lmr10.tfm
+INPUT C:\Users\qpa001\AppData\Local\Temp\pylatex\c3c4116f-e586-4167-8867-a30eb55e1b47.pdf
+INPUT C:\Users\qpa001\AppData\Local\Temp\pylatex\c3c4116f-e586-4167-8867-a30eb55e1b47.pdf
+INPUT C:\Users\qpa001\AppData\Local\Temp\pylatex\c3c4116f-e586-4167-8867-a30eb55e1b47.pdf
+INPUT C:\Users\qpa001\AppData\Local\Temp\pylatex\c3c4116f-e586-4167-8867-a30eb55e1b47.pdf
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmr7.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmr5.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmri10.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmcsc10.tfm
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\t1lmtt.fd
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\lm\t1lmtt.fd
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\lm\ec-lmtt10.tfm
+INPUT test_report_can_delete.aux
+INPUT .\test_report_can_delete.out
+INPUT .\test_report_can_delete.out
+INPUT test_report_can_delete.run.xml
+OUTPUT test_report_can_delete.run.xml
+INPUT C:\Program Files\MiKTeX 2.9\fonts\enc\dvips\lm\lm-ec.enc
+INPUT C:\Program Files\MiKTeX 2.9\fonts\enc\dvips\lm\lm-rm.enc
+INPUT C:\Program Files\MiKTeX 2.9\fonts\enc\dvips\lm\lm-mathsy.enc
+INPUT C:\Program Files\MiKTeX 2.9\fonts\enc\dvips\lm\lm-mathex.enc
+INPUT C:\Program Files\MiKTeX 2.9\fonts\enc\dvips\lm\lm-mathit.enc
+INPUT C:\Program Files\MiKTeX 2.9\fonts\enc\dvips\lm\lm-ts1.enc
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmbx10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmbx10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmbx12.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmbx12.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmcsc10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmcsc10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmex10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmex10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmmi10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmmi10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmr10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmr10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmr12.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmr12.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmr17.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmr17.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmr7.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmr7.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmri10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmri10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmsy10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmsy10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmtt10.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\lm\lmtt10.pfb

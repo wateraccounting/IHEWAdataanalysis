@@ -1,0 +1,385 @@
+\documentclass{article}%
+\usepackage[T1]{fontenc}%
+\usepackage[utf8]{inputenc}%
+\usepackage{lmodern}%
+\usepackage{textcomp}%
+\usepackage{lastpage}%
+\usepackage[paper=a4paper,layout=a4paper,includehead=True,includefoot=True]{geometry}%
+\usepackage{fancyhdr}%
+\usepackage{ragged2e}%
+\usepackage{hyperref}%
+\usepackage[style=authoryear,sorting=ynt]{biblatex}%
+\usepackage{longtable}%
+\usepackage{tabu}%
+\usepackage{graphicx}%
+\usepackage{amsmath}%
+\usepackage[separate-uncertainty=true]{siunitx}%
+\DeclareSIUnit\rpm{rpm}%
+%
+\fancypagestyle{CoverPage}{ 
+\renewcommand{\headrulewidth}{0pt}%
+\renewcommand{\footrulewidth}{0pt}%
+\fancyhead{ 
+}%
+\fancyfoot{ 
+}%
+Mindanao, Philippines%
+\thispagestyle{empty}
+}%
+\fancypagestyle{FirstPage}{ 
+\renewcommand{\headrulewidth}{0pt}%
+\renewcommand{\footrulewidth}{0pt}%
+\fancyhead{ 
+}%
+\fancyfoot{ 
+}%
+\title{Data Analysis Report\\Mindanao, Philippines}%
+\author{Quan Pan}%
+\date{02 Mar 2020}%
+\maketitle%
+\thispagestyle{empty}
+}%
+\fancypagestyle{TOCPage}{ 
+\renewcommand{\headrulewidth}{0pt}%
+\renewcommand{\footrulewidth}{0pt}%
+\fancyhead{ 
+}%
+\fancyfoot{ 
+}%
+\tableofcontents%
+\thispagestyle{empty}
+}%
+\fancypagestyle{PreambleHeader}{ 
+\renewcommand{\headrulewidth}{0pt}%
+\renewcommand{\footrulewidth}{0pt}%
+\fancyhead{ 
+}%
+\fancyfoot{ 
+}%
+\fancyhead[L]{ 
+}%
+\fancyhead[C]{ 
+}%
+\fancyhead[R]{ 
+IHE
+}%
+\fancyfoot[L]{ 
+}%
+\fancyfoot[C]{ 
+}%
+\fancyfoot[R]{ 
+\thepage
+}
+}%
+\fancypagestyle{SectionHeader}{ 
+\renewcommand{\headrulewidth}{0pt}%
+\renewcommand{\footrulewidth}{0pt}%
+\fancyhead{ 
+}%
+\fancyfoot{ 
+}%
+\fancyhead[L]{ 
+}%
+\fancyhead[C]{ 
+}%
+\fancyhead[R]{ 
+IHE
+}%
+\fancyfoot[L]{ 
+}%
+\fancyfoot[C]{ 
+}%
+\fancyfoot[R]{ 
+\thepage
+}
+}%
+\addbibresource{test_report.bib}%
+%
+\begin{document}%
+\normalsize%
+\pagestyle{CoverPage}%
+\cleardoublepage%
+\newpage%
+\pagestyle{FirstPage}%
+\cleardoublepage%
+\newpage%
+\pagestyle{TOCPage}%
+\cleardoublepage%
+\clearpage%
+\pagenumbering{roman}%
+\setcounter{page}{1}%
+\pagestyle{PreambleHeader}%
+\newpage%
+\listoffigures%
+\addcontentsline{toc}{section}{\listfigurename}%
+\cleardoublepage%
+\newpage%
+\listoftables%
+\addcontentsline{toc}{section}{\listtablename}%
+\cleardoublepage%
+\newpage%
+\RaggedRight%
+\section*{Acknowledgements}%
+\label{sec:Acknowledgements}%
+This report was prepared by Bich Tran, Solomon Seyoum, Marloes Mul, Elga Salvadore, Amani Matar, Gonzalo E. Espinoza{-}Dávalos, Jonna van Opstal, Wim Bastiaanssen through a collaboration between IHE%
+\linebreak%
+Water Accounting is an approach based on open access data sets and information. The validation of the water accounts for the Litani depends on observed data. The authors are therefore grateful for the%
+\linebreak
+
+%
+\addcontentsline{toc}{section}{Acknowledgements}%
+\cleardoublepage%
+\newpage%
+\RaggedRight%
+\section*{Abbreviations and Acronyms}%
+\label{sec:AbbreviationsandAcronyms}%
+\begin{longtabu}{X[l] X[l]}%
+\endhead%
+\endfoot%
+\endlastfoot%
+KEY&Value\\%
+\end{longtabu}
+
+%
+\addcontentsline{toc}{section}{Abbreviations and Acronyms}%
+\cleardoublepage%
+\newpage%
+\RaggedRight%
+\section*{Executive summary}%
+\label{sec:Executivesummary}%
+This report was prepared by Bich Tran, Solomon Seyoum, Marloes Mul, Elga Salvadore, Amani Matar, Gonzalo E. Espinoza{-}Dávalos, Jonna van Opstal, Wim Bastiaanssen through a collaboration between IHE%
+\linebreak%
+Water Accounting is an approach based on open access data sets and information. The validation of the water accounts for the Litani depends on observed data. The authors are therefore grateful for the%
+\linebreak
+
+%
+\addcontentsline{toc}{section}{Executive summary}%
+\cleardoublepage%
+\clearpage%
+\pagenumbering{arabic}%
+\setcounter{page}{1}%
+\pagestyle{SectionHeader}%
+\newpage%
+\RaggedRight%
+\section{Introduction}%
+\label{sec:Introduction}%
+The overall objective of the ‘Using Remote Sensing in support of solutions to reduce agricultural water productivity gaps’ project of the Food and Agricultural Organization (FAO) supported by the Ministry of Foreign Affairs of the Netherlands (DGIS) is to achieve future food security with less water, while using water resources in a sustainable manner. Agriculture is a key water user and a careful monitoring of water productivity in agriculture is a necessity. The FAO Water Productivity Open Access portal (WaPOR) provides new opportunities to exploit spatial information related to water consumption in agriculture and water productivity for Africa and Near East. Assessing sustainable use of water resources is evaluated using the water accounting framework, utilising a combination of remote sensing data (in this case the WaPOR database) open access global datasets and complemented with local measurements on weather conditions and river flows.%
+\linebreak%
+The Litani River basin is one of the selected pilot basins for making a more comprehensive assessment of the multiple water user situation (see Figure 1 for location of the Litani basin). The assessment would contribute to better understanding the possible consequences of water productivity increases on other water users. A secondary objective is to demonstrate the value of the WaPOR database in preparing water accounts for river basins.%
+\linebreak%
+IHEWAreport{-}fig1%
+\linebreak%
+IHEWAreport{-}tab1%
+\linebreak%
+IHEWAreport{-}eqa1%
+\linebreak%
+IHEWAreport{-}ref1%
+\linebreak%
+Paragraph 7%
+\linebreak%
+\subsection{Subsection 1.1}%
+\label{subsec:Subsection1.1}%
+Subsection 1.1 Paragraph 1 0.0%
+\linebreak%
+Subsection 1.1 Paragraph 2 1.0%
+\linebreak
+
+%
+\newpage%
+\RaggedRight%
+\section{Methodology}%
+\label{sec:Methodology}%
+Section 2 Paragraph 1%
+\linebreak%
+Section 2 Paragraph 2%
+\linebreak%
+\subsection{WaPOR database}%
+\label{subsec:WaPORdatabase}%
+Subsection 2.1 Paragraph 1 0.5%
+\linebreak%
+Subsection 2.1 Paragraph 2%
+\linebreak
+
+%
+\newpage%
+\RaggedRight%
+\section{Test from YAML}%
+\label{sec:TestfromYAML}%
+Figure fig{-}1.jpg%
+\linebreak%
+Equation a{-}b%
+\linebreak%
+Table table{-}1.csv%
+\linebreak%
+Reference ref{-}1.pdf%
+\linebreak
+
+%
+\newpage%
+\section{Test}%
+\label{sec:Test}%
+\subsection{Reference}%
+\label{subsec:Reference}%
+\cite{bertram}%
+\linebreak%
+\cite{simon06}%
+\linebreak
+
+%
+\subsection{List}%
+\label{subsec:List}%
+\begin{itemize}%
+\item%
+the first item%
+\item%
+the second item%
+\item%
+the third etc%
+\ldots%
+\end{itemize}%
+\begin{itemize}%
+\item%
+the first item%
+\item%
+the second item%
+\item%
+the third etc%
+\ldots%
+\end{itemize}
+
+%
+\subsection{Figure}%
+\label{subsec:Figure}%
+Fig. \ref{figure:fig1}%
+
+
+\begin{figure}[h!]%
+\centering%
+\includegraphics[width=1\textwidth]{C:/Users/qpa001/AppData/Local/Temp/pylatex/c3c4116f-e586-4167-8867-a30eb55e1b47.pdf}%
+\caption{Caption Figure}%
+\label{figure:fig1}%
+\end{figure}
+
+%
+\subsection{Talbe}%
+\label{subsec:Talbe}%
+Tab. \ref{table:tab1}%
+\begin{longtable}{|l|l|l|}%
+\caption{Caption Table}%
+\label{table:tab1}\\%
+\hline%
+header 1&header 2&header 3\\%
+\hline%
+\endhead%
+\hline%
+\endfoot%
+\hline%
+\endlastfoot%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+0.0&0.0&0.0\\%
+\end{longtable}
+
+%
+\subsection{Equation numpy}%
+\label{subsec:Equationnumpy}%
+Equ. \ref{equation:equ1}%
+\begin{alignat}{2}%
+\frac{a}{b} &= 0 \\%
+\begin{pmatrix}%
+2&3&4\\%
+0&0&1\\%
+0&0&2%
+\end{pmatrix}%
+\begin{pmatrix}%
+100\\%
+10\\%
+20%
+\end{pmatrix}%
+&=%
+\begin{pmatrix}%
+310\\%
+20\\%
+40%
+\end{pmatrix}%
+\label{equation:equ1}%
+\end{alignat}
+
+%
+\subsection{Equation quantities}%
+\label{subsec:Equationquantities}%
+Equ. \ref{equation:equ2}%
+\begin{alignat}{2}%
+F%
+&=%
+\SI[round-precision=4,round-mode=figures]{1.9820166063855052e+20}{\newton}%
+\label{equation:equ2}%
+\end{alignat}
+
+%
+\cleardoublepage%
+\newpage%
+\section*{References}%
+\label{sec:References}%
+\printbibliography[heading=none]
+
+%
+\addcontentsline{toc}{section}{References}%
+\cleardoublepage%
+\newpage%
+\section*{Annexes}%
+\label{sec:Annexes}%
+Annexes.csv%
+\linebreak
+
+%
+\addcontentsline{toc}{section}{Annexes}%
+\cleardoublepage%
+\end{document}

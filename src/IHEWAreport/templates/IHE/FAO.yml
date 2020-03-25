@@ -1,0 +1,164 @@
+layout:
+  paper: 'a4paper'
+  layout: 'a4paper'
+  includehead: True
+  includefoot: True
+
+page:
+  header:
+    left: 'FAO'
+    center: ''
+    right: 'IHE'
+  footer:
+    left: ''
+    center: ''
+    right: 'page_number'
+
+content:
+  # Cover
+  cover:
+    title: 'Water Account'
+
+  # Title
+  title:
+    title: 'Water Account\\ in the Litani River Basin'
+    author: 'WA+ team'
+    date: True
+
+  # Preamble
+  acknowledgement:
+    title: 'Acknowledgements'
+    paragraph:
+      1: 'This report was prepared by Bich Tran, Solomon Seyoum, Marloes Mul, Elga Salvadore,
+          Amani Matar, Gonzalo E. Espinoza-Dávalos, Jonna van Opstal, Wim Bastiaanssen through
+          a collaboration between IHE'
+      2: 'Water Accounting is an approach based on open access data sets and information. The
+          validation of the water accounts for the Litani depends on observed data. The authors
+          are therefore grateful for the'
+
+  abbreviation:
+    title: 'Abbreviations and Acronyms'
+    paragraph:
+      KEY: 'Value'
+
+  summary:
+    title: 'Executive summary'
+    paragraph:
+      1: 'This report was prepared by Bich Tran, Solomon Seyoum, Marloes Mul, Elga Salvadore,
+          Amani Matar, Gonzalo E. Espinoza-Dávalos, Jonna van Opstal, Wim Bastiaanssen through
+          a collaboration between IHE'
+      2: 'Water Accounting is an approach based on open access data sets and information. The
+          validation of the water accounts for the Litani depends on observed data. The authors
+          are therefore grateful for the'
+
+  # Section
+  section:
+    1:
+      title: 'Introduction'
+      paragraph:
+        1-1: 'The overall objective of the ‘Using Remote Sensing in support of solutions to reduce agricultural water
+              productivity gaps’ project of the Food and Agricultural Organization (FAO) supported by the Ministry of
+              Foreign Affairs of the Netherlands (DGIS) is to achieve future food security with less water, while using
+              water resources in a sustainable manner. Agriculture is a key water user and a careful monitoring of water
+              productivity in agriculture is a necessity. The FAO Water Productivity Open Access portal (WaPOR)
+              provides new opportunities to exploit spatial information related to water consumption in agriculture and
+              water productivity for Africa and Near East. Assessing sustainable use of water resources is evaluated
+              using the water accounting framework, utilising a combination of remote sensing data (in this case the
+              WaPOR database) open access global datasets and complemented with local measurements on weather
+              conditions and river flows.'
+        1-2: 'The Litani River basin is one of the selected pilot basins for making a more comprehensive assessment of
+              the multiple water user situation (see Figure 1 for location of the Litani basin). The assessment would
+              contribute to better understanding the possible consequences of water productivity increases on other
+              water users. A secondary objective is to demonstrate the value of the WaPOR database in preparing water
+              accounts for river basins.'
+        1-3: IHEWAreport-fig1
+        1-4: IHEWAreport-tab1
+        1-5: IHEWAreport-eqa1
+        1-6: IHEWAreport-ref1
+        1-7: 'Paragraph 7'
+      1.1:
+        title: 'Subsection 1.1'
+        paragraph:
+          1.1-1: 'Subsection 1.1 Paragraph 1 {data[value][min]}'
+          1.1-2: 'Subsection 1.1 Paragraph 2 {data[value][max]}'
+        1.1.1:
+          title: 'Subsection 1.1.1'
+          paragraph:
+            1.1.1-1: 'Subsection 1.1.1 Paragraph 1 {data[value][min]}'
+            1.1.1-2: 'Subsection 1.1.1 Paragraph 2 {data[value][max]}'
+    2:
+      title: 'Methodology'
+      paragraph:
+        2-1: 'Section 2 Paragraph 1'
+        2-2: 'Section 2 Paragraph 2'
+      2.1:
+        title: 'WaPOR database'
+        paragraph:
+          2.1-1: 'Subsection 2.1 Paragraph 1 {data[value][mean]}'
+          2.1-2: 'Subsection 2.1 Paragraph 2'
+        2.1.1:
+          title: 'Precipitation'
+          paragraph:
+            2.1.1-1: 'Subsection 2.1.1 Paragraph 1 {data[value][mean]}'
+            2.1.1-2: 'Subsection 2.1.1 Paragraph 2'
+    3:
+      title: 'Test from YAML'
+      paragraph:
+        3-1: 'Figure {data[figure][fig1]}'
+        3-2: 'Equation {data[equation][equ1]}'
+        3-3: 'Table {data[table][tab1]}'
+        3-4: 'Reference {data[reference][ref1]}'
+
+  reference:
+    title: 'References'
+    file: 'IHE.bib'
+
+  annex:
+    title: 'Annexes'
+    file: 'Annexes.csv'
+
+  data:
+    value:
+      rand: -9999
+      min: 0.
+      max: 1.
+      mean: 0.5
+    equation:
+      equ1: 'a-b'
+    figure:
+      fig1: 'fig-1.jpg'
+    table:
+      tab1: 'table-1.csv'
+    reference:
+      ref1: 'ref-1.pdf'
+
+#fig: 'IHEWAreport-fig1, \ref{figure:fig1}
+#      \begin{figure}[h]
+#      \centering
+#      \includegraphics[width=0.3\linewidth]{fig1.png}
+#      \caption{This image will be referenced below}
+#      \label{figure:fig1}
+#      \end{figure}'
+#
+#tab: 'IHEWAreport-tab1, \ref{table:tab1}
+#      \begin{table}[h!]
+#      \centering
+#      \begin{tabular}{||c c c c||}
+#       \hline
+#       Col1 & Col2 & Col2 & Col3 \\ [0.5ex]
+#       \hline\hline
+#       1 & 6 & 87837 & 787 \\
+#       2 & 7 & 78 & 5415 \\
+#       3 & 545 & 778 & 7507 \\
+#       4 & 545 & 18744 & 7560 \\
+#       5 & 88 & 788 & 6344 \\ [1ex]
+#       \hline
+#      \end{tabular}
+#      \caption{Table to test captions and labels}
+#      \label{table:tab1}
+#      \end{table}'
+#
+#eqa: 'IHEWAreport-eqa1, \ref{equation:eqa1}
+#      \begin{equation} \label{equation:eqa1}
+#      \sum_{i=0}^{\infty} a_i x^i
+#      \end{equation}'

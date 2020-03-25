@@ -1,0 +1,10 @@
+# https://github.com/readthedocs/readthedocs.org/blob/master/docs/guides/build-using-too-many-resources.rst#use-pip-when-possible
+name: _IHEWAreport
+# channels:
+#   - defaults
+#   - conda-forge
+dependencies:
+  - python>=3.6
+  - numpy
+  - pandas
+  - pyyaml

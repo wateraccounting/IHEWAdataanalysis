@@ -1,0 +1,121 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.1 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{ynt/global//global/global}
+    \entry{bertram}{article}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=8a5b475249c01d8aa99f2275128c1037}{%
+           family={Bertram},
+           familyi={B\bibinitperiod},
+           given={Aaron},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=60f0568f0258e96055aef41b438ecbd2}{%
+           family={Wentworth},
+           familyi={W\bibinitperiod},
+           given={Richard},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4be7c21774d86b9e1f65ca280181467e}
+      \strng{fullhash}{4be7c21774d86b9e1f65ca280181467e}
+      \strng{bibnamehash}{4be7c21774d86b9e1f65ca280181467e}
+      \strng{authorbibnamehash}{4be7c21774d86b9e1f65ca280181467e}
+      \strng{authornamehash}{4be7c21774d86b9e1f65ca280181467e}
+      \strng{authorfullhash}{4be7c21774d86b9e1f65ca280181467e}
+      \field{sortinit}{1}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{annotation}{An \texttt{article} entry with a \texttt{volume} and a \texttt{number} field}
+      \field{journaltitle}{J.~Amer. Math. Soc.}
+      \field{langid}{english}
+      \field{langidopts}{variant=american}
+      \field{number}{2}
+      \field{shorttitle}{Gromov invariants}
+      \field{title}{Gromov invariants for holomorphic maps on {Riemann} surfaces}
+      \field{volume}{9}
+      \field{year}{1996}
+      \field{dateera}{ce}
+      \field{pages}{529\bibrangedash 571}
+      \range{pages}{43}
+    \endentry
+    \entry{simon06}{article}{}
+      \name{author}{5}{}{%
+        {{un=0,uniquepart=base,hash=12aaa11594aa9fb02370795d6385ff1e}{%
+           family={Simon},
+           familyi={S\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=25864f66a618652e1eb89ef82f3486d3}{%
+           family={Flaschker},
+           familyi={F\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=49938d63f29583e5707df0547c66b421}{%
+           family={Schadewaldt},
+           familyi={S\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9e3cd84c0bb3a106318d9b907de3cbdf}{%
+           family={Langenbeck},
+           familyi={L\bibinitperiod},
+           given={U.},
+           giveni={U\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b3fc4f414db6edfb9ef06613bbf1e07a}{%
+           family={Wendel},
+           familyi={W\bibinitperiod},
+           given={U.},
+           giveni={U\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{718e5cc4751acb96811b6c7363edc39a}
+      \strng{fullhash}{f3b35e818a98e417c83b477140741ab6}
+      \strng{bibnamehash}{718e5cc4751acb96811b6c7363edc39a}
+      \strng{authorbibnamehash}{718e5cc4751acb96811b6c7363edc39a}
+      \strng{authornamehash}{718e5cc4751acb96811b6c7363edc39a}
+      \strng{authorfullhash}{f3b35e818a98e417c83b477140741ab6}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of inherited metabolic disease}
+      \field{number}{6}
+      \field{title}{Variant maple syrup urine disease (MSUD)--the entire spectrum}
+      \field{volume}{29}
+      \field{year}{2006}
+      \field{pages}{716\bibrangedash 24}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1007/s10545-006-0276-1
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
