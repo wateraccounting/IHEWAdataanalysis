@@ -19,7 +19,7 @@
 # pip3 freeze > requirements.txt
 
 jupyterlab==1.1.4
-matplotlib>=3.1
+matplotlib>=3.0
 netCDF4>=1.5
 numpy>=1.11
 pandas>=0.20
