@@ -21,20 +21,11 @@
 IHEWAdataanalysis
 =================
 
-IHE WaterAccounting Report Tool.
-
-Latex
------
-
-List installed packages in miktex
-
-.. code-block:: console
-
-    $ mpm --list >miktex_pkg.md
+IHE WaterAccounting Data Analysis Tool.
 
 
-Products
---------
+Templates
+---------
 
 
 Note
