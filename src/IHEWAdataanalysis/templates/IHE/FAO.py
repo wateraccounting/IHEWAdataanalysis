@@ -9,14 +9,17 @@ import inspect
 import os
 import yaml
 
-import ogr
-import gdal
-import netCDF4
-
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 import numpy as np
 import pandas as pd
+import netCDF4
+
+try:
+    import ogr, osr, gdal
+except ImportError:
+    from osgeo import ogr, osr, gdal
 
 try:
     # IHEClassInitError, IHEStringError, IHETypeError, IHEKeyError, IHEFileError
