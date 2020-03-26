@@ -2,11 +2,11 @@
 
 import pytest
 
-from IHEWAreport.scripts.skeleton import fib
+from IHEWAdataanalysis.scripts.skeleton import fib
 
 __author__ = "Quan Pan"
 __copyright__ = "Quan Pan"
-__license__ = "apache"
+__license__ = "GPLv3"
 
 
 def test_fib():

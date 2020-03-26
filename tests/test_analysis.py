@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+import pytest
+
 import inspect
 import os
 

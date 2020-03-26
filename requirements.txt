@@ -18,7 +18,6 @@
 # Export installed requirements to requirements.txt:
 # pip3 freeze > requirements.txt
 
-GDAL>=3.0
 jupyterlab==1.1.4
 matplotlib>=3.1
 netCDF4>=1.5
