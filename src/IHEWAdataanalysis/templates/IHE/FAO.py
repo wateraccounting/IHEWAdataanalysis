@@ -46,15 +46,48 @@ class Template(object):
                 inspect.getfile(
                     inspect.currentframe()))
         )
-        print('{}.{}'.format(path, template))
+        self.path = ''
+        self.data = {}
+        self.doc = None
+        self.__conf = conf
 
-    def _conf(self, path, template):
+        data = self._conf(path, template)
+        if len(data.keys()) > 0:
+            self.path = path
+            self.data = data
+        else:
+            raise IHEClassInitError(template) from None
+
+        obj = self.create()
+        if obj is not None:
+            self.fig = obj
+
+            print('\nFigure Start')
+            print('Create temp dir:')
+
+            print('>>>>>')
+            # doc Cover
+            self.plot('CoverPage')
+
+    def _conf(self, path, template) -> dict:
+        data = {}
+
+        file_conf = os.path.join(path, template)
+        with open(file_conf) as fp:
+            data = yaml.load(fp, Loader=yaml.FullLoader)
+
+        return data
+
+    def create(self) -> object:
+        figure = self.data['figure']
+        obj = None
+
+        return obj
+
+    def plot(self):
         pass
 
-    def create(self):
-        pass
-
-    def write(self):
+    def plot_line(self):
         pass
 
     def saveas(self):

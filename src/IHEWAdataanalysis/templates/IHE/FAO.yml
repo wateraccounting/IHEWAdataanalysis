@@ -1,8 +1,8 @@
 figure:
   fig1:
-    name: 'fig'
+    title: 'fig'
+    type: 'line'
     num: 1
     figsize: [6.4, 4.8]
     dpi: 300
-    layout:
-
+    property:

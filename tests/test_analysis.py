@@ -19,3 +19,4 @@ if __name__ == "__main__":
     os.chdir(path)
 
     analysis = IHEWAdataanalysis.Analysis(path, 'test_analysis.yml')
+    print(analysis._Analysis__conf)
