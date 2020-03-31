@@ -69,7 +69,7 @@ class Analysis(Base):
         """
         self.allow_keys = {
             'template': ['provider', 'name'],
-            'data': ['PCP', 'ET', 'dS', 'Q']
+            'data': ['PCP', 'ETA', 'dS', 'Q']
         }
 
         self.__status = {
@@ -84,7 +84,8 @@ class Analysis(Base):
                 'end': None
             },
             'data': {
-                'template': None
+                'template': None,
+                'data': None
             }
         }
         self.__tmp = {
@@ -135,8 +136,9 @@ class Analysis(Base):
             data = yaml.load(fp, Loader=yaml.FullLoader)
 
         if data is not None:
-            # status_code += self._conf_keys('doc', data)
             status_code += self._conf_keys('template', data)
+            status_code += self._conf_keys('data', data)
+
             # status_code += self._conf_keys('page', data)
             # status_code += self._conf_keys('content', data)
         else:

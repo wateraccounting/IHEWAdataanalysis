@@ -1,14 +1,8 @@
-# tests download
-tests/data/Download/
-tests/data/Notebooks/
-tests/data/Products/
+# tests
 tests/data/Shapefile/
-tests/IHEWAreport/
+tests/data/Output/
 
-tests/report.tex
-tests/report.pdf
-tests/report.doc
-tests/report.docx
+tests/IHEWAdataanalysis/
 
 # examples
 examples/IHEWAdataanalysis/

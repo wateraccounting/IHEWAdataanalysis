@@ -3,25 +3,44 @@ template:
   name: FAO
   # name: Manual
 
+#ftype: 'NetCDF'
+#ftype: 'GTiff'
+#ftype: 'CSV'
 data:
-  Basin:
-    file: '.shp'
-  PCP:
-    CHIRPS:
-      folder: ''
-      ftype: 'NetCDF'
-    TRMM:
-      folder: ''
-      ftype: 'GTiff'
-  ETA:
-    CMRSET:
-      folder: ''
-      ftype: 'NetCDF'
+  #Basin:
+  #  folder: 'data/Shapefile'
+  #  file: 'Mindanao-RiverBasin.shp'
   dS:
     GSFC:
-      folder: ''
-      ftype: 'NetCDF'
+      folder: 'data/Output'
+      ftype: 'CSV'
+  ETA:
+    ALEXI:
+      folder: 'data/Output'
+      ftype: 'CSV'
+    CMRSET:
+      folder: 'data/Output'
+      ftype: 'CSV'
+    GLDAS:
+      folder: 'data/Output'
+      ftype: 'CSV'
+    GLEAM:
+      folder: 'data/Output'
+      ftype: 'CSV'
+    MOD16A2:
+      folder: 'data/Output'
+      ftype: 'CSV'
+  PCP:
+    CHIRPS:
+      folder: 'data/Output'
+      ftype: 'CSV'
+    GPM:
+      folder: 'data/Output'
+      ftype: 'CSV'
+    TRMM:
+      folder: 'data/Output'
+      ftype: 'CSV'
   Q:
     FloodObservatory:
-      folder: ''
-      ftype: 'NetCDF'
+      folder: 'data/Output'
+      ftype: 'CSV'

@@ -6,6 +6,7 @@ Created on Tue Dec 17 11:11:53 2019
 """
 import xarray as xr
 from scipy import stats
+import numpy as np
 
 
 def bias(DS1, DS2, min_samples):
@@ -76,15 +77,24 @@ def pearson_correlation(DS1, DS2, min_samples, dim="time", confidence=0.05, tail
     return r.where(n >= min_samples), significance.where(n >= min_samples)
 
 
-def RMSE(DS1, DS2, min_samples):
-    x = DS1.where(DS2.notnull())
-    y = DS2.where(DS1.notnull())
+# def RMSE(DS1, DS2, min_samples):
+#     x = DS1.where(DS2.notnull())
+#     y = DS2.where(DS1.notnull())
+#
+#     n = x.notnull().sum(dim="time")
+#
+#     rmse = xr.ufuncs.sqrt(((y - x) ** 2).mean(dim="time", skipna=True))
+#
+#     return rmse.where(n >= min_samples)
+def RMSE(pred, targ):
+    # x = DS1.where(DS2.notnull())
+    # y = DS2.where(DS1.notnull())
+    #
+    # n = x.notnull().sum(dim="time")
 
-    n = x.notnull().sum(dim="time")
+    rmse = np.sqrt(np.mean((pred-targ)**2))
 
-    rmse = xr.ufuncs.sqrt(((y - x) ** 2).mean(dim="time", skipna=True))
-
-    return rmse.where(n >= min_samples)
+    return rmse
 
 
 def NRMSE(DS1, DS2, min_samples):
@@ -93,8 +103,8 @@ def NRMSE(DS1, DS2, min_samples):
 
     n = x.notnull().sum(dim="time")
 
-    rmse = xr.ufuncs.sqrt(((y - x) ** 2).mean(dim="time", skipna=True)) / (
-                y.max(dim="time") - y.min(dim="time"))
+    rmse = xr.ufuncs.sqrt(((y - x) ** 2).mean(dim="time", skipna=True)) / \
+        (y.max(dim="time") - y.min(dim="time"))
 
     return rmse.where(n >= min_samples)
 

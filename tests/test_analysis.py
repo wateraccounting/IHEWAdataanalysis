@@ -5,6 +5,10 @@ import pytest
 import inspect
 import os
 
+import yaml
+import fnmatch
+import pandas as pd
+
 import IHEWAdataanalysis
 
 
@@ -16,7 +20,7 @@ if __name__ == "__main__":
             inspect.getfile(
                 inspect.currentframe()))
     )
-    os.chdir(path)
 
     analysis = IHEWAdataanalysis.Analysis(path, 'test_analysis.yml')
-    print(analysis._Analysis__conf)
+    # print(analysis._Analysis__conf)
+
