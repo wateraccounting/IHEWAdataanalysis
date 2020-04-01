@@ -89,9 +89,9 @@ fig9:
   #axes:
 
 fig10:
-  title: 'RMSE P-ET-dS vs Q'
+  title: 'RMSE P-ET-dS vs Q [mm/month]'
   data: 'PCP-ETA-dS.Q'
-  ptype: 'heatmap'
+  ptype: 'line_wb'
   figure:
     num: 10
     figsize: [6.4, 4.8]

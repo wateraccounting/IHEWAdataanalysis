@@ -1,8 +1,8 @@
 # tests
-tests/data/Shapefile/
-tests/data/Output/
-
-tests/IHEWAdataanalysis/
+#tests/data/Shapefile/
+#tests/data/Output/
+#
+#tests/IHEWAdataanalysis/
 
 # examples
 examples/IHEWAdataanalysis/

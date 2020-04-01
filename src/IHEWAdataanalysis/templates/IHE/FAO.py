@@ -70,6 +70,7 @@ class Template(object):
             'bar_wb',
             'heatmap',
             'line_prod',
+            'line_wb',
             'scatter_prod'
         ]
         self.path = path
@@ -85,14 +86,14 @@ class Template(object):
             self.conf = conf
         else:
             raise IHEClassInitError(template) from None
-        print(self.conf.keys())
+        # print(self.conf.keys())
 
         data = self._data(self.__conf['path'])
         if len(data.keys()) > 0:
             self.data = data
         else:
             raise IHEClassInitError(template) from None
-        print(self.data.keys())
+        # print(self.data.keys())
 
         print('\nFigure Start')
         self.workspace = os.path.join(self.__conf['path'], 'IHEWAdataanalysis', 'fig')
@@ -107,14 +108,14 @@ class Template(object):
             #                           fig_obj['obj'].dpi))
             ptype = fig_obj['ptype']
             if ptype in self.allow_ptypes:
-                if ptype =='line_prod':
-                    self.plot_line_prod(fig_name)
-                if ptype == 'heatmap':
-                    self.plot_heatmap(fig_name)
-                if ptype == 'scatter_prod':
-                    self.plot_scatter_prod(fig_name)
                 if ptype == 'bar_wb':
                     self.plot_bar_wb(fig_name)
+                if ptype == 'line_prod':
+                    self.plot_line_prod(fig_name)
+                if ptype == 'line_wb':
+                    self.plot_line_wb(fig_name)
+                if ptype == 'scatter_prod':
+                    self.plot_scatter_prod(fig_name)
             else:
                 print('Warning "{}" not support.'.format(
                     ptype
@@ -180,6 +181,9 @@ class Template(object):
 
     def plot_line_prod(self, name):
         fig_conf = self.conf[name]
+        fig_title = fig_conf['title']
+        print(fig_title)
+
         # parse yaml
         fig_data = self.data[fig_conf['data']]
 
@@ -187,9 +191,6 @@ class Template(object):
         prod_nprod = len(prod_names)
 
         if prod_nprod > 0:
-            fig_title = fig_conf['title']
-            print(fig_title)
-
             fig_nplt = prod_nprod
             fig_ncol = int(np.floor(np.sqrt(fig_nplt)))
             fig_nrow = int(np.ceil(float(fig_nplt) / float(fig_ncol)))
@@ -259,8 +260,11 @@ class Template(object):
             self.saveas(fig, name)
             self.close(fig)
 
-    def plot_heatmap(self, name):
+    def plot_line_wb(self, name):
         fig_conf = self.conf[name]
+        fig_title = fig_conf['title']
+        print(fig_title)
+
         # parse yaml
         fig_data = {}
         var_names = []
@@ -295,9 +299,6 @@ class Template(object):
                 fig_data[variable_root] = self.data[variable_root]
             iagn += 1
         # print(var_names, var_opers)
-
-        fig_title = fig_conf['title']
-        print(fig_title)
 
         fig_nplt = 1
         prod_names = []
@@ -425,47 +426,51 @@ class Template(object):
             self.saveas(fig, name)
             self.close(fig)
 
-        # vegetables = ["cucumber", "tomato", "lettuce", "asparagus",
-        #               "potato", "wheat", "barley"]
-        # farmers = ["Farmer Joe", "Upland Bros.", "Smith Gardening",
-        #            "Agrifun", "Organiculture", "BioGoods Ltd.", "Cornylee Corp."]
-        #
-        # harvest = np.array([[0.8, 2.4, 2.5, 3.9, 0.0, 4.0, 0.0],
-        #                     [2.4, 0.0, 4.0, 1.0, 2.7, 0.0, 0.0],
-        #                     [1.1, 2.4, 0.8, 4.3, 1.9, 4.4, 0.0],
-        #                     [0.6, 0.0, 0.3, 0.0, 3.1, 0.0, 0.0],
-        #                     [0.7, 1.7, 0.6, 2.6, 2.2, 6.2, 0.0],
-        #                     [1.3, 1.2, 0.0, 0.0, 0.0, 3.2, 5.1],
-        #                     [0.1, 2.0, 0.0, 1.4, 0.0, 1.9, 6.3]])
-        #
-        # fig, ax = plt.subplots()
-        # im = ax.imshow(harvest)
-        #
-        # # We want to show all ticks...
-        # ax.set_xticks(np.arange(len(farmers)))
-        # ax.set_yticks(np.arange(len(vegetables)))
-        # # ... and label them with the respective list entries
-        # ax.set_xticklabels(farmers)
-        # ax.set_yticklabels(vegetables)
-        #
-        # # Rotate the tick labels and set their alignment.
-        # plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
-        #          rotation_mode="anchor")
-        #
-        # # Loop over data dimensions and create text annotations.
-        # for i in range(len(vegetables)):
-        #     for j in range(len(farmers)):
-        #         text = ax.text(j, i, harvest[i, j],
-        #                        ha="center", va="center", color="w")
-        #
-        # ax.set_title("Harvest of local farmers (in tons/year)")
-        # fig.tight_layout()
-        # plt.show()
-        # # plt.savefig()
-        # # plt.clf()
+    def plot_heatmap(self, name):
+        vegetables = ["cucumber", "tomato", "lettuce", "asparagus",
+                      "potato", "wheat", "barley"]
+        farmers = ["Farmer Joe", "Upland Bros.", "Smith Gardening",
+                   "Agrifun", "Organiculture", "BioGoods Ltd.", "Cornylee Corp."]
+
+        harvest = np.array([[0.8, 2.4, 2.5, 3.9, 0.0, 4.0, 0.0],
+                            [2.4, 0.0, 4.0, 1.0, 2.7, 0.0, 0.0],
+                            [1.1, 2.4, 0.8, 4.3, 1.9, 4.4, 0.0],
+                            [0.6, 0.0, 0.3, 0.0, 3.1, 0.0, 0.0],
+                            [0.7, 1.7, 0.6, 2.6, 2.2, 6.2, 0.0],
+                            [1.3, 1.2, 0.0, 0.0, 0.0, 3.2, 5.1],
+                            [0.1, 2.0, 0.0, 1.4, 0.0, 1.9, 6.3]])
+
+        fig, ax = plt.subplots()
+        im = ax.imshow(harvest)
+
+        # We want to show all ticks...
+        ax.set_xticks(np.arange(len(farmers)))
+        ax.set_yticks(np.arange(len(vegetables)))
+        # ... and label them with the respective list entries
+        ax.set_xticklabels(farmers)
+        ax.set_yticklabels(vegetables)
+
+        # Rotate the tick labels and set their alignment.
+        plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+                 rotation_mode="anchor")
+
+        # Loop over data dimensions and create text annotations.
+        for i in range(len(vegetables)):
+            for j in range(len(farmers)):
+                text = ax.text(j, i, harvest[i, j],
+                               ha="center", va="center", color="w")
+
+        ax.set_title("Harvest of local farmers (in tons/year)")
+        fig.tight_layout()
+        plt.show()
+        # plt.savefig()
+        # plt.clf()
 
     def plot_bar_wb(self, name):
         fig_conf = self.conf[name]
+        fig_title = fig_conf['title']
+        print(fig_title)
+
         # parse yaml
         fig_data = {}
         var_names = []
@@ -490,9 +495,6 @@ class Template(object):
                 fig_data[variable] = self.data[variable]
             isub += 1
         # print(var_names, var_opers)
-
-        fig_title = fig_conf['title']
-        print(fig_title)
 
         fig_nplt = 1
         prod_names = []
@@ -607,6 +609,9 @@ class Template(object):
 
     def plot_scatter_prod(self, name):
         fig_conf = self.conf[name]
+        fig_title = fig_conf['title']
+        print(fig_title)
+
         # parse yaml
         fig_data = self.data[fig_conf['data']]
 
@@ -614,9 +619,6 @@ class Template(object):
         prod_nprod = len(prod_names)
 
         if prod_nprod > 1:
-            fig_title = fig_conf['title']
-            print(fig_title)
-
             fig_nplt = np.sum([i for i in range(prod_nprod)])
             fig_nrow = int(np.floor(np.sqrt(fig_nplt)))
             fig_ncol = int(np.ceil(float(fig_nplt) / float(fig_nrow)))
