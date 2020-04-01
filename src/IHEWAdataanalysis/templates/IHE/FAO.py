@@ -179,6 +179,188 @@ class Template(object):
 
         return objs
 
+    def plot_bar_wb(self, name):
+        fig_conf = self.conf[name]
+        fig_title = fig_conf['title']
+        print(fig_title)
+
+        # parse yaml
+        fig_data = {}
+        var_names = []
+        var_opers = []
+        tmp_names = fig_conf['data'].split('-')
+        isub = 0
+        for variable in tmp_names:
+            if len(variable.split('+')) > 1:
+                ipls = 0
+                for sub_var in variable.split('+'):
+                    if ipls > 0:
+                        var_opers.append('+')
+                    else:
+                        var_opers.append('-')
+                    var_names.append(sub_var)
+                    fig_data[sub_var] = self.data[sub_var]
+                    ipls += 1
+            else:
+                if isub > 0:
+                    var_opers.append('-')
+                var_names.append(variable)
+                fig_data[variable] = self.data[variable]
+            isub += 1
+        # print(var_names, var_opers)
+
+        fig_nplt = 1
+        prod_names = []
+        prod_nprod = []
+        for ivar in range(len(var_names)):
+            prod_names.append(list(fig_data[var_names[ivar]].keys()))
+            prod_nprod.append([i for i in range(len(fig_data[var_names[ivar]].keys()))])
+            fig_nplt *= np.prod(len(fig_data[var_names[ivar]].keys()))
+
+        fig_nrow = int(np.floor(np.sqrt(fig_nplt)))
+        fig_ncol = int(np.ceil(float(fig_nplt) / float(fig_nrow)))
+
+        fig = fig_conf['obj']
+        fig.suptitle(fig_title)
+        axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
+
+        ax_titlesize = 6
+        ax_ticksize = 4
+        ax_labelsize = 4
+
+        fig_comb = list(itertools.product(*prod_nprod))
+        # print(len(fig_comb), prod_names)
+        if len(fig_comb) > 0:
+            for i in range(fig_nrow):
+                for j in range(fig_ncol):
+                    iplt = i * fig_ncol + j
+                    if iplt < fig_nplt:
+                        prod_list = list(fig_comb[iplt])
+
+                        # prepare data
+                        ivar = 0
+                        var_name = var_names[ivar]
+                        prod_name = prod_names[ivar][prod_list[ivar]]
+
+                        xlabel = 'date'
+                        ylabel = '{}'.format(prod_name)
+
+                        df_col = ['date']
+                        df = pd.DataFrame(fig_data[var_name][prod_name],
+                                          columns=['date',
+                                                   '{}'.format(self.ifeature)])
+                        df_col.append('var_{}'.format(ivar))
+                        for ioper in range(len(var_opers)):
+                            ivar = ioper + 1
+                            var_oper = var_opers[ioper]
+                            var_name = var_names[ivar]
+                            prod_name = prod_names[ivar][prod_list[ivar]]
+
+                            ylabel += '{}{}'.format(var_oper, prod_name)
+                            df = pd.merge(df,
+                                         pd.DataFrame(fig_data[var_name][prod_name],
+                                                      columns=['date',
+                                                               '{}'.format(self.ifeature)]),
+                                         on='date', how='inner')
+                            df_col.append('var_{}'.format(ivar))
+                        df.columns = df_col
+
+                        # calculate data
+                        print('{:>10d}'
+                              '{:>40s}'.format(iplt, ylabel))
+                        df['date'] = pd.to_datetime(df['date'], format='%Y-%m')
+
+                        ivar = 0
+                        df[ylabel] = df['var_{}'.format(ivar)]
+                        for ioper in range(len(var_opers)):
+                            var_oper = var_opers[ioper]
+                            ivar = ioper + 1
+                            if var_oper == '-':
+                                df[ylabel] = df[ylabel] - df['var_{}'.format(ivar)]
+                            if var_oper == '+':
+                                df[ylabel] = df[ylabel] + df['var_{}'.format(ivar)]
+                        # print(df)
+
+                        y_std = np.nanstd(df[ylabel])
+                        y_avg = np.nanmean(df[ylabel])
+
+                        # plot data
+                        axes[i, j].bar(x=df['date'], height=df[ylabel], width=30,
+                                       color='black')
+                        axes[i, j].set_title('STD {:0.2f} '
+                                             'AVG {:0.2f}'.format(y_std, y_avg),
+                                             fontsize=ax_titlesize)
+                        axes[i, j].xaxis.set_major_locator(mdates.YearLocator())
+                        axes[i, j].xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+                        axes[i, j].tick_params(axis='x', which='major', direction='in',
+                                               pad=0.5, length=1,
+                                               labelsize=ax_ticksize,
+                                               labelrotation=45)
+                        axes[i, j].tick_params(axis='y', which='major', direction='in',
+                                               pad=0.5, length=1,
+                                               labelsize=ax_ticksize,
+                                               labelrotation=90)
+                        axes[i, j].set_xlabel(xlabel,
+                                              fontsize=ax_labelsize,
+                                              labelpad=1)
+                        axes[i, j].set_ylabel(ylabel,
+                                              fontsize=ax_labelsize,
+                                              labelpad=1)
+                    else:
+                        axes[i, j].remove()
+
+            # fig.autofmt_xdate()
+            if fig_nplt < fig_nrow * fig_ncol:
+                fig.text(x=0.8, y=0.05,
+                         s='STD: Standard Deviation\nAVG: Mean',
+                         fontsize=4,
+                         horizontalalignment='left', verticalalignment='center')
+            fig.subplots_adjust(bottom=0.05, top=0.9,
+                                left=0.075, right=0.95,
+                                wspace=0.2, hspace=0.4)
+            self.saveas(fig, name)
+            self.close(fig)
+
+    def plot_heatmap(self, name):
+        vegetables = ["cucumber", "tomato", "lettuce", "asparagus",
+                      "potato", "wheat", "barley"]
+        farmers = ["Farmer Joe", "Upland Bros.", "Smith Gardening",
+                   "Agrifun", "Organiculture", "BioGoods Ltd.", "Cornylee Corp."]
+
+        harvest = np.array([[0.8, 2.4, 2.5, 3.9, 0.0, 4.0, 0.0],
+                            [2.4, 0.0, 4.0, 1.0, 2.7, 0.0, 0.0],
+                            [1.1, 2.4, 0.8, 4.3, 1.9, 4.4, 0.0],
+                            [0.6, 0.0, 0.3, 0.0, 3.1, 0.0, 0.0],
+                            [0.7, 1.7, 0.6, 2.6, 2.2, 6.2, 0.0],
+                            [1.3, 1.2, 0.0, 0.0, 0.0, 3.2, 5.1],
+                            [0.1, 2.0, 0.0, 1.4, 0.0, 1.9, 6.3]])
+
+        fig, ax = plt.subplots()
+        im = ax.imshow(harvest)
+
+        # We want to show all ticks...
+        ax.set_xticks(np.arange(len(farmers)))
+        ax.set_yticks(np.arange(len(vegetables)))
+        # ... and label them with the respective list entries
+        ax.set_xticklabels(farmers)
+        ax.set_yticklabels(vegetables)
+
+        # Rotate the tick labels and set their alignment.
+        plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+                 rotation_mode="anchor")
+
+        # Loop over data dimensions and create text annotations.
+        for i in range(len(vegetables)):
+            for j in range(len(farmers)):
+                text = ax.text(j, i, harvest[i, j],
+                               ha="center", va="center", color="w")
+
+        ax.set_title("Harvest of local farmers (in tons/year)")
+        fig.tight_layout()
+        plt.show()
+        # plt.savefig()
+        # plt.clf()
+
     def plot_line_prod(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
@@ -373,7 +555,11 @@ class Template(object):
                                 df[ylabel] = df[ylabel] + df['var_{}'.format(ivar)]
                             if var_oper == '.':
                                 # RMSE
-                                y_rms = RMSE(df[ylabel], df['var_{}'.format(ivar)])
+                                y_rms = RMSE(
+                                    df[ylabel], df['var_{}'.format(ivar)])
+                                # Pearson correlation coefficient
+                                y_pcc = np.corrcoef(
+                                    df[ylabel], df['var_{}'.format(ivar)])[0, 1]
                         # print(df)
 
                         # plot data
@@ -398,7 +584,8 @@ class Template(object):
                                                   framealpha=1.0, frameon=False)
                         for ax_leg_line in ax_leg.get_lines():
                             ax_leg_line.set_linewidth(0.5)
-                        axes[i, j].set_title('RMSE {:0.2f}'.format(y_rms),
+                        axes[i, j].set_title('RMSE {:0.2f} '
+                                             'PCC{:0.2f}'.format(y_rms, y_pcc),
                                              fontsize=ax_titlesize)
                         axes[i, j].xaxis.set_major_locator(mdates.YearLocator())
                         axes[i, j].xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
@@ -420,187 +607,6 @@ class Template(object):
                         axes[i, j].remove()
 
             # fig.autofmt_xdate()
-            fig.subplots_adjust(bottom=0.05, top=0.9,
-                                left=0.075, right=0.95,
-                                wspace=0.2, hspace=0.4)
-            self.saveas(fig, name)
-            self.close(fig)
-
-    def plot_heatmap(self, name):
-        vegetables = ["cucumber", "tomato", "lettuce", "asparagus",
-                      "potato", "wheat", "barley"]
-        farmers = ["Farmer Joe", "Upland Bros.", "Smith Gardening",
-                   "Agrifun", "Organiculture", "BioGoods Ltd.", "Cornylee Corp."]
-
-        harvest = np.array([[0.8, 2.4, 2.5, 3.9, 0.0, 4.0, 0.0],
-                            [2.4, 0.0, 4.0, 1.0, 2.7, 0.0, 0.0],
-                            [1.1, 2.4, 0.8, 4.3, 1.9, 4.4, 0.0],
-                            [0.6, 0.0, 0.3, 0.0, 3.1, 0.0, 0.0],
-                            [0.7, 1.7, 0.6, 2.6, 2.2, 6.2, 0.0],
-                            [1.3, 1.2, 0.0, 0.0, 0.0, 3.2, 5.1],
-                            [0.1, 2.0, 0.0, 1.4, 0.0, 1.9, 6.3]])
-
-        fig, ax = plt.subplots()
-        im = ax.imshow(harvest)
-
-        # We want to show all ticks...
-        ax.set_xticks(np.arange(len(farmers)))
-        ax.set_yticks(np.arange(len(vegetables)))
-        # ... and label them with the respective list entries
-        ax.set_xticklabels(farmers)
-        ax.set_yticklabels(vegetables)
-
-        # Rotate the tick labels and set their alignment.
-        plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
-                 rotation_mode="anchor")
-
-        # Loop over data dimensions and create text annotations.
-        for i in range(len(vegetables)):
-            for j in range(len(farmers)):
-                text = ax.text(j, i, harvest[i, j],
-                               ha="center", va="center", color="w")
-
-        ax.set_title("Harvest of local farmers (in tons/year)")
-        fig.tight_layout()
-        plt.show()
-        # plt.savefig()
-        # plt.clf()
-
-    def plot_bar_wb(self, name):
-        fig_conf = self.conf[name]
-        fig_title = fig_conf['title']
-        print(fig_title)
-
-        # parse yaml
-        fig_data = {}
-        var_names = []
-        var_opers = []
-        tmp_names = fig_conf['data'].split('-')
-        isub = 0
-        for variable in tmp_names:
-            if len(variable.split('+')) > 1:
-                ipls = 0
-                for sub_var in variable.split('+'):
-                    if ipls > 0:
-                        var_opers.append('+')
-                    else:
-                        var_opers.append('-')
-                    var_names.append(sub_var)
-                    fig_data[sub_var] = self.data[sub_var]
-                    ipls += 1
-            else:
-                if isub > 0:
-                    var_opers.append('-')
-                var_names.append(variable)
-                fig_data[variable] = self.data[variable]
-            isub += 1
-        # print(var_names, var_opers)
-
-        fig_nplt = 1
-        prod_names = []
-        prod_nprod = []
-        for ivar in range(len(var_names)):
-            prod_names.append(list(fig_data[var_names[ivar]].keys()))
-            prod_nprod.append([i for i in range(len(fig_data[var_names[ivar]].keys()))])
-            fig_nplt *= np.prod(len(fig_data[var_names[ivar]].keys()))
-
-        fig_nrow = int(np.floor(np.sqrt(fig_nplt)))
-        fig_ncol = int(np.ceil(float(fig_nplt) / float(fig_nrow)))
-
-        fig = fig_conf['obj']
-        fig.suptitle(fig_title)
-        axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
-
-        ax_titlesize = 6
-        ax_ticksize = 4
-        ax_labelsize = 4
-
-        fig_comb = list(itertools.product(*prod_nprod))
-        # print(len(fig_comb), prod_names)
-        if len(fig_comb) > 0:
-            for i in range(fig_nrow):
-                for j in range(fig_ncol):
-                    iplt = i * fig_ncol + j
-                    if iplt < fig_nplt:
-                        prod_list = list(fig_comb[iplt])
-
-                        # prepare data
-                        ivar = 0
-                        var_name = var_names[ivar]
-                        prod_name = prod_names[ivar][prod_list[ivar]]
-
-                        xlabel = 'date'
-                        ylabel = '{}'.format(prod_name)
-
-                        df_col = ['date']
-                        df = pd.DataFrame(fig_data[var_name][prod_name],
-                                          columns=['date',
-                                                   '{}'.format(self.ifeature)])
-                        df_col.append('var_{}'.format(ivar))
-                        for ioper in range(len(var_opers)):
-                            ivar = ioper + 1
-                            var_oper = var_opers[ioper]
-                            var_name = var_names[ivar]
-                            prod_name = prod_names[ivar][prod_list[ivar]]
-
-                            ylabel += '{}{}'.format(var_oper, prod_name)
-                            df = pd.merge(df,
-                                         pd.DataFrame(fig_data[var_name][prod_name],
-                                                      columns=['date',
-                                                               '{}'.format(self.ifeature)]),
-                                         on='date', how='inner')
-                            df_col.append('var_{}'.format(ivar))
-                        df.columns = df_col
-
-                        # calculate data
-                        print('{:>10d}'
-                              '{:>40s}'.format(iplt, ylabel))
-                        df['date'] = pd.to_datetime(df['date'], format='%Y-%m')
-
-                        ivar = 0
-                        df[ylabel] = df['var_{}'.format(ivar)]
-                        for ioper in range(len(var_opers)):
-                            var_oper = var_opers[ioper]
-                            ivar = ioper + 1
-                            if var_oper == '-':
-                                df[ylabel] = df[ylabel] - df['var_{}'.format(ivar)]
-                            if var_oper == '+':
-                                df[ylabel] = df[ylabel] + df['var_{}'.format(ivar)]
-                        # print(df)
-
-                        y_std = np.nanstd(df[ylabel])
-                        y_avg = np.nanmean(df[ylabel])
-
-                        # plot data
-                        axes[i, j].bar(x=df['date'], height=df[ylabel], width=30)
-                        axes[i, j].set_title('STD {:0.2f} '
-                                             'AVG {:0.2f}'.format(y_std, y_avg),
-                                             fontsize=ax_titlesize)
-                        axes[i, j].xaxis.set_major_locator(mdates.YearLocator())
-                        axes[i, j].xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
-                        axes[i, j].tick_params(axis='x', which='major', direction='in',
-                                               pad=0.5, length=1,
-                                               labelsize=ax_ticksize,
-                                               labelrotation=45)
-                        axes[i, j].tick_params(axis='y', which='major', direction='in',
-                                               pad=0.5, length=1,
-                                               labelsize=ax_ticksize,
-                                               labelrotation=90)
-                        axes[i, j].set_xlabel(xlabel,
-                                              fontsize=ax_labelsize,
-                                              labelpad=1)
-                        axes[i, j].set_ylabel(ylabel,
-                                              fontsize=ax_labelsize,
-                                              labelpad=1)
-                    else:
-                        axes[i, j].remove()
-
-            # fig.autofmt_xdate()
-            if fig_nplt < fig_nrow * fig_ncol:
-                fig.text(x=0.8, y=0.05,
-                         s='STD: Standard Deviation\nAVG: Mean',
-                         fontsize=4,
-                         horizontalalignment='left', verticalalignment='center')
             fig.subplots_adjust(bottom=0.05, top=0.9,
                                 left=0.075, right=0.95,
                                 wspace=0.2, hspace=0.4)
