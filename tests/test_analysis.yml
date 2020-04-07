@@ -1,11 +1,10 @@
 template:
   provider: IHE
   name: FAO
-  # name: Manual
 
-#ftype: 'NetCDF'
-#ftype: 'GTiff'
-#ftype: 'CSV'
+# ftype: 'NetCDF'
+# ftype: 'GTiff'
+# ftype: 'CSV'
 data:
   #Basin:
   #  folder: 'data/Shapefile'
@@ -14,6 +13,9 @@ data:
     GSFC:
       folder: 'data/Output'
       ftype: 'CSV'
+#    Test1:
+#      folder: 'data/Output'
+#      ftype: 'CSV'
   ETA:
     ALEXI:
       folder: 'data/Output'
@@ -21,13 +23,16 @@ data:
     CMRSET:
       folder: 'data/Output'
       ftype: 'CSV'
-    GLDAS:
-      folder: 'data/Output'
-      ftype: 'CSV'
+#    GLDAS:
+#      folder: 'data/Output'
+#      ftype: 'CSV'
     GLEAM:
       folder: 'data/Output'
       ftype: 'CSV'
     MOD16A2:
+      folder: 'data/Output'
+      ftype: 'CSV'
+    SSEBop:
       folder: 'data/Output'
       ftype: 'CSV'
   PCP:
@@ -40,7 +45,14 @@ data:
     TRMM:
       folder: 'data/Output'
       ftype: 'CSV'
+  RO:
+    FloodObservatory:
+      folder: 'data/Output'
+      ftype: 'CSV'
   Q:
     FloodObservatory:
       folder: 'data/Output'
       ftype: 'CSV'
+#    Test1:
+#      folder: 'data/Output'
+#      ftype: 'CSV'
