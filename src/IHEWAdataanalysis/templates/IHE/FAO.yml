@@ -4,7 +4,8 @@ fig1a:
   ptype: 'line_prod'
   figure:
     num: 1
-    figsize: [6.4, 4.8]
+    # figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -14,7 +15,7 @@ fig1b:
   ptype: 'line_prod'
   figure:
     num: 1
-    figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -24,7 +25,7 @@ fig1c:
   ptype: 'line_prod'
   figure:
     num: 1
-    figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -34,7 +35,7 @@ fig1d:
   ptype: 'line_prod'
   figure:
     num: 1
-    figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -44,7 +45,7 @@ fig1e:
   ptype: 'line_prod'
   figure:
     num: 1
-    figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -54,7 +55,7 @@ fig2a:
   ptype: 'scatter_prod'
   figure:
     num: 2
-    figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -64,7 +65,7 @@ fig2b:
   ptype: 'scatter_prod'
   figure:
     num: 2
-    figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -74,7 +75,7 @@ fig2c:
   ptype: 'scatter_prod'
   figure:
     num: 2
-    figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -84,7 +85,7 @@ fig2d:
   ptype: 'scatter_prod'
   figure:
     num: 2
-    figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -94,7 +95,7 @@ fig2e:
   ptype: 'scatter_prod'
   figure:
     num: 2
-    figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -104,7 +105,7 @@ fig3a:
   ptype: 'bar_prod'
   figure:
     num: 3
-    figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -114,7 +115,7 @@ fig3b:
   ptype: 'bar_prod'
   figure:
     num: 3
-    figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -124,7 +125,7 @@ fig3c:
   ptype: 'bar_prod'
   figure:
     num: 3
-    figsize: [6.4, 4.8]
+    figsize: [6.4, 3.2]
     dpi: 400
   #axes:
 
@@ -164,6 +165,6 @@ fig6:
   ptype: 'heatmap_wb'
   figure:
     num: 6
-    figsize: [4.8, 6.4]
+    figsize: [6.4, 4.8]
     dpi: 400
   #axes:

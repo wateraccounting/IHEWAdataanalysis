@@ -13,7 +13,13 @@ data:
     GSFC:
       folder: 'data/Output'
       ftype: 'CSV'
-#    Test1:
+    Test1:
+      folder: 'data/Output'
+      ftype: 'CSV'
+#    Test2:
+#      folder: 'data/Output'
+#      ftype: 'CSV'
+#    Test3:
 #      folder: 'data/Output'
 #      ftype: 'CSV'
   ETA:
@@ -53,6 +59,3 @@ data:
     FloodObservatory:
       folder: 'data/Output'
       ftype: 'CSV'
-#    Test1:
-#      folder: 'data/Output'
-#      ftype: 'CSV'

@@ -329,7 +329,7 @@ class Template(object):
                                   fontsize=ax_labelsize,
                                   labelpad=1)
             axes[0, 0].legend()
-            fig.subplots_adjust(bottom=0.05, top=0.9,
+            fig.subplots_adjust(bottom=0.15, top=0.9,
                                 left=0.075, right=0.95,
                                 wspace=0.2, hspace=0.4)
             self.saveas(fig, '{}_{}'.format(name, 'monthly'))
@@ -496,9 +496,15 @@ class Template(object):
                          s='STD: Standard Deviation\nAVG: Mean',
                          fontsize=4,
                          horizontalalignment='left', verticalalignment='center')
-            fig.subplots_adjust(bottom=0.05, top=0.9,
-                                left=0.075, right=0.95,
-                                wspace=0.2, hspace=0.4)
+            if 0 < fig_nrow <= 2:
+                fig.subplots_adjust(bottom=0.15, top=0.8,
+                                    left=0.075, right=0.95,
+                                    wspace=0.2, hspace=0.4)
+            if 2 < fig_nrow <= 5:
+                fig.set_size_inches(6.4, 4.8, forward=True)
+                fig.subplots_adjust(bottom=0.1, top=0.85,
+                                    left=0.075, right=0.95,
+                                    wspace=0.2, hspace=0.45)
             self.saveas(fig, name)
             self.close(fig)
 
@@ -658,7 +664,7 @@ class Template(object):
             iagn += 1
         # print(var_names, var_opers)
 
-        ax_legends = ['R2', 'RMSE', 'PCC']
+        ax_legends = ['PCC', 'R2', 'RMSE']
         fig_nscr = len(ax_legends)
         fig_pix_naxe = 1
         fig_naxe = 1
@@ -679,7 +685,8 @@ class Template(object):
                 fig_nrow = int(len(ax_titles))
             # if var_names[ivar] == 'Q':
             #     fig_ncol = int(len(fig_data[var_names[ivar]].keys()))
-            fig_ncol = int(1)
+        # fig_ncol = int(1)
+        fig_ncol = fig_nscr
         fig_pix_naxe = int(fig_pix_nrow * fig_pix_ncol)
         fig_naxe = int(fig_nrow * fig_ncol)
 
@@ -687,9 +694,10 @@ class Template(object):
         # fig.suptitle(fig_title)
         # axes = fig.subplots(nrows=fig_nrow, ncols=(fig_ncol * fig_nscr), squeeze=False)
 
-        ax_ticksize = 9 - fig_naxe
-        ax_labelsize = 11 - fig_naxe
-        ax_textsize = 7 - fig_naxe
+        ax_ticksize = max(9 - fig_nrow, 1)
+        ax_labelsize = max(11 - fig_nrow, 1)
+        ax_textsize = max(7 - fig_nrow, 1)
+        ax_cbarsize = max(7 - fig_nrow, 1)
         ax_ylim = [[np.inf, -np.inf],
                    [np.inf, -np.inf],
                    [np.inf, -np.inf]]
@@ -752,23 +760,23 @@ class Template(object):
                                     if var_oper == '+':
                                         df[ylabel] = df[ylabel] + df['var_{}'.format(ivar)]
                                     if var_oper == '.':
-                                        # R2
-                                        y[ipix, iplt, 0] = r2_score(
-                                            df[ylabel], df['var_{}'.format(ivar)])
+                                        # PCC, Pearson correlation coefficient
+                                        y[ipix, iplt, 0] = np.corrcoef(
+                                            df[ylabel], df['var_{}'.format(ivar)])[0, 1]
                                         ax_ylim[0] = [min(ax_ylim[0][0],
                                                           np.min(y[ipix, iplt, 0])),
                                                       max(ax_ylim[0][1],
                                                           np.max(y[ipix, iplt, 0]))]
-                                        # RMSE
-                                        y[ipix, iplt, 1] = RMSE(
+                                        # R2
+                                        y[ipix, iplt, 1] = r2_score(
                                             df[ylabel], df['var_{}'.format(ivar)])
                                         ax_ylim[1] = [min(ax_ylim[1][0],
                                                           np.min(y[ipix, iplt, 1])),
                                                       max(ax_ylim[1][1],
                                                           np.max(y[ipix, iplt, 1]))]
-                                        # PCC, Pearson correlation coefficient
-                                        y[ipix, iplt, 2] = np.corrcoef(
-                                            df[ylabel], df['var_{}'.format(ivar)])[0, 1]
+                                        # RMSE
+                                        y[ipix, iplt, 2] = RMSE(
+                                            df[ylabel], df['var_{}'.format(ivar)])
                                         ax_ylim[2] = [min(ax_ylim[2][0],
                                                           np.min(y[ipix, iplt, 2])),
                                                       max(ax_ylim[2][1],
@@ -776,10 +784,79 @@ class Template(object):
                                         # print(ipix, y[ipix, iplt, 2])
                                 # print(df)
 
-            # plot data
+            # plot combine
+            fig = fig_conf['obj']
+            # fig.suptitle(fig_title)
+            axes = fig.subplots(nrows=fig_nrow,
+                                ncols=fig_ncol,
+                                squeeze=False)
+            fig.set_size_inches(6.4, 4.8 + 4.8 * (fig_nrow - 1.0) / 2.0, forward=True)
+            fig.subplots_adjust(bottom=0.15, top=0.9, left=0.05, right=0.95)
+
+            for i in range(fig_nrow):
+                for j in range(fig_ncol):
+                    iplt = i * fig_ncol + j
+
+                    tmp_y = np.empty((fig_pix_nrow, fig_pix_ncol))
+                    tmp_y[:] = np.nan
+                    for ii in range(fig_pix_nrow):
+                        for jj in range(fig_pix_ncol):
+                            ipix = jj * fig_pix_nrow + ii
+                            tmp_y[ii, jj] = y[ipix, iplt, j]
+                    im = self.heatmap(data=tmp_y,
+                                      row_labels=ax_yticks,
+                                      col_labels=ax_xticks,
+                                      ax=axes[i, j],
+                                      cmap="Blues",
+                                      vmin=ax_ylim[j][0],
+                                      vmax=ax_ylim[j][1]
+                                      )
+                    texts = self.annotate_heatmap(im,
+                                                  valfmt="{x:.2f}",
+                                                  fontsize=ax_textsize)
+
+                    axes[i, j].tick_params(axis='x', labelsize=ax_ticksize)
+                    axes[i, j].tick_params(axis='y', labelsize=ax_ticksize)
+                    axes[i, j].set_ylabel(ax_titles[i],
+                                          fontsize=ax_labelsize,
+                                          labelpad=1)
+                    axes[i, j].yaxis.set_label_position("right")
+
+                    # if i == 0:
+                    #     axes[i, j].set_title('{}'.format(ax_legends[j]),
+                    #                          fontsize=ax_labelsize)
+                    if i == fig_nrow - 1:
+                        ax_pos = axes[i, j].get_position()
+                        print('axes', ax_pos)
+
+                        # Create colorbar
+                        ax_cb_l = ax_pos.x0
+                        ax_cb_b = max(0.03, ax_pos.y0 - 0.0)
+                        ax_cb_w = ax_pos.x1 - ax_pos.x0
+                        ax_cb_h = 0.02
+                        # print('cbar {:0.4f} {:0.4f} {:0.4f} {:0.4f}'.format(
+                        #     ax_cb_l, ax_cb_b, ax_cb_w, ax_cb_h))
+
+                        cax = fig.add_axes([ax_cb_l, ax_cb_b, ax_cb_w, ax_cb_h])
+                        cbar = plt.colorbar(im, ax=axes.ravel().tolist(), cax=cax,
+                                            orientation="horizontal")
+                        cbar.ax.set_title('{}'.format(ax_legends[j]),
+                                          fontsize=ax_labelsize)
+                        cbar.ax.tick_params(axis='x', which='major', direction='in',
+                                            pad=0.5, length=1,
+                                            labelsize=ax_cbarsize,
+                                            labelrotation=0)
+
+            self.saveas(fig, '{}'.format(name))
+            self.close(fig)
+
+            # plot singel
+            fig_ncol = int(1)
             for k in range(fig_nscr):
                 fig = fig_conf['obj']
                 # fig.suptitle(fig_title)
+                fig.set_size_inches(4.8, 6.4, forward=True)
+                fig.subplots_adjust(bottom=0.1, top=0.9, left=0.2, right=0.75)
                 axes = fig.subplots(nrows=fig_nrow,
                                     ncols=fig_ncol,
                                     squeeze=False)
@@ -807,13 +884,11 @@ class Template(object):
 
                         axes[i, j].tick_params(axis='x', labelsize=ax_ticksize)
                         axes[i, j].tick_params(axis='y', labelsize=ax_ticksize)
-                        axes[i, j].set_ylabel(ax_titles[iplt],
+                        axes[i, j].set_ylabel(ax_titles[i],
                                               fontsize=ax_labelsize,
                                               labelpad=1)
                         axes[i, j].yaxis.set_label_position("right")
                 # Create colorbar
-                fig.subplots_adjust(bottom=0.1, top=0.9, left=0.2, right=0.75)
-
                 cax = fig.add_axes([0.85, 0.2, 0.02, 0.5])
                 cbar = plt.colorbar(im, ax=axes.ravel().tolist(), cax=cax)
                 # cbar = fig.colorbar(im)
@@ -822,7 +897,6 @@ class Template(object):
                 #                    rotation=-90,
                 #                    va='bottom')
                 cbar.ax.tick_params(labelsize=ax_textsize)
-
                 self.saveas(fig, '{}_{}'.format(name, ax_legends[k]))
                 self.close(fig)
 
@@ -886,7 +960,7 @@ class Template(object):
                                       labelpad=1)
 
             axes[0, 0].legend()
-            fig.subplots_adjust(bottom=0.05, top=0.9,
+            fig.subplots_adjust(bottom=0.15, top=0.9,
                                 left=0.075, right=0.95,
                                 wspace=0.2, hspace=0.4)
             self.saveas(fig, name)
@@ -1135,9 +1209,15 @@ class Template(object):
                          s='PCC: Pearson correlation coefficient',
                          fontsize=4,
                          horizontalalignment='left', verticalalignment='center')
-            fig.subplots_adjust(bottom=0.05, top=0.9,
-                                left=0.075, right=0.95,
-                                wspace=0.2, hspace=0.4)
+            if 0 < fig_nrow <= 2:
+                fig.subplots_adjust(bottom=0.15, top=0.8,
+                                    left=0.075, right=0.95,
+                                    wspace=0.2, hspace=0.4)
+            if 2 < fig_nrow <= 5:
+                fig.set_size_inches(6.4, 4.8, forward=True)
+                fig.subplots_adjust(bottom=0.1, top=0.85,
+                                    left=0.075, right=0.95,
+                                    wspace=0.2, hspace=0.45)
             self.saveas(fig, name)
             self.close(fig)
 
@@ -1245,9 +1325,15 @@ class Template(object):
                          s='PCC: Pearson correlation coefficient',
                          fontsize=4,
                          horizontalalignment='left', verticalalignment='center')
-            fig.subplots_adjust(bottom=0.05, top=0.9,
-                                left=0.075, right=0.95,
-                                wspace=0.2, hspace=0.4)
+            if 0 < fig_nrow <= 2:
+                fig.subplots_adjust(bottom=0.15, top=0.8,
+                                    left=0.075, right=0.95,
+                                    wspace=0.2, hspace=0.4)
+            if 2 < fig_nrow <= 5:
+                fig.set_size_inches(6.4, 4.8, forward=True)
+                fig.subplots_adjust(bottom=0.1, top=0.85,
+                                    left=0.075, right=0.95,
+                                    wspace=0.2, hspace=0.45)
             self.saveas(fig, name)
             self.close(fig)
 
