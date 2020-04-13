@@ -20,8 +20,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-from matplotlib.collections import LineCollection
-from matplotlib.colors import ListedColormap, BoundaryNorm
+# from matplotlib.collections import LineCollection
+# from matplotlib.colors import ListedColormap, BoundaryNorm
 
 import numpy as np
 import pandas as pd
@@ -130,7 +130,7 @@ class Template(object):
             os.makedirs(self.workspace)
 
         print('>>>>>')
-        for fig_name, fig_obj in self.create().items():
+        for fig_name, fig_obj in self.conf.items():
             # print('{} {} "{}"'.format(fig_obj['obj'].number,
             #                           fig_name,
             #                           fig_obj['obj'].get_size_inches() *
@@ -150,9 +150,7 @@ class Template(object):
                 if ptype == 'scatter_prod':
                     self.plot_scatter_prod(fig_name)
             else:
-                print('Warning "{}" not support.'.format(
-                    ptype
-                ))
+                print('Warning "{}" not support.'.format(ptype))
 
     def _conf(self, path, template) -> dict:
         conf = {}
@@ -195,7 +193,10 @@ class Template(object):
                                     print('Loading{:>10s}{:>20s} "{}"'.format(variable,
                                                                               prod_name,
                                                                               file))
-                                    data[variable][prod_name] = pd.read_csv(file, index_col='date', parse_dates=True)
+                                    data[variable][prod_name] = \
+                                        pd.read_csv(file,
+                                                    index_col='date',
+                                                    parse_dates=True)
                                     # print('{}'.format(
                                     #     data[variable][prod_name].describe()))
                         else:
@@ -203,14 +204,14 @@ class Template(object):
 
         return data
 
-    def create(self) -> dict:
-        objs = {}
-
-        for fig_name, fig_conf in self.conf.items():
-            objs[fig_name] = fig_conf
-            objs[fig_name]['obj'] = plt.figure(**fig_conf['figure'])
-
-        return objs
+    # def create(self, conf) -> dict:
+    #     objs = {}
+    #
+    #     for fig_name, fig_conf in conf.items():
+    #         objs[fig_name] = fig_conf
+    #         objs[fig_name]['obj'] = plt.figure(**fig_conf['figure'])
+    #
+    #     return objs
 
     def plot_bar_prod(self, name):
         fig_conf = self.conf[name]
@@ -223,19 +224,21 @@ class Template(object):
         prod_names = list(fig_data.keys())
         prod_nprod = len(prod_names)
 
-        ax_ticksize = 6
-        ax_labelsize = 8
-        xlabel = 'date'
-
         if prod_nprod > 0:
             fig_nbar = prod_nprod
 
             # Yearly
-            fig = fig_conf['obj']
-            axes = fig.subplots(nrows=1, ncols=1, squeeze=False)
+            fig = plt.figure(**fig_conf['figure'])
+            fig.subplots_adjust(bottom=0.15, top=0.9,
+                                left=0.075, right=0.95)
 
+            axes = fig.subplots(nrows=1, ncols=1, squeeze=False)
+            ax_ticksize = 6
+            ax_labelsize = 8
+            xlabel = 'date'
             ax_bar_width = max(0.01, (1.0 / fig_nbar - 0.05))
 
+            # fig.suptitle(fig_title)
             for i in range(fig_nbar):
                 ax_yearly_xticks = []
 
@@ -273,10 +276,14 @@ class Template(object):
                                    pad=0.5, length=1,
                                    labelsize=ax_ticksize,
                                    labelrotation=90)
+            # axes[0, 0].set_xlabel(xlabel,
+            #                       fontsize=ax_labelsize,
+            #                       labelpad=1)
             axes[0, 0].set_ylabel(fig_title,
                                   fontsize=ax_labelsize,
                                   labelpad=1)
             axes[0, 0].legend()
+            axes[0, 0].grid(True)
             fig.subplots_adjust(bottom=0.05, top=0.9,
                                 left=0.075, right=0.95,
                                 wspace=0.2, hspace=0.4)
@@ -284,11 +291,12 @@ class Template(object):
             self.close(fig)
 
             # Monthly
-            fig = fig_conf['obj']
-            axes = fig.subplots(nrows=1, ncols=1, squeeze=False)
+            fig = plt.figure(**fig_conf['figure'])
 
+            axes = fig.subplots(nrows=1, ncols=1, squeeze=False)
             ax_bar_width = max(0.01, (1.0 / fig_nbar - 0.05))
 
+            # fig.suptitle(fig_title)
             for i in range(fig_nbar):
                 ax_hydrological_year = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2]
                 ax_monthly_xticks = ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
@@ -332,6 +340,7 @@ class Template(object):
             fig.subplots_adjust(bottom=0.15, top=0.9,
                                 left=0.075, right=0.95,
                                 wspace=0.2, hspace=0.4)
+
             self.saveas(fig, '{}_{}'.format(name, 'monthly'))
             self.close(fig)
 
@@ -375,11 +384,25 @@ class Template(object):
 
         fig_nrow = int(np.floor(np.sqrt(fig_naxe)))
         fig_ncol = int(np.ceil(float(fig_naxe) / float(fig_nrow)))
+        fig_comb = list(itertools.product(*prod_nprod))
+        # print(len(fig_comb), prod_names)
 
-        fig = fig_conf['obj']
-        fig.suptitle(fig_title)
+        fig = plt.figure(**fig_conf['figure'])
+        if 0 < fig_nrow <= 2:
+            fig.subplots_adjust(bottom=0.15, top=0.8,
+                                left=0.075, right=0.95,
+                                wspace=0.2, hspace=0.4)
+        if 2 < fig_nrow <= 5:
+            fig.set_size_inches(6.4, 4.8, forward=True)
+            fig.subplots_adjust(bottom=0.1, top=0.85,
+                                left=0.075, right=0.95,
+                                wspace=0.2, hspace=0.45)
+        if 5 < fig_nrow:
+            fig.set_size_inches(6.4, 4.8, forward=True)
+            fig.subplots_adjust(bottom=0.05, top=0.95,
+                                left=0.05, right=0.9)
+
         axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
-
         if 0 < fig_naxe <= 10:
             ax_titlesize = 6
             ax_ticksize = 4
@@ -397,8 +420,7 @@ class Template(object):
             ax_legendsize = 2
         ax_ylim = [np.inf, -np.inf]
 
-        fig_comb = list(itertools.product(*prod_nprod))
-        # print(len(fig_comb), prod_names)
+        fig.suptitle(fig_title)
         if len(fig_comb) > 0:
             for i in range(fig_nrow):
                 for j in range(fig_ncol):
@@ -460,6 +482,12 @@ class Template(object):
                                          max(np.max(df[ylabel]),
                                              np.max(df['var_{}'.format(ivar)])))
 
+                        axes[i, j].plot([df.index[0], df.index[-1]],
+                                        [0., 0.],
+                                        color='gray',
+                                        linestyle='solid',
+                                        linewidth=0.5)
+
                         axes[i, j].bar(x=df.index, height=df[ylabel], width=30,
                                        color='black')
                         axes[i, j].set_title('STD {:0.2f} '
@@ -481,30 +509,20 @@ class Template(object):
                         axes[i, j].set_ylabel(ylabel,
                                               fontsize=ax_labelsize,
                                               labelpad=1)
+                        # if fig_naxe < 6:
+                        #     axes[i, j].grid(True)
                     else:
                         axes[i, j].remove()
-                for i in range(fig_nrow):
-                    for j in range(fig_ncol):
-                        iplt = i * fig_ncol + j
-                        if iplt < fig_naxe:
-                            axes[i, j].set_ylim(tuple(ax_ylim))
 
-            if fig_naxe > 15:
+            for i in range(fig_nrow):
+                for j in range(fig_ncol):
+                    iplt = i * fig_ncol + j
+                    if iplt < fig_naxe:
+                        axes[i, j].set_ylim(tuple(ax_ylim))
+
+            if fig_nrow > 4:
                 fig.autofmt_xdate()
-            if fig_naxe < fig_nrow * fig_ncol:
-                fig.text(x=0.8, y=0.05,
-                         s='STD: Standard Deviation\nAVG: Mean',
-                         fontsize=4,
-                         horizontalalignment='left', verticalalignment='center')
-            if 0 < fig_nrow <= 2:
-                fig.subplots_adjust(bottom=0.15, top=0.8,
-                                    left=0.075, right=0.95,
-                                    wspace=0.2, hspace=0.4)
-            if 2 < fig_nrow <= 5:
-                fig.set_size_inches(6.4, 4.8, forward=True)
-                fig.subplots_adjust(bottom=0.1, top=0.85,
-                                    left=0.075, right=0.95,
-                                    wspace=0.2, hspace=0.45)
+
             self.saveas(fig, name)
             self.close(fig)
 
@@ -540,26 +558,34 @@ class Template(object):
         # We want to show all ticks...
         ax.set_xticks(np.arange(data.shape[1]))
         ax.set_yticks(np.arange(data.shape[0]))
-        # ... and label them with the respective list entries.
         ax.set_xticklabels(col_labels)
         ax.set_yticklabels(row_labels)
 
-        # Let the horizontal axes labeling appear on top.
-        ax.tick_params(top=True, bottom=False,
-                       labeltop=True, labelbottom=False)
-
         # Rotate the tick labels and set their alignment.
-        plt.setp(ax.get_xticklabels(), rotation=-30, ha="right",
+        plt.setp(ax.get_xticklabels(),
+                 ha="center",
+                 rotation=0,
+                 rotation_mode="anchor")
+        plt.setp(ax.get_yticklabels(),
+                 ha="center",
+                 rotation=90,
                  rotation_mode="anchor")
 
         # Turn spines off and create white grid.
         for edge, spine in ax.spines.items():
             spine.set_visible(False)
 
+        ax.grid(which="major", b=False)
+        ax.tick_params(which="major",
+                       bottom=False, left=False, top=False, right=False,
+                       labeltop=True, labelbottom=False)
+
+        ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
         ax.set_xticks(np.arange(data.shape[1] + 1) - .5, minor=True)
         ax.set_yticks(np.arange(data.shape[0] + 1) - .5, minor=True)
-        ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
-        ax.tick_params(which="minor", bottom=False, left=False)
+        ax.tick_params(which="minor",
+                       bottom=False, left=False, top=False, right=False,
+                       labeltop=False, labelbottom=False)
 
         return im
 
@@ -689,21 +715,12 @@ class Template(object):
         fig_ncol = fig_nscr
         fig_pix_naxe = int(fig_pix_nrow * fig_pix_ncol)
         fig_naxe = int(fig_nrow * fig_ncol)
+        fig_pix_comb = list(itertools.product(*prod_nprod))
+        # print(len(fig_comb), prod_names)
 
-        # fig = fig_conf['obj']
-        # fig.suptitle(fig_title)
-        # axes = fig.subplots(nrows=fig_nrow, ncols=(fig_ncol * fig_nscr), squeeze=False)
-
-        ax_ticksize = max(9 - fig_nrow, 1)
-        ax_labelsize = max(11 - fig_nrow, 1)
-        ax_textsize = max(7 - fig_nrow, 1)
-        ax_cbarsize = max(7 - fig_nrow, 1)
         ax_ylim = [[np.inf, -np.inf],
                    [np.inf, -np.inf],
                    [np.inf, -np.inf]]
-
-        fig_pix_comb = list(itertools.product(*prod_nprod))
-        # print(len(fig_comb), prod_names)
         if len(fig_pix_comb) > 0:
             y = np.empty(((fig_pix_nrow * fig_pix_ncol), fig_naxe, fig_nscr))
             y[:] = np.nan
@@ -785,14 +802,20 @@ class Template(object):
                                 # print(df)
 
             # plot combine
-            fig = fig_conf['obj']
-            # fig.suptitle(fig_title)
-            axes = fig.subplots(nrows=fig_nrow,
-                                ncols=fig_ncol,
-                                squeeze=False)
+            fig = plt.figure(**fig_conf['figure'])
             fig.set_size_inches(6.4, 4.8 + 4.8 * (fig_nrow - 1.0) / 2.0, forward=True)
-            fig.subplots_adjust(bottom=0.15, top=0.9, left=0.05, right=0.95)
+            fig.subplots_adjust(bottom=0.15, top=0.95,
+                                left=0.1, right=0.9,)
 
+            axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
+            ax_ticksize = max(9 - fig_nrow, 1)
+            ax_labelsize = max(11 - fig_nrow, 1)
+            ax_textsize = max(7 - fig_nrow, 1)
+            ax_cbarsize = max(7 - fig_nrow, 1)
+            ax_cbarcmap = ['Blues', 'Blues', 'Blues']
+            # ax_cbarcmap = ['RdYlBu_r', 'RdYlGn_r', 'Reds_r']
+
+            # fig.suptitle(fig_title)
             for i in range(fig_nrow):
                 for j in range(fig_ncol):
                     iplt = i * fig_ncol + j
@@ -807,7 +830,7 @@ class Template(object):
                                       row_labels=ax_yticks,
                                       col_labels=ax_xticks,
                                       ax=axes[i, j],
-                                      cmap="Blues",
+                                      cmap=ax_cbarcmap[j],
                                       vmin=ax_ylim[j][0],
                                       vmax=ax_ylim[j][1]
                                       )
@@ -825,13 +848,13 @@ class Template(object):
                     # if i == 0:
                     #     axes[i, j].set_title('{}'.format(ax_legends[j]),
                     #                          fontsize=ax_labelsize)
+
+                    # Create colorbar
                     if i == fig_nrow - 1:
                         ax_pos = axes[i, j].get_position()
-                        print('axes', ax_pos)
 
-                        # Create colorbar
                         ax_cb_l = ax_pos.x0
-                        ax_cb_b = max(0.03, ax_pos.y0 - 0.0)
+                        ax_cb_b = max(0.05, ax_pos.y0 - 0.1)
                         ax_cb_w = ax_pos.x1 - ax_pos.x0
                         ax_cb_h = 0.02
                         # print('cbar {:0.4f} {:0.4f} {:0.4f} {:0.4f}'.format(
@@ -853,13 +876,19 @@ class Template(object):
             # plot singel
             fig_ncol = int(1)
             for k in range(fig_nscr):
-                fig = fig_conf['obj']
-                # fig.suptitle(fig_title)
+                fig = plt.figure(**fig_conf['figure'])
                 fig.set_size_inches(4.8, 6.4, forward=True)
                 fig.subplots_adjust(bottom=0.1, top=0.9, left=0.2, right=0.75)
-                axes = fig.subplots(nrows=fig_nrow,
-                                    ncols=fig_ncol,
-                                    squeeze=False)
+
+                axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
+                ax_ticksize = max(9 - fig_nrow, 1)
+                ax_labelsize = max(11 - fig_nrow, 1)
+                ax_textsize = max(7 - fig_nrow, 1)
+                ax_cbarsize = max(7 - fig_nrow, 1)
+                ax_cbarcmap = ['Blues', 'Blues', 'Blues']
+                # ax_cbarcmap = ['RdYlBu_r', 'RdYlGn_r', 'Reds_r']
+
+                # fig.suptitle(fig_title)
                 for i in range(fig_nrow):
                     for j in range(fig_ncol):
                         iplt = i * fig_ncol + j
@@ -874,7 +903,7 @@ class Template(object):
                                           row_labels=ax_yticks,
                                           col_labels=ax_xticks,
                                           ax=axes[i, j],
-                                          cmap="Blues",
+                                          cmap=ax_cbarcmap[j],
                                           vmin=ax_ylim[k][0],
                                           vmax=ax_ylim[k][1]
                                           )
@@ -888,15 +917,16 @@ class Template(object):
                                               fontsize=ax_labelsize,
                                               labelpad=1)
                         axes[i, j].yaxis.set_label_position("right")
+
+                        if j == fig_ncol - 1:
+                            ax_pos = axes[i, j].get_position()
+
                 # Create colorbar
-                cax = fig.add_axes([0.85, 0.2, 0.02, 0.5])
+                cax = fig.add_axes([ax_pos.x1 + 0.1, 0.2, 0.02, 0.5])
                 cbar = plt.colorbar(im, ax=axes.ravel().tolist(), cax=cax)
-                # cbar = fig.colorbar(im)
                 cbar.ax.set_title('{}'.format(ax_legends[k]))
-                # cbar.ax.set_ylabel('{}'.format(ax_legends[k]),
-                #                    rotation=-90,
-                #                    va='bottom')
                 cbar.ax.tick_params(labelsize=ax_textsize)
+
                 self.saveas(fig, '{}_{}'.format(name, ax_legends[k]))
                 self.close(fig)
 
@@ -911,16 +941,19 @@ class Template(object):
         prod_names = list(fig_data.keys())
         prod_nprod = len(prod_names)
 
-        ax_ticksize = 6
-        ax_labelsize = 8
-        xlabel = 'date'
-
         if prod_nprod > 0:
             fig_nbar = prod_nprod
 
-            fig = fig_conf['obj']
-            axes = fig.subplots(nrows=1, ncols=1, squeeze=False)
+            fig = plt.figure(**fig_conf['figure'])
+            fig.subplots_adjust(bottom=0.15, top=0.9,
+                                left=0.075, right=0.95)
 
+            axes = fig.subplots(nrows=1, ncols=1, squeeze=False)
+            ax_ticksize = 6
+            ax_labelsize = 8
+            xlabel = 'date'
+
+            # fig.suptitle(fig_title)
             for i in range(fig_nbar):
                 prod_name = prod_names[i]
                 print('{:>10d}{:>20s}'.format(i, prod_name))
@@ -952,17 +985,16 @@ class Template(object):
                                        pad=0.5, length=1,
                                        labelsize=ax_ticksize,
                                        labelrotation=90)
-                axes[0, 0].set_xlabel(xlabel,
-                                      fontsize=ax_labelsize,
-                                      labelpad=1)
+                # axes[0, 0].set_xlabel(xlabel,
+                #                       fontsize=ax_labelsize,
+                #                       labelpad=1)
                 axes[0, 0].set_ylabel(fig_title,
                                       fontsize=ax_labelsize,
                                       labelpad=1)
 
             axes[0, 0].legend()
-            fig.subplots_adjust(bottom=0.15, top=0.9,
-                                left=0.075, right=0.95,
-                                wspace=0.2, hspace=0.4)
+            axes[0, 0].grid(True)
+
             self.saveas(fig, name)
             self.close(fig)
 
@@ -1016,11 +1048,25 @@ class Template(object):
 
         fig_nrow = int(np.floor(np.sqrt(fig_naxe)))
         fig_ncol = int(np.ceil(float(fig_naxe) / float(fig_nrow)))
+        fig_comb = list(itertools.product(*prod_nprod))
+        # print(len(fig_comb), prod_names)
 
-        fig = fig_conf['obj']
-        fig.suptitle(fig_title)
+        fig = plt.figure(**fig_conf['figure'])
+        if 0 < fig_nrow <= 2:
+            fig.subplots_adjust(bottom=0.15, top=0.8,
+                                left=0.075, right=0.95,
+                                wspace=0.2, hspace=0.4)
+        if 2 < fig_nrow <= 5:
+            fig.set_size_inches(6.4, 4.8, forward=True)
+            fig.subplots_adjust(bottom=0.1, top=0.85,
+                                left=0.075, right=0.95,
+                                wspace=0.2, hspace=0.45)
+        if 5 < fig_nrow:
+            fig.set_size_inches(6.4, 4.8, forward=True)
+            fig.subplots_adjust(bottom=0.05, top=0.95,
+                                left=0.05, right=0.9)
+
         axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
-
         if 0 < fig_naxe <= 10:
             ax_titlesize = 6
             ax_ticksize = 4
@@ -1038,8 +1084,7 @@ class Template(object):
             ax_legendsize = 2
         ax_ylim = [np.inf, -np.inf]
 
-        fig_comb = list(itertools.product(*prod_nprod))
-        # print(len(fig_comb), prod_names)
+        fig.suptitle(fig_title)
         if len(fig_comb) > 0:
             for i in range(fig_nrow):
                 for j in range(fig_ncol):
@@ -1117,6 +1162,7 @@ class Template(object):
                                         linestyle='solid',
                                         linewidth=1,
                                         label='WB')
+
                         # x = mdates.date2num(df.index)
                         # y = df[ylabel]
                         # ax_cmap = ListedColormap(['r', 'k'])
@@ -1194,6 +1240,8 @@ class Template(object):
                         axes[i, j].set_ylabel(ylabel,
                                               fontsize=ax_labelsize,
                                               labelpad=1)
+                        # if fig_naxe < 6:
+                        #     axes[i, j].grid(True)
                     else:
                         axes[i, j].remove()
 
@@ -1202,22 +1250,9 @@ class Template(object):
                         iplt = i * fig_ncol + j
                         if iplt < fig_naxe:
                             axes[i, j].set_ylim(tuple(ax_ylim))
-            if fig_naxe > 15:
+            if fig_nrow > 4:
                 fig.autofmt_xdate()
-            if fig_naxe < fig_nrow * fig_ncol:
-                fig.text(x=0.8, y=0.05,
-                         s='PCC: Pearson correlation coefficient',
-                         fontsize=4,
-                         horizontalalignment='left', verticalalignment='center')
-            if 0 < fig_nrow <= 2:
-                fig.subplots_adjust(bottom=0.15, top=0.8,
-                                    left=0.075, right=0.95,
-                                    wspace=0.2, hspace=0.4)
-            if 2 < fig_nrow <= 5:
-                fig.set_size_inches(6.4, 4.8, forward=True)
-                fig.subplots_adjust(bottom=0.1, top=0.85,
-                                    left=0.075, right=0.95,
-                                    wspace=0.2, hspace=0.45)
+
             self.saveas(fig, name)
             self.close(fig)
 
@@ -1236,21 +1271,35 @@ class Template(object):
             fig_naxe = np.sum([i for i in range(prod_nprod)])
             fig_nrow = int(np.floor(np.sqrt(fig_naxe)))
             fig_ncol = int(np.ceil(float(fig_naxe) / float(fig_nrow)))
-
-            fig = fig_conf['obj']
-            fig.suptitle(fig_title)
-            axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
-
-            ax_titlesize = 6
-            ax_ticksize = 4
-            ax_labelsize = 4
-
             fig_comb = []
             for i in range(prod_nprod):
                 for j in range(prod_nprod):
                     if j > i:
                         fig_comb.append([i, j])
 
+            fig = plt.figure(**fig_conf['figure'])
+            if fig_ncol == 1:
+                fig.set_size_inches(4.8, 4.8, forward=True)
+            if 0 < fig_nrow <= 2:
+                fig.subplots_adjust(bottom=0.15, top=0.8,
+                                    left=0.075, right=0.8,
+                                    wspace=0.2, hspace=0.4)
+            if 2 < fig_nrow <= 5:
+                fig.set_size_inches(6.4, 4.8, forward=True)
+                fig.subplots_adjust(bottom=0.1, top=0.85,
+                                    left=0.075, right=0.8,
+                                    wspace=0.2, hspace=0.45)
+            if 5 < fig_nrow:
+                fig.set_size_inches(6.4, 4.8, forward=True)
+                fig.subplots_adjust(bottom=0.05, top=0.95,
+                                    left=0.05, right=0.8)
+
+            axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
+            ax_titlesize = 6
+            ax_ticksize = 4
+            ax_labelsize = 4
+
+            fig.suptitle(fig_title)
             for i in range(fig_nrow):
                 for j in range(fig_ncol):
                     iplt = i * fig_ncol + j
@@ -1278,7 +1327,6 @@ class Template(object):
                         df.columns = ['y', 'x']
                         xy = np.vstack([df['x'], df['y']])
                         df['c'] = gaussian_kde(xy)(xy)
-                        # df['c'] = abs(df['y'] / df['x'] - 1.0)
                         # print(df)
 
                         # Pearson correlation coefficient
@@ -1314,26 +1362,32 @@ class Template(object):
                         axes[i, j].set_ylabel(ylabel,
                                               fontsize=ax_labelsize,
                                               labelpad=1)
-                        # fig.colorbar()
+                        if j == fig_ncol - 1:
+                            ax_pos = axes[i, j].get_position()
                     else:
                         axes[i, j].remove()
 
-            if fig_naxe > 15:
+            # Create colorbar
+            ax_cb_l = min(ax_pos.x1 + 0.05, 0.9)
+            ax_cb_b = 0.2
+            ax_cb_w = 0.02
+            ax_cb_h = 0.6
+            # print('cbar {:0.4f} {:0.4f} {:0.4f} {:0.4f}'.format(
+            #     ax_cb_l, ax_cb_b, ax_cb_w, ax_cb_h))
+
+            cax = fig.add_axes([ax_cb_l, ax_cb_b, ax_cb_w, ax_cb_h])
+            cbar = plt.colorbar(im, ax=axes.ravel().tolist(), cax=cax,
+                                ticks=[df['c'].min(), df['c'].max()])
+            cbar.ax.set_yticklabels(['Low', 'High'])
+            cbar.ax.set_ylabel('Density', fontsize=ax_labelsize)
+            cbar.ax.tick_params(axis='y', which='major', direction='in',
+                                pad=0.5, length=1,
+                                labelsize=ax_ticksize,
+                                labelrotation=0)
+
+            if fig_nrow > 4:
                 fig.autofmt_xdate()
-            if fig_naxe < fig_nrow * fig_ncol:
-                fig.text(x=0.8, y=0.05,
-                         s='PCC: Pearson correlation coefficient',
-                         fontsize=4,
-                         horizontalalignment='left', verticalalignment='center')
-            if 0 < fig_nrow <= 2:
-                fig.subplots_adjust(bottom=0.15, top=0.8,
-                                    left=0.075, right=0.95,
-                                    wspace=0.2, hspace=0.4)
-            if 2 < fig_nrow <= 5:
-                fig.set_size_inches(6.4, 4.8, forward=True)
-                fig.subplots_adjust(bottom=0.1, top=0.85,
-                                    left=0.075, right=0.95,
-                                    wspace=0.2, hspace=0.45)
+
             self.saveas(fig, name)
             self.close(fig)
 
