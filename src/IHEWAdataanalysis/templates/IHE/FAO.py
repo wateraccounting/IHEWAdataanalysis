@@ -283,7 +283,8 @@ class Template(object):
                                   fontsize=ax_labelsize,
                                   labelpad=1)
             axes[0, 0].legend()
-            axes[0, 0].grid(True)
+            axes[0, 0].grid(True, which='major',
+                            color='#999999', linewidth=1, linestyle='-', alpha=0.2)
             fig.subplots_adjust(bottom=0.05, top=0.9,
                                 left=0.075, right=0.95,
                                 wspace=0.2, hspace=0.4)
@@ -337,6 +338,8 @@ class Template(object):
                                   fontsize=ax_labelsize,
                                   labelpad=1)
             axes[0, 0].legend()
+            axes[0, 0].grid(True, which='major',
+                            color='#999999', linewidth=1, linestyle='-', alpha=0.2)
             fig.subplots_adjust(bottom=0.15, top=0.9,
                                 left=0.075, right=0.95,
                                 wspace=0.2, hspace=0.4)
@@ -420,7 +423,7 @@ class Template(object):
             ax_legendsize = 2
         ax_ylim = [np.inf, -np.inf]
 
-        fig.suptitle(fig_title)
+        # fig.suptitle(fig_title)
         if len(fig_comb) > 0:
             for i in range(fig_nrow):
                 for j in range(fig_ncol):
@@ -575,12 +578,14 @@ class Template(object):
         for edge, spine in ax.spines.items():
             spine.set_visible(False)
 
+        ax.set_frame_on(False)
+
         ax.grid(which="major", b=False)
         ax.tick_params(which="major",
                        bottom=False, left=False, top=False, right=False,
                        labeltop=True, labelbottom=False)
 
-        ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
+        # ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
         ax.set_xticks(np.arange(data.shape[1] + 1) - .5, minor=True)
         ax.set_yticks(np.arange(data.shape[0] + 1) - .5, minor=True)
         ax.tick_params(which="minor",
@@ -993,7 +998,8 @@ class Template(object):
                                       labelpad=1)
 
             axes[0, 0].legend()
-            axes[0, 0].grid(True)
+            axes[0, 0].grid(True, which='major',
+                            color='#999999', linewidth=1, linestyle='-', alpha=0.2)
 
             self.saveas(fig, name)
             self.close(fig)
@@ -1084,7 +1090,7 @@ class Template(object):
             ax_legendsize = 2
         ax_ylim = [np.inf, -np.inf]
 
-        fig.suptitle(fig_title)
+        # fig.suptitle(fig_title)
         if len(fig_comb) > 0:
             for i in range(fig_nrow):
                 for j in range(fig_ncol):
@@ -1134,12 +1140,15 @@ class Template(object):
                             if var_oper == '+':
                                 df[ylabel] = df[ylabel] + df['var_{}'.format(ivar)]
                             if var_oper == '.':
+                                # PCC, Pearson correlation coefficient
+                                y_pcc = np.corrcoef(
+                                    df[ylabel], df['var_{}'.format(ivar)])[0, 1]
+                                # R2
+                                y_r2 = r2_score(
+                                    df[ylabel], df['var_{}'.format(ivar)])
                                 # RMSE
                                 y_rms = RMSE(
                                     df[ylabel], df['var_{}'.format(ivar)])
-                                # Pearson correlation coefficient
-                                y_pcc = np.corrcoef(
-                                    df[ylabel], df['var_{}'.format(ivar)])[0, 1]
                         # print(df)
 
                         # plot data
@@ -1221,8 +1230,9 @@ class Template(object):
                         for ax_leg_line in ax_leg.get_lines():
                             ax_leg_line.set_linewidth(0.5)
 
-                        axes[i, j].set_title('RMSE {:0.2f} '
-                                             'PCC {:0.2f}'.format(y_rms, y_pcc),
+                        axes[i, j].set_title('PCC {:0.2f} '
+                                             'R2 {:0.2f} '
+                                             'RMSE {:0.2f}'.format(y_pcc, y_r2, y_rms),
                                              fontsize=ax_titlesize)
                         axes[i, j].xaxis.set_major_locator(mdates.YearLocator())
                         axes[i, j].xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
@@ -1299,7 +1309,7 @@ class Template(object):
             ax_ticksize = 4
             ax_labelsize = 4
 
-            fig.suptitle(fig_title)
+            # fig.suptitle(fig_title)
             for i in range(fig_nrow):
                 for j in range(fig_ncol):
                     iplt = i * fig_ncol + j
