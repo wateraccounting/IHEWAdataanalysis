@@ -299,9 +299,10 @@ class Template(object):
 
             # fig.suptitle(fig_title)
             for i in range(fig_nbar):
-                ax_hydrological_year = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2]
-                ax_monthly_xticks = ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
-                                     'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb']
+                months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                ax_hydrological_year = self.__conf['data']['hydrology']['year']
+                ax_monthly_xticks = [months[i - 1] for i in ax_hydrological_year]
 
                 prod_name = prod_names[i]
                 print('{:>10d}{:>20s}'.format(i, prod_name))
