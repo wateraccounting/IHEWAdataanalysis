@@ -260,9 +260,14 @@ class Template(object):
                 df_yearly_x = np.arange(0, len(ax_yearly_xticks), 1) - \
                     ax_bar_width * ((fig_nbar - 1.) / 2. - i)
 
-                # pd.to_csv('{}_{}-{}.csv'.format(name, 'yearly', prod_name))
-
                 # plot data
+                df_yearly_sum.sort_index(axis=0).\
+                    to_csv(os.path.join(self.workspace,
+                                        '{}_{}-{}.csv'.format(
+                                            name, 'yearly', prod_name)),
+                           index=True,
+                           header=[self.conf[name]['data']])
+
                 axes[0, 0].bar(x=df_yearly_x,
                                height=df_yearly_sum['{}'.format(self.ifeature)],
                                width=ax_bar_width,
@@ -322,6 +327,13 @@ class Template(object):
                 df_monthly_avg = df_monthly_avg.reindex(ax_hydrological_year)
 
                 # plot data
+                df_monthly_avg.sort_index(axis=0).\
+                    to_csv(os.path.join(self.workspace,
+                                        '{}_{}-{}.csv'.format(
+                                            name, 'monthly', prod_name)),
+                           index=True,
+                           header=[self.conf[name]['data']])
+
                 axes[0, 0].bar(x=df_monthly_x,
                                height=df_monthly_avg['{}'.format(self.ifeature)],
                                width=ax_bar_width,
@@ -798,10 +810,13 @@ class Template(object):
                                                           np.min(y[yrow, j, ypix])),
                                                       max(ax_ylim[j][1],
                                                           np.max(y[yrow, j, ypix]))]
-                                        print('{} - {},{},{}; {},{}'
+                                        print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
                                               '{:>40s}'
-                                              ', PCC={:0.2f}'.format(icnt, yrow, j, ypix, ii, jj,
-                                                             ylabel, y[yrow, j, ypix]))
+                                              ', PCC  = {:0.2f}'.format(icnt,
+                                                                     yrow, j, ypix,
+                                                                     ii, jj,
+                                                                     ylabel,
+                                                                     y[yrow, j, ypix]))
                                     # R2
                                     if j == 1:
                                         y[yrow, j, ypix] = r2_score(
@@ -810,9 +825,10 @@ class Template(object):
                                                           np.min(y[yrow, j, ypix])),
                                                       max(ax_ylim[j][1],
                                                           np.max(y[yrow, j, ypix]))]
-                                        print('{} - {},{},{}; {},{}'
+                                        print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
                                               '{:>40s}'
-                                              ', R2={:0.2f}'.format(icnt, yrow, j, ypix,
+                                              ', R2   = {:0.2f}'.format(icnt,
+                                                                    yrow, j, ypix,
                                                                     ii, jj,
                                                                     ylabel,
                                                                     y[yrow, j, ypix]))
@@ -824,9 +840,10 @@ class Template(object):
                                                           np.min(y[yrow, j, ypix])),
                                                       max(ax_ylim[j][1],
                                                           np.max(y[yrow, j, ypix]))]
-                                        print('{} - {},{},{}; {},{}'
+                                        print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
                                               '{:>40s}'
-                                              ', RMSE={:0.2f}'.format(icnt, yrow, j, ypix,
+                                              ', RMSE = {:0.2f}'.format(icnt,
+                                                                      yrow, j, ypix,
                                                                       ii, jj,
                                                                       ylabel,
                                                                       y[yrow, j, ypix]))
