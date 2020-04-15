@@ -260,6 +260,8 @@ class Template(object):
                 df_yearly_x = np.arange(0, len(ax_yearly_xticks), 1) - \
                     ax_bar_width * ((fig_nbar - 1.) / 2. - i)
 
+                pd.to_csv('{}_{}-{}.csv'.format(name, 'yearly', prod_name))
+
                 # plot data
                 axes[0, 0].bar(x=df_yearly_x,
                                height=df_yearly_sum['{}'.format(self.ifeature)],
@@ -404,7 +406,8 @@ class Template(object):
         if 5 < fig_nrow:
             fig.set_size_inches(6.4, 4.8, forward=True)
             fig.subplots_adjust(bottom=0.05, top=0.95,
-                                left=0.05, right=0.9)
+                                left=0.05, right=0.9,
+                                wspace=0.2, hspace=0.45)
 
         axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
         if 0 < fig_naxe <= 10:
@@ -728,84 +731,116 @@ class Template(object):
                    [np.inf, -np.inf],
                    [np.inf, -np.inf]]
         if len(fig_pix_comb) > 0:
-            y = np.empty(((fig_pix_nrow * fig_pix_ncol), fig_naxe, fig_nscr))
+            y = np.empty((fig_nrow, fig_nscr, (fig_pix_nrow * fig_pix_ncol)))
             y[:] = np.nan
+            icnt = 0
             for i in range(fig_nrow):
                 for j in range(fig_ncol):
                     iplt = i * fig_ncol + j
 
                     for ii in range(fig_pix_nrow):
                         for jj in range(fig_pix_ncol):
-                            ipix = ii * fig_pix_ncol + jj
-                            if ipix < fig_pix_naxe:
-                                prod_list = list(fig_pix_comb[ipix])
+                            ipix = jj * (fig_nrow * fig_pix_nrow) + ii * fig_nrow + i
+                            prod_list = list(fig_pix_comb[ipix])
 
-                                # prepare data
-                                ivar = 0
+                            # prepare data
+                            ivar = 0
+                            var_name = var_names[ivar]
+                            prod_name = prod_names[ivar][prod_list[ivar]]
+
+                            xlabel = 'date'
+                            ylabel = '{}'.format(prod_name)
+
+                            df_col = []
+                            df = pd.DataFrame(fig_data[var_name][prod_name],
+                                              columns=['{}'.format(self.ifeature)])
+                            df_col.append('var_{}'.format(ivar))
+                            for ioper in range(len(var_opers)):
+                                ivar = ioper + 1
+                                var_oper = var_opers[ioper]
                                 var_name = var_names[ivar]
                                 prod_name = prod_names[ivar][prod_list[ivar]]
 
-                                xlabel = 'date'
-                                ylabel = '{}'.format(prod_name)
-
-                                df_col = []
-                                df = pd.DataFrame(fig_data[var_name][prod_name],
-                                                  columns=['{}'.format(self.ifeature)])
+                                ylabel += '{}{}'.format(var_oper, prod_name)
+                                df = pd.merge(df,
+                                              pd.DataFrame(
+                                                  fig_data[var_name][prod_name],
+                                                  columns=['{}'.format(
+                                                      self.ifeature)]),
+                                              left_index=True, right_index=True,
+                                              how='inner')
                                 df_col.append('var_{}'.format(ivar))
-                                for ioper in range(len(var_opers)):
-                                    ivar = ioper + 1
-                                    var_oper = var_opers[ioper]
-                                    var_name = var_names[ivar]
-                                    prod_name = prod_names[ivar][prod_list[ivar]]
+                            df.columns = df_col
 
-                                    ylabel += '{}{}'.format(var_oper, prod_name)
-                                    df = pd.merge(df,
-                                                  pd.DataFrame(
-                                                      fig_data[var_name][prod_name],
-                                                      columns=['{}'.format(
-                                                          self.ifeature)]),
-                                                  left_index=True, right_index=True,
-                                                  how='inner')
-                                    df_col.append('var_{}'.format(ivar))
-                                df.columns = df_col
+                            # calculate data
+                            # print('{:>10d}'
+                            #       '{:>40s}'.format(ipix, ylabel))
 
-                                # calculate data
-                                print('{:>10d}'
-                                      '{:>40s}'.format(ipix, ylabel))
+                            ivar = 0
+                            df[ylabel] = df['var_{}'.format(ivar)]
+                            for ioper in range(len(var_opers)):
+                                var_oper = var_opers[ioper]
+                                ivar = ioper + 1
+                                if var_oper == '-':
+                                    df[ylabel] = df[ylabel] - df['var_{}'.format(ivar)]
+                                if var_oper == '+':
+                                    df[ylabel] = df[ylabel] + df['var_{}'.format(ivar)]
+                                if var_oper == '.':
+                                    yrow = i
+                                    # yrow = icnt % fig_nrow
+                                    ypix = ii * fig_pix_ncol + jj
 
-                                ivar = 0
-                                df[ylabel] = df['var_{}'.format(ivar)]
-                                for ioper in range(len(var_opers)):
-                                    var_oper = var_opers[ioper]
-                                    ivar = ioper + 1
-                                    if var_oper == '-':
-                                        df[ylabel] = df[ylabel] - df['var_{}'.format(ivar)]
-                                    if var_oper == '+':
-                                        df[ylabel] = df[ylabel] + df['var_{}'.format(ivar)]
-                                    if var_oper == '.':
-                                        # PCC, Pearson correlation coefficient
-                                        y[ipix, iplt, 0] = np.corrcoef(
+                                    # PCC, Pearson correlation coefficient
+                                    if j == 0:
+                                        y[yrow, j, ypix] = np.corrcoef(
                                             df[ylabel], df['var_{}'.format(ivar)])[0, 1]
-                                        ax_ylim[0] = [min(ax_ylim[0][0],
-                                                          np.min(y[ipix, iplt, 0])),
-                                                      max(ax_ylim[0][1],
-                                                          np.max(y[ipix, iplt, 0]))]
-                                        # R2
-                                        y[ipix, iplt, 1] = r2_score(
+                                        ax_ylim[j] = [min(ax_ylim[j][0],
+                                                          np.min(y[yrow, j, ypix])),
+                                                      max(ax_ylim[j][1],
+                                                          np.max(y[yrow, j, ypix]))]
+                                        print('{} - {},{},{}; {},{}'
+                                              '{:>40s}'
+                                              ', PCC={:0.2f}'.format(icnt, yrow, j, ypix, ii, jj,
+                                                             ylabel, y[yrow, j, ypix]))
+                                    # R2
+                                    if j == 1:
+                                        y[yrow, j, ypix] = r2_score(
                                             df[ylabel], df['var_{}'.format(ivar)])
-                                        ax_ylim[1] = [min(ax_ylim[1][0],
-                                                          np.min(y[ipix, iplt, 1])),
-                                                      max(ax_ylim[1][1],
-                                                          np.max(y[ipix, iplt, 1]))]
-                                        # RMSE
-                                        y[ipix, iplt, 2] = RMSE(
+                                        ax_ylim[j] = [min(ax_ylim[j][0],
+                                                          np.min(y[yrow, j, ypix])),
+                                                      max(ax_ylim[j][1],
+                                                          np.max(y[yrow, j, ypix]))]
+                                        print('{} - {},{},{}; {},{}'
+                                              '{:>40s}'
+                                              ', R2={:0.2f}'.format(icnt, yrow, j, ypix,
+                                                                    ii, jj,
+                                                                    ylabel,
+                                                                    y[yrow, j, ypix]))
+                                    # RMSE
+                                    if j == 2:
+                                        y[yrow, j, ypix] = RMSE(
                                             df[ylabel], df['var_{}'.format(ivar)])
-                                        ax_ylim[2] = [min(ax_ylim[2][0],
-                                                          np.min(y[ipix, iplt, 2])),
-                                                      max(ax_ylim[2][1],
-                                                          np.max(y[ipix, iplt, 2]))]
-                                        # print(ipix, y[ipix, iplt, 2])
+                                        ax_ylim[j] = [min(ax_ylim[j][0],
+                                                          np.min(y[yrow, j, ypix])),
+                                                      max(ax_ylim[j][1],
+                                                          np.max(y[yrow, j, ypix]))]
+                                        print('{} - {},{},{}; {},{}'
+                                              '{:>40s}'
+                                              ', RMSE={:0.2f}'.format(icnt, yrow, j, ypix,
+                                                                      ii, jj,
+                                                                      ylabel,
+                                                                      y[yrow, j, ypix]))
+                                    # print(ipix, y[ipix, iplt, 2])
                                 # print(df)
+                                # print('{:>10d}'
+                                #       '{:>40s} '
+                                #       '{:0.2f} '
+                                #       '{:0.2f} '
+                                #       '{:0.2f}'.format(ipix, ylabel,
+                                #                        y[i, 0, ipix],
+                                #                        y[i, 1, ipix],
+                                #                        y[i, 2, ipix]))
+                            icnt += 1
 
             # plot combine
             fig = plt.figure(**fig_conf['figure'])
@@ -816,8 +851,8 @@ class Template(object):
             axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
             ax_ticksize = max(9 - fig_nrow, 1)
             ax_labelsize = max(11 - fig_nrow, 1)
-            ax_textsize = max(7 - fig_nrow, 1)
-            ax_cbarsize = max(7 - fig_nrow, 1)
+            ax_textsize = max(8 - fig_nrow, 1)
+            ax_cbarsize = max(8 - fig_nrow, 1)
             ax_cbarcmap = ['Blues', 'Blues', 'Blues']
             # ax_cbarcmap = ['RdYlBu_r', 'RdYlGn_r', 'Reds_r']
 
@@ -830,8 +865,9 @@ class Template(object):
                     tmp_y[:] = np.nan
                     for ii in range(fig_pix_nrow):
                         for jj in range(fig_pix_ncol):
-                            ipix = jj * fig_pix_nrow + ii
-                            tmp_y[ii, jj] = y[ipix, iplt, j]
+                            ipix = ii * fig_pix_ncol + jj
+                            tmp_y[ii, jj] = y[i, j, ipix]
+                    # print(iplt, i, j, tmp_y)
                     im = self.heatmap(data=tmp_y,
                                       row_labels=ax_yticks,
                                       col_labels=ax_xticks,
@@ -897,14 +933,15 @@ class Template(object):
                 # fig.suptitle(fig_title)
                 for i in range(fig_nrow):
                     for j in range(fig_ncol):
-                        iplt = i * fig_ncol + j
+                        iplt = i * fig_nscr + k
 
                         tmp_y = np.empty((fig_pix_nrow, fig_pix_ncol))
                         tmp_y[:] = np.nan
                         for ii in range(fig_pix_nrow):
                             for jj in range(fig_pix_ncol):
                                 ipix = jj * fig_pix_nrow + ii
-                                tmp_y[ii, jj] = y[ipix, iplt, k]
+                                tmp_y[ii, jj] = y[i, k, ipix]
+                        # print(iplt, i, k, tmp_y)
                         im = self.heatmap(data=tmp_y,
                                           row_labels=ax_yticks,
                                           col_labels=ax_xticks,
@@ -930,8 +967,12 @@ class Template(object):
                 # Create colorbar
                 cax = fig.add_axes([ax_pos.x1 + 0.1, 0.2, 0.02, 0.5])
                 cbar = plt.colorbar(im, ax=axes.ravel().tolist(), cax=cax)
-                cbar.ax.set_title('{}'.format(ax_legends[k]))
-                cbar.ax.tick_params(labelsize=ax_textsize)
+                cbar.ax.set_title('{}'.format(ax_legends[k]),
+                                  fontsize=ax_labelsize)
+                cbar.ax.tick_params(axis='x', which='major', direction='in',
+                                    pad=0.5, length=1,
+                                    labelsize=ax_cbarsize,
+                                    labelrotation=0)
 
                 self.saveas(fig, '{}_{}'.format(name, ax_legends[k]))
                 self.close(fig)
@@ -1071,7 +1112,8 @@ class Template(object):
         if 5 < fig_nrow:
             fig.set_size_inches(6.4, 4.8, forward=True)
             fig.subplots_adjust(bottom=0.05, top=0.95,
-                                left=0.05, right=0.9)
+                                left=0.05, right=0.9,
+                                wspace=0.2, hspace=0.45)
 
         axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
         if 0 < fig_naxe <= 10:

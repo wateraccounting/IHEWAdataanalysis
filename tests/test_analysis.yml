@@ -16,13 +16,13 @@ data:
     GSFC:
       folder: 'data/Output'
       ftype: 'CSV'
-    Test1:
+    JPL:
       folder: 'data/Output'
       ftype: 'CSV'
-#    Test2:
+#    Test1:
 #      folder: 'data/Output'
 #      ftype: 'CSV'
-#    Test3:
+#    Test2:
 #      folder: 'data/Output'
 #      ftype: 'CSV'
   ETA:
