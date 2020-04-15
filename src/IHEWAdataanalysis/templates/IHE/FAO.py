@@ -260,7 +260,7 @@ class Template(object):
                 df_yearly_x = np.arange(0, len(ax_yearly_xticks), 1) - \
                     ax_bar_width * ((fig_nbar - 1.) / 2. - i)
 
-                pd.to_csv('{}_{}-{}.csv'.format(name, 'yearly', prod_name))
+                # pd.to_csv('{}_{}-{}.csv'.format(name, 'yearly', prod_name))
 
                 # plot data
                 axes[0, 0].bar(x=df_yearly_x,
