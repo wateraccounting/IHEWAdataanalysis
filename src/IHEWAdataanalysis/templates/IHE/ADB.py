@@ -83,7 +83,7 @@ class Template(object):
     def __init__(self, conf):
         """Class instantiation
         """
-        template = 'FAO.yml'
+        template = 'ADB.yml'
         path = os.path.join(
             os.getcwd(),
             os.path.dirname(
