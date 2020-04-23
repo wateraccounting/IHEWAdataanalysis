@@ -97,6 +97,7 @@ class Template(object):
         self.allow_ptypes = [
             'bar_prod',
             'bar_wb',
+            'heatmap_score',
             'heatmap_wb',
             'line_prod',
             'line_wb',
@@ -106,7 +107,6 @@ class Template(object):
         self.workspace = ''
         self.conf = None
         self.data = None
-        self.ifeature = 1
 
         self.__conf = conf
 
@@ -117,40 +117,54 @@ class Template(object):
             raise IHEClassInitError(template) from None
         # print(self.conf.keys())
 
-        data = self._data(self.__conf['path'])
-        if len(data.keys()) > 0:
-            self.data = data
-        else:
-            raise IHEClassInitError(template) from None
-        # print(self.data.keys())
-
         print('\nFigure Start')
-        self.workspace = os.path.join(self.__conf['path'], 'IHEWAdataanalysis', 'fig')
-        if not os.path.exists(self.workspace):
-            os.makedirs(self.workspace)
 
-        print('>>>>>')
-        for fig_name, fig_obj in self.conf.items():
-            # print('{} {} "{}"'.format(fig_obj['obj'].number,
-            #                           fig_name,
-            #                           fig_obj['obj'].get_size_inches() *
-            #                           fig_obj['obj'].dpi))
-            ptype = fig_obj['ptype']
-            if ptype in self.allow_ptypes:
-                if ptype == 'bar_prod':
-                    self.plot_bar_prod(fig_name)
-                if ptype == 'bar_wb':
-                    self.plot_bar_wb(fig_name)
-                if ptype == 'heatmap_wb':
-                    self.plot_heatmap_wb(fig_name)
-                if ptype == 'line_prod':
-                    self.plot_line_prod(fig_name)
-                if ptype == 'line_wb':
-                    self.plot_line_wb(fig_name)
-                if ptype == 'scatter_prod':
-                    self.plot_scatter_prod(fig_name)
+        area_names = list(self.__conf['data']['data'].keys())
+        for iarea in range(len(area_names)):
+            area_name = area_names[iarea]
+            print('>>>>> {}'.format(area_name))
+
+            area_conf = self.__conf['data']['data'][area_name]['data']
+            data = self._data(self.__conf['path'], area_name, area_conf)
+            if len(data.keys()) > 0:
+                self.data = data
+                self.hyd = self.__conf['data']['data'][area_name]['hydrology']
             else:
-                print('Warning "{}" not support.'.format(ptype))
+                raise IHEClassInitError(template) from None
+            # print(self.data.keys())
+
+            # print(area_name, self.hyd['area'], self.hyd['year'])
+
+            self.workspace = os.path.join(self.__conf['path'],
+                                          'IHEWAdataanalysis',
+                                          area_name,
+                                          'fig')
+            if not os.path.exists(self.workspace):
+                os.makedirs(self.workspace)
+
+            for fig_name, fig_obj in self.conf.items():
+                # print('{} {} "{}"'.format(fig_obj['obj'].number,
+                #                           fig_name,
+                #                           fig_obj['obj'].get_size_inches() *
+                #                           fig_obj['obj'].dpi))
+                ptype = fig_obj['ptype']
+                if ptype in self.allow_ptypes:
+                    if ptype == 'bar_prod':
+                        self.plot_bar_prod(fig_name)
+                    if ptype == 'bar_wb':
+                        self.plot_bar_wb(fig_name)
+                    if ptype == 'heatmap_score':
+                        self.plot_heatmap_score(fig_name)
+                    if ptype == 'heatmap_wb':
+                        self.plot_heatmap_wb(fig_name)
+                    if ptype == 'line_prod':
+                        self.plot_line_prod(fig_name)
+                    if ptype == 'line_wb':
+                        self.plot_line_wb(fig_name)
+                    if ptype == 'scatter_prod':
+                        self.plot_scatter_prod(fig_name)
+                else:
+                    print('Warning "{}" not support.'.format(ptype))
 
     def _conf(self, path, template) -> dict:
         conf = {}
@@ -161,46 +175,46 @@ class Template(object):
 
         return conf
 
-    def _data(self, path) -> dict:
+    def _data(self, path, area_name, conf_data) -> dict:
         data = {}
 
-        try:
-            conf_data = self.__conf['data']['data']
-        except KeyError:
-            data = {}
-        else:
-            for variable, products in conf_data.items():
-                data[variable] = {}
+        # try:
+        #     conf_data = self.__conf['data']['data'][area_name]['data']
+        # except KeyError:
+        #     data = {}
+        # else:
+        for variable, products in conf_data.items():
+            data[variable] = {}
 
-                for prod_name, prod_conf in products.items():
-                    try:
-                        folder = os.path.split(prod_conf['folder'])
-                        ftype = prod_conf['ftype']
-                    except KeyError:
-                        print('No "folder" in yaml.')
-                        data = {}
+            for prod_name, prod_conf in products.items():
+                try:
+                    folder = os.path.split(prod_conf['folder'])
+                    ftype = prod_conf['ftype']
+                except KeyError:
+                    print('No "folder" in yaml.')
+                    data = {}
+                else:
+                    if ftype in self.allow_ftypes.keys():
+                        fname_ptn = '{var}-{pod}.{typ}'.format(
+                            var=variable,
+                            pod=prod_name,
+                            typ=self.allow_ftypes[ftype]
+                        )
+                        for root, dnames, fnames in os.walk(os.path.join(path,
+                                                                         *folder)):
+                            for fname in fnmatch.filter(fnames, fname_ptn):
+                                file = os.path.join(root, fname)
+                                print('Loading{:>10s}{:>20s} "{}"'.format(variable,
+                                                                          prod_name,
+                                                                          file))
+                                data[variable][prod_name] = \
+                                    pd.read_csv(file,
+                                                index_col='date',
+                                                parse_dates=True)
+                                # print('{}'.format(
+                                #     data[variable][prod_name].describe()))
                     else:
-                        if ftype in self.allow_ftypes.keys():
-                            fname_ptn = '{var}-{pod}.{typ}'.format(
-                                var=variable,
-                                pod=prod_name,
-                                typ=self.allow_ftypes[ftype]
-                            )
-                            for root, dnames, fnames in os.walk(os.path.join(path,
-                                                                             *folder)):
-                                for fname in fnmatch.filter(fnames, fname_ptn):
-                                    file = os.path.join(root, fname)
-                                    print('Loading{:>10s}{:>20s} "{}"'.format(variable,
-                                                                              prod_name,
-                                                                              file))
-                                    data[variable][prod_name] = \
-                                        pd.read_csv(file,
-                                                    index_col='date',
-                                                    parse_dates=True)
-                                    # print('{}'.format(
-                                    #     data[variable][prod_name].describe()))
-                        else:
-                            data = {}
+                        data = {}
 
         return data
 
@@ -216,7 +230,7 @@ class Template(object):
     def plot_bar_prod(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print(fig_title)
+        print('{:>10s}{:>40s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = self.data[fig_conf['data']]
@@ -243,12 +257,12 @@ class Template(object):
                 ax_yearly_xticks = []
 
                 prod_name = prod_names[i]
-                print('{:>10d}{:>20s}'.format(i, prod_name))
+                # print('{:>10d}{:>20s}'.format(i, prod_name))
 
                 # prepare data
                 ylabel = '{}'.format(prod_name)
                 df = pd.DataFrame(fig_data[ylabel],
-                                  columns=['{}'.format(self.ifeature)])
+                                  columns=['{}'.format(self.hyd['id'])])
 
                 # calculate data
                 df_yearly = df.groupby(df.index.year)
@@ -269,7 +283,7 @@ class Template(object):
                            header=[self.conf[name]['data']])
 
                 axes[0, 0].bar(x=df_yearly_x,
-                               height=df_yearly_sum['{}'.format(self.ifeature)],
+                               height=df_yearly_sum['{}'.format(self.hyd['id'])],
                                width=ax_bar_width,
                                label='{}'.format(prod_name))
 
@@ -308,16 +322,16 @@ class Template(object):
             for i in range(fig_nbar):
                 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                ax_hydrological_year = self.__conf['data']['hydrology']['year']
+                ax_hydrological_year = self.hyd['year']
                 ax_monthly_xticks = [months[i - 1] for i in ax_hydrological_year]
 
                 prod_name = prod_names[i]
-                print('{:>10d}{:>20s}'.format(i, prod_name))
+                # print('{:>10d}{:>20s}'.format(i, prod_name))
 
                 # prepare data
                 ylabel = '{}'.format(prod_name)
                 df = pd.DataFrame(fig_data[ylabel],
-                                  columns=['{}'.format(self.ifeature)])
+                                  columns=['{}'.format(self.hyd['id'])])
 
                 # calculate data
                 df_monthly_avg = df.groupby(df.index.month).mean()
@@ -335,7 +349,7 @@ class Template(object):
                            header=[self.conf[name]['data']])
 
                 axes[0, 0].bar(x=df_monthly_x,
-                               height=df_monthly_avg['{}'.format(self.ifeature)],
+                               height=df_monthly_avg['{}'.format(self.hyd['id'])],
                                width=ax_bar_width,
                                label='{}'.format(prod_name))
 
@@ -365,7 +379,7 @@ class Template(object):
     def plot_bar_wb(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print(fig_title)
+        print('{:>10s}{:>40s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = {}
@@ -457,7 +471,7 @@ class Template(object):
 
                         df_col = []
                         df = pd.DataFrame(fig_data[var_name][prod_name],
-                                          columns=['{}'.format(self.ifeature)])
+                                          columns=['{}'.format(self.hyd['id'])])
                         df_col.append('var_{}'.format(ivar))
                         for ioper in range(len(var_opers)):
                             ivar = ioper + 1
@@ -469,15 +483,15 @@ class Template(object):
                             df = pd.merge(df,
                                           pd.DataFrame(fig_data[var_name][prod_name],
                                                        columns=['{}'.format(
-                                                           self.ifeature)]),
+                                                           self.hyd['id'])]),
                                           left_index=True, right_index=True,
                                           how='inner')
                             df_col.append('var_{}'.format(ivar))
                         df.columns = df_col
 
                         # calculate data
-                        print('{:>10d}'
-                              '{:>40s}'.format(iplt, ylabel))
+                        # print('{:>10d}'
+                        #       '{:>40s}'.format(iplt, ylabel))
 
                         ivar = 0
                         df[ylabel] = df['var_{}'.format(ivar)]
@@ -668,10 +682,10 @@ class Template(object):
 
         return texts
 
-    def plot_heatmap_wb(self, name):
+    def plot_heatmap_score(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print(fig_title)
+        print('{:>10s}{:>40s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = {}
@@ -712,6 +726,10 @@ class Template(object):
         # print(var_names, var_opers)
 
         ax_legends = ['PCC', 'R2', 'RMSE']
+        ax_ylim = [[np.inf, -np.inf],
+                   [np.inf, -np.inf],
+                   [np.inf, -np.inf]]
+
         fig_nscr = len(ax_legends)
         fig_pix_naxe = 1
         fig_naxe = 1
@@ -739,9 +757,6 @@ class Template(object):
         fig_pix_comb = list(itertools.product(*prod_nprod))
         # print(len(fig_comb), prod_names)
 
-        ax_ylim = [[np.inf, -np.inf],
-                   [np.inf, -np.inf],
-                   [np.inf, -np.inf]]
         if len(fig_pix_comb) > 0:
             y = np.empty((fig_nrow, fig_nscr, (fig_pix_nrow * fig_pix_ncol)))
             y[:] = np.nan
@@ -765,7 +780,7 @@ class Template(object):
 
                             df_col = []
                             df = pd.DataFrame(fig_data[var_name][prod_name],
-                                              columns=['{}'.format(self.ifeature)])
+                                              columns=['{}'.format(self.hyd['id'])])
                             df_col.append('var_{}'.format(ivar))
                             for ioper in range(len(var_opers)):
                                 ivar = ioper + 1
@@ -778,7 +793,7 @@ class Template(object):
                                               pd.DataFrame(
                                                   fig_data[var_name][prod_name],
                                                   columns=['{}'.format(
-                                                      self.ifeature)]),
+                                                      self.hyd['id'])]),
                                               left_index=True, right_index=True,
                                               how='inner')
                                 df_col.append('var_{}'.format(ivar))
@@ -810,13 +825,13 @@ class Template(object):
                                                           np.min(y[yrow, j, ypix])),
                                                       max(ax_ylim[j][1],
                                                           np.max(y[yrow, j, ypix]))]
-                                        print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
-                                              '{:>40s}'
-                                              ', PCC  = {:0.2f}'.format(icnt,
-                                                                     yrow, j, ypix,
-                                                                     ii, jj,
-                                                                     ylabel,
-                                                                     y[yrow, j, ypix]))
+                                        # print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
+                                        #       '{:>40s}'
+                                        #       ', PCC  = {:0.2f}'.format(icnt,
+                                        #                              yrow, j, ypix,
+                                        #                              ii, jj,
+                                        #                              ylabel,
+                                        #                              y[yrow, j, ypix]))
                                     # R2
                                     if j == 1:
                                         y[yrow, j, ypix] = r2_score(
@@ -825,13 +840,13 @@ class Template(object):
                                                           np.min(y[yrow, j, ypix])),
                                                       max(ax_ylim[j][1],
                                                           np.max(y[yrow, j, ypix]))]
-                                        print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
-                                              '{:>40s}'
-                                              ', R2   = {:0.2f}'.format(icnt,
-                                                                    yrow, j, ypix,
-                                                                    ii, jj,
-                                                                    ylabel,
-                                                                    y[yrow, j, ypix]))
+                                        # print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
+                                        #       '{:>40s}'
+                                        #       ', R2   = {:0.2f}'.format(icnt,
+                                        #                             yrow, j, ypix,
+                                        #                             ii, jj,
+                                        #                             ylabel,
+                                        #                             y[yrow, j, ypix]))
                                     # RMSE
                                     if j == 2:
                                         y[yrow, j, ypix] = RMSE(
@@ -840,13 +855,13 @@ class Template(object):
                                                           np.min(y[yrow, j, ypix])),
                                                       max(ax_ylim[j][1],
                                                           np.max(y[yrow, j, ypix]))]
-                                        print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
-                                              '{:>40s}'
-                                              ', RMSE = {:0.2f}'.format(icnt,
-                                                                      yrow, j, ypix,
-                                                                      ii, jj,
-                                                                      ylabel,
-                                                                      y[yrow, j, ypix]))
+                                        # print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
+                                        #       '{:>40s}'
+                                        #       ', RMSE = {:0.2f}'.format(icnt,
+                                        #                               yrow, j, ypix,
+                                        #                               ii, jj,
+                                        #                               ylabel,
+                                        #                               y[yrow, j, ypix]))
                                     # print(ipix, y[ipix, iplt, 2])
                                 # print(df)
                                 # print('{:>10d}'
@@ -940,10 +955,10 @@ class Template(object):
                 fig.subplots_adjust(bottom=0.1, top=0.9, left=0.2, right=0.75)
 
                 axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
-                ax_ticksize = max(9 - fig_nrow, 1)
-                ax_labelsize = max(11 - fig_nrow, 1)
-                ax_textsize = max(7 - fig_nrow, 1)
-                ax_cbarsize = max(7 - fig_nrow, 1)
+                ax_ticksize = 6
+                ax_labelsize = 8
+                ax_textsize = 4
+                ax_cbarsize = 4
                 ax_cbarcmap = ['Blues', 'Blues', 'Blues']
                 # ax_cbarcmap = ['RdYlBu_r', 'RdYlGn_r', 'Reds_r']
 
@@ -994,10 +1009,287 @@ class Template(object):
                 self.saveas(fig, '{}_{}'.format(name, ax_legends[k]))
                 self.close(fig)
 
+    def plot_heatmap_wb(self, name):
+        fig_conf = self.conf[name]
+        fig_title = fig_conf['title']
+        print('{:>10s}{:>40s}'.format(name, fig_title))
+
+        # parse yaml
+        fig_data = {}
+        var_names = []
+        var_opers = []
+        tmp_names_root = fig_conf['data'].split('.')
+        iagn = 0
+        for variable_root in tmp_names_root:
+            # if len(variable_root.split('_')) > 1:
+            #     tmp_names_subroot = variable_root.split('_')
+            #     isub = 0
+            if len(variable_root.split('-')) > 1:
+                tmp_names = variable_root.split('-')
+                isub = 0
+                for variable in tmp_names:
+                    if len(variable.split('+')) > 1:
+                        ipls = 0
+                        for sub_var in variable.split('+'):
+                            if ipls > 0:
+                                var_opers.append('+')
+                            else:
+                                var_opers.append('-')
+                            var_names.append(sub_var)
+                            fig_data[sub_var] = self.data[sub_var]
+                            ipls += 1
+                    else:
+                        if isub > 0:
+                            var_opers.append('-')
+                        var_names.append(variable)
+                        fig_data[variable] = self.data[variable]
+                    isub += 1
+            else:
+                if iagn > 0:
+                    var_opers.append('.')
+                var_names.append(variable_root)
+                fig_data[variable_root] = self.data[variable_root]
+            iagn += 1
+        # print(var_names, var_opers)
+
+        ax_legends = ['Diff [Mm3/year]', 'Diff [%]']
+        ax_ylim = [[np.inf, -np.inf],
+                   [np.inf, -np.inf]]
+
+        fig_nscr = len(ax_legends)
+        fig_pix_naxe = 1
+        fig_naxe = 1
+        prod_names = []
+        prod_nprod = []
+        for ivar in range(len(var_names)):
+            prod_names.append(list(fig_data[var_names[ivar]].keys()))
+            prod_nprod.append([i for i in range(len(fig_data[var_names[ivar]].keys()))])
+
+            if 'PCP' in var_names[ivar]:
+                ax_xticks = list(fig_data[var_names[ivar]].keys())
+                fig_pix_ncol = int(len(ax_xticks))
+            if 'ET' in var_names[ivar]:
+                ax_yticks = list(fig_data[var_names[ivar]].keys())
+                fig_pix_nrow = int(len(ax_yticks))
+            if 'dS' == var_names[ivar]:
+                ax_titles = list(fig_data[var_names[ivar]].keys())
+                fig_nrow = int(len(ax_titles))
+            # if var_names[ivar] == 'Q':
+            #     fig_ncol = int(len(fig_data[var_names[ivar]].keys()))
+        # fig_ncol = int(1)
+        fig_ncol = fig_nscr
+        fig_pix_naxe = int(fig_pix_nrow * fig_pix_ncol)
+        fig_naxe = int(fig_nrow * fig_ncol)
+        fig_pix_comb = list(itertools.product(*prod_nprod))
+        # print(len(fig_comb), prod_names)
+
+        if len(fig_pix_comb) > 0:
+            y = np.empty((fig_nrow, fig_nscr, (fig_pix_nrow * fig_pix_ncol)))
+            y[:] = np.nan
+            icnt = 0
+            for i in range(fig_nrow):
+                for j in range(fig_ncol):
+                    iplt = i * fig_ncol + j
+
+                    for ii in range(fig_pix_nrow):
+                        for jj in range(fig_pix_ncol):
+                            ipix = jj * (fig_nrow * fig_pix_nrow) + ii * fig_nrow + i
+                            prod_list = list(fig_pix_comb[ipix])
+
+                            # prepare data
+                            ivar = 0
+                            var_name = var_names[ivar]
+                            prod_name = prod_names[ivar][prod_list[ivar]]
+
+                            xlabel = 'date'
+                            ylabel = '{}'.format(prod_name)
+
+                            df_col = []
+                            df = pd.DataFrame(fig_data[var_name][prod_name],
+                                              columns=['{}'.format(self.hyd['id'])])
+                            # df_col.append('var_{}'.format(ivar))
+                            df_col.append(prod_name)
+                            for ioper in range(len(var_opers)):
+                                ivar = ioper + 1
+                                var_oper = var_opers[ioper]
+                                var_name = var_names[ivar]
+                                prod_name = prod_names[ivar][prod_list[ivar]]
+
+                                ylabel += '{}{}'.format(var_oper, prod_name)
+                                df = pd.merge(df,
+                                              pd.DataFrame(
+                                                  fig_data[var_name][prod_name],
+                                                  columns=['{}'.format(
+                                                      self.hyd['id'])]),
+                                              left_index=True, right_index=True,
+                                              how='inner')
+                                # df_col.append('var_{}'.format(ivar))
+                                df_col.append(prod_name)
+                            df.columns = df_col
+
+                            # calculate data
+                            # print('{:>10d}'
+                            #       '{:>40s}'.format(ipix, ylabel))
+
+                            ivar = 0
+                            prod_name = prod_names[ivar][prod_list[ivar]]
+                            # df[ylabel] = df['var_{}'.format(ivar)]
+                            df[ylabel] = df[prod_name]
+                            for ioper in range(len(var_opers)):
+                                var_oper = var_opers[ioper]
+                                ivar = ioper + 1
+                                prod_name = prod_names[ivar][prod_list[ivar]]
+
+                                if var_oper == '-':
+                                    df[ylabel] = df[ylabel] - df[prod_name]
+                                if var_oper == '+':
+                                    df[ylabel] = df[ylabel] + df[prod_name]
+                                if var_oper == '.':
+                                    yrow = i
+                                    # yrow = icnt % fig_nrow
+                                    ypix = ii * fig_pix_ncol + jj
+
+                                    # yearly, % difference ((PCP-ETA-dS) - Q)
+                                    # calculate data
+                                    df[ylabel] = df[ylabel] - df[prod_name]
+
+                                    df = df * self.hyd['area']
+                                    df_yearly = df.groupby(df.index.year)
+                                    df_yearly_sum = df_yearly.sum()
+
+                                    if j == 0:
+                                        y[yrow, j, ypix] = df_yearly_sum[ylabel].mean()
+                                        ax_ylim[j] = [min(ax_ylim[j][0],
+                                                          np.min(y[yrow, j, ypix])),
+                                                      max(ax_ylim[j][1],
+                                                          np.max(y[yrow, j, ypix]))]
+                                        # print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
+                                        #       '{:>40s}'
+                                        #       ',  Diff  = {:0.2f}'.format(
+                                        #           icnt,
+                                        #           yrow, j, ypix,
+                                        #           ii, jj,
+                                        #           ylabel,
+                                        #           y[yrow, j, ypix]))
+                                    if j == 1:
+                                        df_yearly_sum['difp'] = \
+                                            df_yearly_sum[ylabel] / \
+                                            df_yearly_sum[prod_name] * 100.0
+                                        y[yrow, j, ypix] = df_yearly_sum['difp'].mean()
+                                        ax_ylim[j] = [min(ax_ylim[j][0],
+                                                          np.min(y[yrow, j, ypix])),
+                                                      max(ax_ylim[j][1],
+                                                          np.max(y[yrow, j, ypix]))]
+                                        # print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
+                                        #       '{:>40s}'
+                                        #       ', %Diff  = {:0.2f}'.format(
+                                        #           icnt,
+                                        #           yrow, j, ypix,
+                                        #           ii, jj,
+                                        #           ylabel,
+                                        #           y[yrow, j, ypix]))
+
+                                    df_yearly_sum.sort_index(axis=0). \
+                                        to_csv(os.path.join(self.workspace,
+                                                            '{}_{}-{}.csv'.format(
+                                                                name, 'yearly',
+                                                                ylabel)),
+                                               index=True)
+
+                                # print(df)
+                                # print('{:>10d}'
+                                #       '{:>40s} '
+                                #       '{:0.2f} '
+                                #       '{:0.2f} '
+                                #       '{:0.2f}'.format(ipix, ylabel,
+                                #                        y[i, 0, ipix],
+                                #                        y[i, 1, ipix],
+                                #                        y[i, 2, ipix]))
+
+                            icnt += 1
+
+            # plot combine
+            fig = plt.figure(**fig_conf['figure'])
+            fig.set_size_inches(6.4, 4.8 + 4.8 * (fig_nrow - 1.0) / 2.0, forward=True)
+            fig.subplots_adjust(bottom=0.15, top=0.95,
+                                left=0.1, right=0.9,)
+
+            axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
+            ax_ticksize = max(9 - fig_nrow, 1)
+            ax_labelsize = max(11 - fig_nrow, 1)
+            ax_textsize = max(8 - fig_nrow, 1)
+            ax_cbarsize = max(8 - fig_nrow, 1)
+            ax_cbarcmap = ['Blues', 'Blues', 'Blues']
+            # ax_cbarcmap = ['RdYlBu_r', 'RdYlGn_r', 'Reds_r']
+
+            # fig.suptitle(fig_title)
+            for i in range(fig_nrow):
+                for j in range(fig_ncol):
+                    iplt = i * fig_ncol + j
+
+                    tmp_y = np.empty((fig_pix_nrow, fig_pix_ncol))
+                    tmp_y[:] = np.nan
+                    for ii in range(fig_pix_nrow):
+                        for jj in range(fig_pix_ncol):
+                            ipix = ii * fig_pix_ncol + jj
+                            tmp_y[ii, jj] = y[i, j, ipix]
+                    # print(iplt, i, j, tmp_y)
+                    im = self.heatmap(data=tmp_y,
+                                      row_labels=ax_yticks,
+                                      col_labels=ax_xticks,
+                                      ax=axes[i, j],
+                                      cmap=ax_cbarcmap[j],
+                                      vmin=ax_ylim[j][0],
+                                      vmax=ax_ylim[j][1]
+                                      )
+                    if j == 0:
+                        texts = self.annotate_heatmap(im,
+                                                      valfmt="{x:.2f}",
+                                                      fontsize=ax_textsize)
+                    if j == 1:
+                        texts = self.annotate_heatmap(im,
+                                                      valfmt="{x:.2f}%",
+                                                      fontsize=ax_textsize)
+
+                    axes[i, j].tick_params(axis='x', labelsize=ax_ticksize)
+                    axes[i, j].tick_params(axis='y', labelsize=ax_ticksize)
+                    axes[i, j].set_ylabel(ax_titles[i],
+                                          fontsize=ax_labelsize,
+                                          labelpad=1)
+                    axes[i, j].yaxis.set_label_position("right")
+
+                    # if i == 0:
+                    #     axes[i, j].set_title('{}'.format(ax_legends[j]),
+                    #                          fontsize=ax_labelsize)
+
+                    # Create colorbar
+                    if i == fig_nrow - 1:
+                        ax_pos = axes[i, j].get_position()
+
+                        ax_cb_l = ax_pos.x0
+                        ax_cb_b = max(0.05, ax_pos.y0 - 0.1)
+                        ax_cb_w = ax_pos.x1 - ax_pos.x0
+                        ax_cb_h = 0.02
+                        # print('cbar {:0.4f} {:0.4f} {:0.4f} {:0.4f}'.format(
+                        #     ax_cb_l, ax_cb_b, ax_cb_w, ax_cb_h))
+
+                        cax = fig.add_axes([ax_cb_l, ax_cb_b, ax_cb_w, ax_cb_h])
+                        cbar = plt.colorbar(im, ax=axes.ravel().tolist(), cax=cax,
+                                            orientation="horizontal")
+                        cbar.ax.set_title('{}'.format(ax_legends[j]),
+                                          fontsize=ax_labelsize)
+                        cbar.ax.tick_params(axis='x', which='major', direction='in',
+                                            pad=0.5, length=1,
+                                            labelsize=ax_cbarsize,
+                                            labelrotation=0)
+
+            self.saveas(fig, '{}'.format(name))
+            self.close(fig)
+
     def plot_line_prod(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print(fig_title)
+        print('{:>10s}{:>40s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = self.data[fig_conf['data']]
@@ -1020,22 +1312,22 @@ class Template(object):
             # fig.suptitle(fig_title)
             for i in range(fig_nbar):
                 prod_name = prod_names[i]
-                print('{:>10d}{:>20s}'.format(i, prod_name))
+                # print('{:>10d}{:>20s}'.format(i, prod_name))
 
                 # prepare data
                 xlabel = 'date'
                 ylabel = '{}'.format(prod_name)
 
                 # x = pd.DataFrame(fig_data[xlabel],
-                #                  columns=['{}'.format(self.ifeature)])
+                #                  columns=['{}'.format(self.hyd['id'])])
                 df = pd.DataFrame(fig_data[ylabel],
-                                  columns=['{}'.format(self.ifeature)])
+                                  columns=['{}'.format(self.hyd['id'])])
 
                 # calculate data
                 # print(df)
 
                 # plot data
-                axes[0, 0].plot(df.index, df['{}'.format(self.ifeature)],
+                axes[0, 0].plot(df.index, df['{}'.format(self.hyd['id'])],
                                 linestyle='solid',
                                 linewidth=1,
                                 label='{}'.format(prod_name))
@@ -1066,7 +1358,7 @@ class Template(object):
     def plot_line_wb(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print(fig_title)
+        print('{:>10s}{:>40s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = {}
@@ -1168,7 +1460,7 @@ class Template(object):
 
                         df_col = []
                         df = pd.DataFrame(fig_data[var_name][prod_name],
-                                          columns=['{}'.format(self.ifeature)])
+                                          columns=['{}'.format(self.hyd['id'])])
                         df_col.append('var_{}'.format(ivar))
                         for ioper in range(len(var_opers)):
                             ivar = ioper + 1
@@ -1180,15 +1472,15 @@ class Template(object):
                             df = pd.merge(df,
                                           pd.DataFrame(fig_data[var_name][prod_name],
                                                        columns=['{}'.format(
-                                                           self.ifeature)]),
+                                                           self.hyd['id'])]),
                                           left_index=True, right_index=True,
                                           how='inner')
                             df_col.append('var_{}'.format(ivar))
                         df.columns = df_col
 
                         # calculate data
-                        print('{:>10d}'
-                              '{:>40s}'.format(iplt, ylabel))
+                        # print('{:>10d}'
+                        #       '{:>40s}'.format(iplt, ylabel))
 
                         ivar = 0
                         df[ylabel] = df['var_{}'.format(ivar)]
@@ -1329,7 +1621,7 @@ class Template(object):
     def plot_scatter_prod(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print(fig_title)
+        print('{:>10s}{:>40s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = self.data[fig_conf['data']]
@@ -1374,29 +1666,31 @@ class Template(object):
                 for j in range(fig_ncol):
                     iplt = i * fig_ncol + j
                     if iplt < fig_naxe:
-                        print('{:>10d}'
-                              '{:>20s}{:>20s}'.format(iplt,
-                                                      prod_names[fig_comb[iplt][0]],
-                                                      prod_names[fig_comb[iplt][1]]))
+                        # print('{:>10d}'
+                        #       '{:>20s}{:>20s}'.format(iplt,
+                        #                               prod_names[fig_comb[iplt][0]],
+                        #                               prod_names[fig_comb[iplt][1]]))
 
                         # prepare data
                         xlabel = prod_names[fig_comb[iplt][1]]
                         ylabel = prod_names[fig_comb[iplt][0]]
 
                         # x = pd.DataFrame(fig_data[xlabel],
-                        #                  columns=['date', '{}'.format(self.ifeature)])
+                        #                  columns=['date', '{}'.format(self.hyd['id'])])
                         # y = pd.DataFrame(fig_data[ylabel],
-                        #                  columns=['date', '{}'.format(self.ifeature)])
+                        #                  columns=['date', '{}'.format(self.hyd['id'])])
 
                         # calculate data
-                        df = pd.merge(fig_data[ylabel]['{}'.format(self.ifeature)],
-                                      fig_data[xlabel]['{}'.format(self.ifeature)],
+                        df = pd.merge(fig_data[ylabel]['{}'.format(self.hyd['id'])],
+                                      fig_data[xlabel]['{}'.format(self.hyd['id'])],
                                       left_index=True, right_index=True,
                                       how='outer',
                                       suffixes=('_l', '_r'))
                         df.columns = ['y', 'x']
                         xy = np.vstack([df['x'], df['y']])
-                        df['c'] = gaussian_kde(xy)(xy)
+                        kernel = gaussian_kde(xy)
+                        df['c'] = kernel(xy)
+                        # df['c'] = kernel(xy)*df.size
                         # print(df)
 
                         # Pearson correlation coefficient
@@ -1448,7 +1742,7 @@ class Template(object):
             cax = fig.add_axes([ax_cb_l, ax_cb_b, ax_cb_w, ax_cb_h])
             cbar = plt.colorbar(im, ax=axes.ravel().tolist(), cax=cax,
                                 ticks=[df['c'].min(), df['c'].max()])
-            cbar.ax.set_yticklabels(['Low', 'High'])
+            # cbar.ax.set_yticklabels(['Low', 'High'])
             cbar.ax.set_ylabel('Density', fontsize=ax_labelsize)
             cbar.ax.tick_params(axis='y', which='major', direction='in',
                                 pad=0.5, length=1,

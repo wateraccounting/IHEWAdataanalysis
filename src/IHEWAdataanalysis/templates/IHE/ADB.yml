@@ -139,6 +139,16 @@ fig3d:
     dpi: 400
   #axes:
 
+fig3e:
+  title: 'Discharge [m3/s]'
+  data: 'Q'
+  ptype: 'bar_prod'
+  figure:
+    num: 3
+    figsize: [6.4, 4.8]
+    dpi: 400
+  #axes:
+
 fig4:
   title: 'P-ET-dS-RO [mm/month]'
   data: 'PCP-ETA-dS-RO'
@@ -160,11 +170,21 @@ fig5:
   #axes:
 
 fig6:
-  title: 'P-ET-dS vs RO'
+  title: 'P-ET-dS vs RO [PCC, R2, RMSE]'
+  data: 'PCP-ETA-dS.RO'
+  ptype: 'heatmap_score'
+  figure:
+    num: 6
+    figsize: [6.4, 4.8]
+    dpi: 400
+  #axes:
+
+fig7:
+  title: 'P-ET-dS vs RO [Diff, %Diff]'
   data: 'PCP-ETA-dS.RO'
   ptype: 'heatmap_wb'
   figure:
-    num: 6
+    num: 7
     figsize: [6.4, 4.8]
     dpi: 400
   #axes:

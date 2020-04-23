@@ -2,63 +2,69 @@ template:
   provider: IHE
   name: ADB
 
-hydrology:
-  year: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2]
-
-# ftype: 'NetCDF'
-# ftype: 'GTiff'
-# ftype: 'CSV'
 data:
-  #Basin:
-  #  folder: 'data/Shapefile'
-  #  file: 'Mindanao-RiverBasin.shp'
-  dS:
-    GSFC:
-      folder: 'data/Output'
-      ftype: 'CSV'
-    JPL:
-      folder: 'data/Output'
-      ftype: 'CSV'
-#    Test1:
-#      folder: 'data/Output'
-#      ftype: 'CSV'
-#    Test2:
-#      folder: 'data/Output'
-#      ftype: 'CSV'
-  ETA:
-    ALEXI:
-      folder: 'data/Output'
-      ftype: 'CSV'
-    CMRSET:
-      folder: 'data/Output'
-      ftype: 'CSV'
-#    GLDAS:
-#      folder: 'data/Output'
-#      ftype: 'CSV'
-    GLEAM:
-      folder: 'data/Output'
-      ftype: 'CSV'
-    MOD16A2:
-      folder: 'data/Output'
-      ftype: 'CSV'
-    SSEBop:
-      folder: 'data/Output'
-      ftype: 'CSV'
-  PCP:
-    CHIRPS:
-      folder: 'data/Output'
-      ftype: 'CSV'
-    GPM:
-      folder: 'data/Output'
-      ftype: 'CSV'
-    TRMM:
-      folder: 'data/Output'
-      ftype: 'CSV'
-  RO:
-    FloodObservatory:
-      folder: 'data/Output'
-      ftype: 'CSV'
-  Q:
-    FloodObservatory:
-      folder: 'data/Output'
-      ftype: 'CSV'
+  area1:
+    hydrology:
+      # csv column [0, 1, 2, ...]
+      id: 1
+      # km2 / 1000.0 = Mm2
+      area: 21.503
+      year: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2]
+
+    # ftype: 'NetCDF'
+    # ftype: 'GTiff'
+    # ftype: 'CSV'
+    data:
+      #Basin:
+      #  folder: 'data/Shapefile'
+      #  file: 'Mindanao-RiverBasin.shp'
+      dS:
+    #    GSFC:
+    #      folder: 'data/Output'
+    #      ftype: 'CSV'
+        CSR:
+          folder: 'data/Output'
+          ftype: 'CSV'
+        GFZ:
+          folder: 'data/Output'
+          ftype: 'CSV'
+        JPL:
+          folder: 'data/Output'
+          ftype: 'CSV'
+      ETA:
+        ALEXI:
+          folder: 'data/Output'
+          ftype: 'CSV'
+        CMRSET:
+          folder: 'data/Output'
+          ftype: 'CSV'
+    #    GLDAS:
+    #      folder: 'data/Output'
+    #      ftype: 'CSV'
+        GLEAM:
+          folder: 'data/Output'
+          ftype: 'CSV'
+        MOD16A2:
+          folder: 'data/Output'
+          ftype: 'CSV'
+        SSEBop:
+          folder: 'data/Output'
+          ftype: 'CSV'
+      PCP:
+        CHIRPS:
+          folder: 'data/Output'
+          ftype: 'CSV'
+        GPM:
+          folder: 'data/Output'
+          ftype: 'CSV'
+        TRMM:
+          folder: 'data/Output'
+          ftype: 'CSV'
+      RO:
+        FloodObservatory:
+          folder: 'data/Output'
+          ftype: 'CSV'
+      Q:
+        FloodObservatory:
+          folder: 'data/Output'
+          ftype: 'CSV'

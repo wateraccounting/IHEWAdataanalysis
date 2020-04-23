@@ -69,7 +69,7 @@ class Analysis(Base):
         """
         self.allow_keys = {
             'template': ['provider', 'name'],
-            'hydrology': ['year'],
+            'hydrology': ['id', 'area', 'year'],
             'data': ['PCP', 'ETA', 'dS', 'Q']
         }
 
@@ -138,8 +138,8 @@ class Analysis(Base):
 
         if data is not None:
             status_code += self._conf_keys('template', data)
-            status_code += self._conf_keys('hydrology', data)
-            status_code += self._conf_keys('data', data)
+
+            # status_code += self._conf_keys('data', data)
 
             # status_code += self._conf_keys('page', data)
             # status_code += self._conf_keys('content', data)
