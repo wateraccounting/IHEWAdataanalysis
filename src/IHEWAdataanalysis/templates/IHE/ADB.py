@@ -104,7 +104,11 @@ class Template(object):
             'scatter_prod'
         ]
         self.path = path
-        self.workspace = ''
+        self.workspace = {
+            'fig': '',
+            'pdf': '',
+            'csv': ''
+        }
         self.conf = None
         self.data = None
 
@@ -133,14 +137,13 @@ class Template(object):
                 raise IHEClassInitError(template) from None
             # print(self.data.keys())
 
-            # print(area_name, self.hyd['area'], self.hyd['year'])
-
-            self.workspace = os.path.join(self.__conf['path'],
-                                          'IHEWAdataanalysis',
-                                          area_name,
-                                          'fig')
-            if not os.path.exists(self.workspace):
-                os.makedirs(self.workspace)
+            for key in self.workspace.keys():
+                self.workspace[key] = os.path.join(self.__conf['path'],
+                                                   'IHEWAdataanalysis',
+                                                   area_name,
+                                                   key)
+                if not os.path.exists(self.workspace[key]):
+                    os.makedirs(self.workspace[key])
 
             for fig_name, fig_obj in self.conf.items():
                 # print('{} {} "{}"'.format(fig_obj['obj'].number,
@@ -204,9 +207,9 @@ class Template(object):
                                                                          *folder)):
                             for fname in fnmatch.filter(fnames, fname_ptn):
                                 file = os.path.join(root, fname)
-                                print('Loading{:>10s}{:>20s} "{}"'.format(variable,
-                                                                          prod_name,
-                                                                          file))
+                                print('    Loading{:>10s}{:>20s} "{}"'.format(variable,
+                                                                              prod_name,
+                                                                              file))
                                 data[variable][prod_name] = \
                                     pd.read_csv(file,
                                                 index_col='date',
@@ -230,7 +233,7 @@ class Template(object):
     def plot_bar_prod(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print('{:>10s}{:>40s}'.format(name, fig_title))
+        print('{:>11s} {:>48s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = self.data[fig_conf['data']]
@@ -276,7 +279,7 @@ class Template(object):
 
                 # plot data
                 df_yearly_sum.sort_index(axis=0).\
-                    to_csv(os.path.join(self.workspace,
+                    to_csv(os.path.join(self.workspace['csv'],
                                         '{}_{}-{}.csv'.format(
                                             name, 'yearly', prod_name)),
                            index=True,
@@ -342,7 +345,7 @@ class Template(object):
 
                 # plot data
                 df_monthly_avg.sort_index(axis=0).\
-                    to_csv(os.path.join(self.workspace,
+                    to_csv(os.path.join(self.workspace['csv'],
                                         '{}_{}-{}.csv'.format(
                                             name, 'monthly', prod_name)),
                            index=True,
@@ -379,7 +382,7 @@ class Template(object):
     def plot_bar_wb(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print('{:>10s}{:>40s}'.format(name, fig_title))
+        print('{:>11s} {:>48s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = {}
@@ -685,7 +688,7 @@ class Template(object):
     def plot_heatmap_score(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print('{:>10s}{:>40s}'.format(name, fig_title))
+        print('{:>11s} {:>48s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = {}
@@ -955,8 +958,8 @@ class Template(object):
                 fig.subplots_adjust(bottom=0.1, top=0.9, left=0.2, right=0.75)
 
                 axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
-                ax_ticksize = 6
-                ax_labelsize = 8
+                ax_ticksize = 4
+                ax_labelsize = 7
                 ax_textsize = 4
                 ax_cbarsize = 4
                 ax_cbarcmap = ['Blues', 'Blues', 'Blues']
@@ -1001,7 +1004,7 @@ class Template(object):
                 cbar = plt.colorbar(im, ax=axes.ravel().tolist(), cax=cax)
                 cbar.ax.set_title('{}'.format(ax_legends[k]),
                                   fontsize=ax_labelsize)
-                cbar.ax.tick_params(axis='x', which='major', direction='in',
+                cbar.ax.tick_params(axis='y', which='major', direction='in',
                                     pad=0.5, length=1,
                                     labelsize=ax_cbarsize,
                                     labelrotation=0)
@@ -1012,7 +1015,7 @@ class Template(object):
     def plot_heatmap_wb(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print('{:>10s}{:>40s}'.format(name, fig_title))
+        print('{:>11s} {:>48s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = {}
@@ -1190,7 +1193,7 @@ class Template(object):
                                         #           y[yrow, j, ypix]))
 
                                     df_yearly_sum.sort_index(axis=0). \
-                                        to_csv(os.path.join(self.workspace,
+                                        to_csv(os.path.join(self.workspace['csv'],
                                                             '{}_{}-{}.csv'.format(
                                                                 name, 'yearly',
                                                                 ylabel)),
@@ -1289,7 +1292,7 @@ class Template(object):
     def plot_line_prod(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print('{:>10s}{:>40s}'.format(name, fig_title))
+        print('{:>11s} {:>48s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = self.data[fig_conf['data']]
@@ -1358,7 +1361,7 @@ class Template(object):
     def plot_line_wb(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print('{:>10s}{:>40s}'.format(name, fig_title))
+        print('{:>11s} {:>48s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = {}
@@ -1621,7 +1624,7 @@ class Template(object):
     def plot_scatter_prod(self, name):
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
-        print('{:>10s}{:>40s}'.format(name, fig_title))
+        print('{:>11s} {:>48s}'.format(name, fig_title))
 
         # parse yaml
         fig_data = self.data[fig_conf['data']]
@@ -1757,11 +1760,11 @@ class Template(object):
 
     def saveas(self, fig, name):
         fig_ext = 'jpg'
-        fig.savefig(os.path.join(self.workspace,
+        fig.savefig(os.path.join(self.workspace['fig'],
                                  '{}.{}'.format(name, fig_ext)),
                     format=fig_ext)
         fig_ext = 'pdf'
-        fig.savefig(os.path.join(self.workspace,
+        fig.savefig(os.path.join(self.workspace['pdf'],
                                  '{}.{}'.format(name, fig_ext)),
                     format=fig_ext)
         fig.clf()
