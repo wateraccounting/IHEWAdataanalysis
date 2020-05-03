@@ -9,6 +9,7 @@
 """
 import inspect
 import os
+import datetime
 import yaml
 
 import fnmatch
@@ -19,6 +20,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+
+# from mpl_toolkits.basemap import Basemap
 
 # from matplotlib.collections import LineCollection
 # from matplotlib.colors import ListedColormap, BoundaryNorm
@@ -40,9 +43,9 @@ except ImportError:
 
 try:
     # IHEClassInitError, IHEStringError, IHETypeError, IHEKeyError, IHEFileError
-    from .exception import IHEClassInitError
+    from .exception import IHEClassInitError, IHEFileError
 except ImportError:
-    from IHEWAdataanalysis.exception import IHEClassInitError
+    from IHEWAdataanalysis.exception import IHEClassInitError, IHEFileError
 
 try:
     from .indicators import RMSE
@@ -91,9 +94,9 @@ class Template(object):
                     inspect.currentframe()))
         )
 
-        self.allow_ftypes = {
-            'CSV': 'csv'
-        }
+        self.allow_ftypes = [
+            'CSV', 'csv'
+        ]
         self.allow_ptypes = [
             'bar_prod',
             'bar_wb',
@@ -101,6 +104,7 @@ class Template(object):
             'heatmap_wb',
             'line_prod',
             'line_wb',
+            'map_wb',
             'scatter_prod'
         ]
         self.path = path
@@ -109,10 +113,12 @@ class Template(object):
             'pdf': '',
             'csv': ''
         }
-        self.conf = None
-        self.data = None
 
         self.__conf = conf
+        self.conf = None
+        self.csv = None
+        self.tif = None
+        self.shp = None
 
         conf = self._conf(path, template)
         if len(conf.keys()) > 0:
@@ -123,19 +129,32 @@ class Template(object):
 
         print('\nFigure Start')
 
-        area_names = list(self.__conf['data']['data'].keys())
+        area_names = list(self.__conf['data']['areas'].keys())
         for iarea in range(len(area_names)):
             area_name = area_names[iarea]
             print('>>>>> {}'.format(area_name))
 
-            area_conf = self.__conf['data']['data'][area_name]['data']
-            data = self._data(self.__conf['path'], area_name, area_conf)
-            if len(data.keys()) > 0:
-                self.data = data
-                self.hyd = self.__conf['data']['data'][area_name]['hydrology']
+            self.hyd = self.__conf['data']['areas'][area_name]['hydrology']
+            area_shp = self._data_shp(self.__conf['path'], self.hyd)
+            if len(area_shp.keys()) > 0:
+                self.shp = area_shp
             else:
                 raise IHEClassInitError(template) from None
-            # print(self.data.keys())
+            # print(self.shp.keys())
+
+            area_dir = self.__conf['data']['areas'][area_name]['directory']
+            area_csv = self._data_csv(self.__conf['path'], area_dir)
+            if len(area_csv.keys()) > 0:
+                self.csv = area_csv
+            else:
+                raise IHEClassInitError(template) from None
+            # print(self.csv.keys())
+            area_tif = self._data_tif(self.__conf['path'], area_dir)
+            if len(area_tif.keys()) > 0:
+                self.tif = area_tif
+            else:
+                raise IHEClassInitError(template) from None
+            # print(self.tif.keys())
 
             for key in self.workspace.keys():
                 self.workspace[key] = os.path.join(self.__conf['path'],
@@ -164,6 +183,8 @@ class Template(object):
                         self.plot_line_prod(fig_name)
                     if ptype == 'line_wb':
                         self.plot_line_wb(fig_name)
+                    if ptype == 'map_wb':
+                        self.plot_map_wb(fig_name)
                     if ptype == 'scatter_prod':
                         self.plot_scatter_prod(fig_name)
                 else:
@@ -178,46 +199,219 @@ class Template(object):
 
         return conf
 
-    def _data(self, path, area_name, conf_data) -> dict:
+    def _data_csv(self, path, conf_data) -> dict:
         data = {}
+        ftype = 'csv'
+        # f = lambda s: datetime.datetime.strptime(s, '%Y-%m-%d-%H-%M-%S')
+        f = lambda s: datetime.datetime.strptime(s, '%Y-%m')
 
         # try:
         #     conf_data = self.__conf['data']['data'][area_name]['data']
         # except KeyError:
         #     data = {}
         # else:
-        for variable, products in conf_data.items():
-            data[variable] = {}
+        for var_name, products in conf_data.items():
+            data[var_name] = {}
 
             for prod_name, prod_conf in products.items():
-                try:
-                    folder = os.path.split(prod_conf['folder'])
-                    ftype = prod_conf['ftype']
-                except KeyError:
-                    print('No "folder" in yaml.')
-                    data = {}
-                else:
-                    if ftype in self.allow_ftypes.keys():
-                        fname_ptn = '{var}-{pod}.{typ}'.format(
-                            var=variable,
-                            pod=prod_name,
-                            typ=self.allow_ftypes[ftype]
-                        )
-                        for root, dnames, fnames in os.walk(os.path.join(path,
-                                                                         *folder)):
-                            for fname in fnmatch.filter(fnames, fname_ptn):
-                                file = os.path.join(root, fname)
-                                print('    Loading{:>10s}{:>20s} "{}"'.format(variable,
-                                                                              prod_name,
-                                                                              file))
-                                data[variable][prod_name] = \
-                                    pd.read_csv(file,
-                                                index_col='date',
-                                                parse_dates=True)
-                                # print('{}'.format(
-                                #     data[variable][prod_name].describe()))
+                # if ftype in self.allow_ftypes:
+                if 'csv' in prod_conf.keys():
+                    folder = prod_conf[ftype]['folder']
+                    fname = prod_conf[ftype]['fname']
+
+                    file = os.path.join(path, folder, fname)
+                    print('    csv:{:>10s}{:>10s} "{}"'.format(var_name,
+                                                               prod_name,
+                                                               file))
+                    df = pd.read_csv(
+                        file,
+                        index_col=prod_conf['csv']['index'],
+                        usecols=[prod_conf['csv']['index'],
+                                 prod_conf['csv']['column']],
+                        date_parser=f)
+                    # parse_dates=True)
+                    df.columns = [prod_name]
+                    data[var_name][prod_name] = df
+
+        return data
+
+    def _data_tif(self, path, conf_data) -> dict:
+        data = {}
+        ftype = 'tif'
+
+        for var_name, products in conf_data.items():
+            data[var_name] = {}
+
+            for prod_name, prod_conf in products.items():
+                # if ftype in self.allow_ftypes:
+                if ftype in prod_conf.keys():
+                    folder = prod_conf[ftype]['folder']
+                    fname = prod_conf[ftype]['fname']
+
+                    file = os.path.join(path, folder, fname)
+                    print('    tif:{:>10s}{:>10s} "{}"'.format(var_name,
+                                                               prod_name,
+                                                               file))
+
+                    ds = gdal.Open(file)
+                    band = 1
+                    if ds is None:
+                        raise IHEFileError(file) from None
                     else:
-                        data = {}
+                        if ds.RasterCount > 0:
+                            ds_band = ds.GetRasterBand(band)
+                            ds_ncol = ds.RasterXSize
+                            ds_nrow = ds.RasterYSize
+                            ds_gtrf = ds.GetGeoTransform()
+                            ds_xorg = ds_gtrf[0]
+                            ds_yorg = ds_gtrf[3]
+                            ds_pxlw = ds_gtrf[1]
+                            ds_pxlh = ds_gtrf[5]
+                            ds_lons = ds_xorg + np.arange(0, ds_ncol) * ds_pxlw
+                            ds_lats = ds_yorg + np.arange(0, ds_nrow) * ds_pxlh
+                            x, y = np.meshgrid(ds_lons, ds_lats)
+                            if ds_band is None:
+                                pass
+                            else:
+                                ds_band_ndv = ds_band.GetNoDataValue()
+                                ds_band_scale = ds_band.GetScale()
+                                # ds_band_unit = ds_band.GetUnitType()
+
+                                ds_data = ds_band.ReadAsArray()
+
+                                # Check data type
+                                if isinstance(ds_data, np.ma.MaskedArray):
+                                    ds_data = ds_data.filled()
+                                else:
+                                    ds_data = np.asarray(ds_data)
+
+                                if np.logical_or(isinstance(ds_band_ndv, str),
+                                                 isinstance(ds_band_scale, str)):
+                                    ds_band_ndv = float(ds_band_ndv)
+                                    ds_band_scale = float(ds_band_scale)
+
+                                # Convert units, set NVD
+                                if ds_band_ndv is not None:
+                                    ds_data[ds_data == ds_band_ndv] = np.nan
+                                if ds_band_scale is not None:
+                                    ds_data = ds_data * ds_band_scale
+                        else:
+                            raise IHEFileError(file) from None
+
+                    data[var_name][prod_name] = ds_data
+                    data['x'] = x
+                    data['y'] = y
+                    ds = None
+
+        return data
+
+    def _data_shp(self, path, conf_data) -> dict:
+        data = {}
+        ftype = 'shp'
+        key = 'basin'
+
+        if key in conf_data.keys():
+            shp_conf = conf_data[key]
+
+            folder = shp_conf[ftype]['folder']
+            fname = shp_conf[ftype]['fname']
+
+            file = os.path.join(path, folder, fname)
+            print('    shp:{:>10s}{:>10s} "{}"'.format(ftype,
+                                                       key,
+                                                       file))
+            gd_driver = ogr.GetDriverByName('ESRI Shapefile')
+            # 0 means read-only. 1 means writeable.
+            ds = gd_driver.Open(file, 0)
+            if ds is None:
+                raise IHEFileError(file) from None
+            else:
+                ds_layer = ds.GetLayer()
+
+                # ds_feature_count = ds_layer.GetFeatureCount()
+                # print('\tNumber of features: %d' % ds_feature_count)
+                ipoly = 0
+                for ds_feature in ds_layer:
+                    ds_geom = ds_feature.GetGeometryRef()
+                    ds_geom_name = ds_feature.GetField("NAME")
+                    ds_geom_type_name = ds_geom.GetGeometryName()
+
+                    # ds_feature = ds_layer.GetFeature(i)
+                    # ds_geom_name = ds_feature.GetField("NAME")
+                    # ds_geom = ds_feature.GetGeometryRef()
+                    # print(ds_geom_type_name, ds_geom_name)
+
+                    if ds_geom_type_name == 'MULTIPOLYGON':
+                        for polygon in ds_geom:
+                            for ring in polygon:
+                                data[ipoly] = {
+                                    'name': ds_geom_name,
+                                    'x': [ring.GetPoint(ipt)[0] for ipt in
+                                          range(0, ring.GetPointCount())],
+                                    'y': [ring.GetPoint(ipt)[1] for ipt in
+                                          range(0, ring.GetPointCount())]
+                                }
+                                ipoly += 1
+                    elif ds_geom_type_name == 'POLYGON':
+                        for ring in ds_geom:
+                            data[ipoly] = {
+                                'name': ds_geom_name,
+                                'x': [ring.GetPoint(ipt)[0] for ipt in
+                                      range(0, ring.GetPointCount())],
+                                'y': [ring.GetPoint(ipt)[1] for ipt in
+                                      range(0, ring.GetPointCount())]
+                            }
+                            ipoly += 1
+
+                    else:
+                        # print('\t', ipoly, ingeomTypeName)
+                        # ipoly += 1
+                        pass
+
+                # if ds.GetLayer() > 0:
+                #     ds_band = ds.GetRasterBand(band)
+                #     ds_ncol = ds.RasterXSize
+                #     ds_nrow = ds.RasterYSize
+                #     ds_gtrf = ds.GetGeoTransform()
+                #     ds_xorg = ds_gtrf[0]
+                #     ds_yorg = ds_gtrf[3]
+                #     ds_pxlw = ds_gtrf[1]
+                #     ds_pxlh = ds_gtrf[5]
+                #     ds_lons = ds_xorg + np.arange(0, ds_ncol) * ds_pxlw
+                #     ds_lats = ds_yorg + np.arange(0, ds_nrow) * ds_pxlh
+                #     x, y = np.meshgrid(ds_lons, ds_lats)
+                #     if ds_band is None:
+                #         pass
+                #     else:
+                #         ds_band_ndv = ds_band.GetNoDataValue()
+                #         ds_band_scale = ds_band.GetScale()
+                #         # ds_band_unit = ds_band.GetUnitType()
+                #
+                #         ds_data = ds_band.ReadAsArray()
+                #
+                #         # Check data type
+                #         if isinstance(ds_data, np.ma.MaskedArray):
+                #             ds_data = ds_data.filled()
+                #         else:
+                #             ds_data = np.asarray(ds_data)
+                #
+                #         if np.logical_or(isinstance(ds_band_ndv, str),
+                #                          isinstance(ds_band_scale, str)):
+                #             ds_band_ndv = float(ds_band_ndv)
+                #             ds_band_scale = float(ds_band_scale)
+                #
+                #         # Convert units, set NVD
+                #         if ds_band_ndv is not None:
+                #             ds_data[ds_data == ds_band_ndv] = np.nan
+                #         if ds_band_scale is not None:
+                #             ds_data = ds_data * ds_band_scale
+                # else:
+                #     raise IHEFileError(file) from None
+                #
+                # data[var_name][prod_name] = ds_data
+                # data['x'] = x
+                # data['y'] = y
+                ds = None
 
         return data
 
@@ -236,7 +430,7 @@ class Template(object):
         print('{:>11s} {:>48s}'.format(name, fig_title))
 
         # parse yaml
-        fig_data = self.data[fig_conf['data']]
+        fig_data = self.csv[fig_conf['data']]
 
         prod_names = list(fig_data.keys())
         prod_nprod = len(prod_names)
@@ -264,8 +458,8 @@ class Template(object):
 
                 # prepare data
                 ylabel = '{}'.format(prod_name)
-                df = pd.DataFrame(fig_data[ylabel],
-                                  columns=['{}'.format(self.hyd['id'])])
+                df = pd.DataFrame(fig_data[prod_name],
+                                  columns=[prod_name])
 
                 # calculate data
                 df_yearly = df.groupby(df.index.year)
@@ -286,7 +480,7 @@ class Template(object):
                            header=[self.conf[name]['data']])
 
                 axes[0, 0].bar(x=df_yearly_x,
-                               height=df_yearly_sum['{}'.format(self.hyd['id'])],
+                               height=df_yearly_sum[ylabel],
                                width=ax_bar_width,
                                label='{}'.format(prod_name))
 
@@ -306,7 +500,7 @@ class Template(object):
             axes[0, 0].set_ylabel(fig_title,
                                   fontsize=ax_labelsize,
                                   labelpad=1)
-            axes[0, 0].legend()
+            axes[0, 0].legend(loc='upper right')
             axes[0, 0].grid(True, which='major',
                             color='#999999', linewidth=1, linestyle='-', alpha=0.2)
             fig.subplots_adjust(bottom=0.05, top=0.9,
@@ -333,8 +527,8 @@ class Template(object):
 
                 # prepare data
                 ylabel = '{}'.format(prod_name)
-                df = pd.DataFrame(fig_data[ylabel],
-                                  columns=['{}'.format(self.hyd['id'])])
+                df = pd.DataFrame(fig_data[prod_name],
+                                  columns=[prod_name])
 
                 # calculate data
                 df_monthly_avg = df.groupby(df.index.month).mean()
@@ -352,7 +546,7 @@ class Template(object):
                            header=[self.conf[name]['data']])
 
                 axes[0, 0].bar(x=df_monthly_x,
-                               height=df_monthly_avg['{}'.format(self.hyd['id'])],
+                               height=df_monthly_avg[prod_name],
                                width=ax_bar_width,
                                label='{}'.format(prod_name))
 
@@ -369,7 +563,7 @@ class Template(object):
             axes[0, 0].set_ylabel(fig_title,
                                   fontsize=ax_labelsize,
                                   labelpad=1)
-            axes[0, 0].legend()
+            axes[0, 0].legend(loc='upper right')
             axes[0, 0].grid(True, which='major',
                             color='#999999', linewidth=1, linestyle='-', alpha=0.2)
             fig.subplots_adjust(bottom=0.15, top=0.9,
@@ -399,13 +593,13 @@ class Template(object):
                     else:
                         var_opers.append('-')
                     var_names.append(sub_var)
-                    fig_data[sub_var] = self.data[sub_var]
+                    fig_data[sub_var] = self.csv[sub_var]
                     ipls += 1
             else:
                 if isub > 0:
                     var_opers.append('-')
                 var_names.append(variable)
-                fig_data[variable] = self.data[variable]
+                fig_data[variable] = self.csv[variable]
             isub += 1
         # print(var_names, var_opers)
 
@@ -454,7 +648,7 @@ class Template(object):
             ax_ticksize = 2
             ax_labelsize = 2
             ax_legendsize = 2
-        ax_ylim = [np.inf, -np.inf]
+        ax_zlim = [np.inf, -np.inf]
 
         # fig.suptitle(fig_title)
         if len(fig_comb) > 0:
@@ -474,7 +668,7 @@ class Template(object):
 
                         df_col = []
                         df = pd.DataFrame(fig_data[var_name][prod_name],
-                                          columns=['{}'.format(self.hyd['id'])])
+                                          columns=[prod_name])
                         df_col.append('var_{}'.format(ivar))
                         for ioper in range(len(var_opers)):
                             ivar = ioper + 1
@@ -485,8 +679,7 @@ class Template(object):
                             ylabel += '{}{}'.format(var_oper, prod_name)
                             df = pd.merge(df,
                                           pd.DataFrame(fig_data[var_name][prod_name],
-                                                       columns=['{}'.format(
-                                                           self.hyd['id'])]),
+                                                       columns=[prod_name]),
                                           left_index=True, right_index=True,
                                           how='inner')
                             df_col.append('var_{}'.format(ivar))
@@ -511,10 +704,10 @@ class Template(object):
                         y_avg = np.nanmean(df[ylabel])
 
                         # plot data
-                        ax_ylim[0] = min(ax_ylim[0],
+                        ax_zlim[0] = min(ax_zlim[0],
                                          min(np.min(df[ylabel]),
                                              np.min(df['var_{}'.format(ivar)])))
-                        ax_ylim[1] = max(ax_ylim[1],
+                        ax_zlim[1] = max(ax_zlim[1],
                                          max(np.max(df[ylabel]),
                                              np.max(df['var_{}'.format(ivar)])))
 
@@ -554,7 +747,7 @@ class Template(object):
                 for j in range(fig_ncol):
                     iplt = i * fig_ncol + j
                     if iplt < fig_naxe:
-                        axes[i, j].set_ylim(tuple(ax_ylim))
+                        axes[i, j].set_ylim(tuple(ax_zlim))
 
             if fig_nrow > 4:
                 fig.autofmt_xdate()
@@ -712,24 +905,24 @@ class Template(object):
                             else:
                                 var_opers.append('-')
                             var_names.append(sub_var)
-                            fig_data[sub_var] = self.data[sub_var]
+                            fig_data[sub_var] = self.csv[sub_var]
                             ipls += 1
                     else:
                         if isub > 0:
                             var_opers.append('-')
                         var_names.append(variable)
-                        fig_data[variable] = self.data[variable]
+                        fig_data[variable] = self.csv[variable]
                     isub += 1
             else:
                 if iagn > 0:
                     var_opers.append('.')
                 var_names.append(variable_root)
-                fig_data[variable_root] = self.data[variable_root]
+                fig_data[variable_root] = self.csv[variable_root]
             iagn += 1
         # print(var_names, var_opers)
 
         ax_legends = ['PCC', 'R2', 'RMSE']
-        ax_ylim = [[np.inf, -np.inf],
+        ax_zlim = [[np.inf, -np.inf],
                    [np.inf, -np.inf],
                    [np.inf, -np.inf]]
 
@@ -783,7 +976,7 @@ class Template(object):
 
                             df_col = []
                             df = pd.DataFrame(fig_data[var_name][prod_name],
-                                              columns=['{}'.format(self.hyd['id'])])
+                                              columns=[prod_name])
                             df_col.append('var_{}'.format(ivar))
                             for ioper in range(len(var_opers)):
                                 ivar = ioper + 1
@@ -795,8 +988,7 @@ class Template(object):
                                 df = pd.merge(df,
                                               pd.DataFrame(
                                                   fig_data[var_name][prod_name],
-                                                  columns=['{}'.format(
-                                                      self.hyd['id'])]),
+                                                  columns=[prod_name]),
                                               left_index=True, right_index=True,
                                               how='inner')
                                 df_col.append('var_{}'.format(ivar))
@@ -824,9 +1016,9 @@ class Template(object):
                                     if j == 0:
                                         y[yrow, j, ypix] = np.corrcoef(
                                             df[ylabel], df['var_{}'.format(ivar)])[0, 1]
-                                        ax_ylim[j] = [min(ax_ylim[j][0],
+                                        ax_zlim[j] = [min(ax_zlim[j][0],
                                                           np.min(y[yrow, j, ypix])),
-                                                      max(ax_ylim[j][1],
+                                                      max(ax_zlim[j][1],
                                                           np.max(y[yrow, j, ypix]))]
                                         # print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
                                         #       '{:>40s}'
@@ -839,9 +1031,9 @@ class Template(object):
                                     if j == 1:
                                         y[yrow, j, ypix] = r2_score(
                                             df[ylabel], df['var_{}'.format(ivar)])
-                                        ax_ylim[j] = [min(ax_ylim[j][0],
+                                        ax_zlim[j] = [min(ax_zlim[j][0],
                                                           np.min(y[yrow, j, ypix])),
-                                                      max(ax_ylim[j][1],
+                                                      max(ax_zlim[j][1],
                                                           np.max(y[yrow, j, ypix]))]
                                         # print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
                                         #       '{:>40s}'
@@ -854,9 +1046,9 @@ class Template(object):
                                     if j == 2:
                                         y[yrow, j, ypix] = RMSE(
                                             df[ylabel], df['var_{}'.format(ivar)])
-                                        ax_ylim[j] = [min(ax_ylim[j][0],
+                                        ax_zlim[j] = [min(ax_zlim[j][0],
                                                           np.min(y[yrow, j, ypix])),
-                                                      max(ax_ylim[j][1],
+                                                      max(ax_zlim[j][1],
                                                           np.max(y[yrow, j, ypix]))]
                                         # print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
                                         #       '{:>40s}'
@@ -908,8 +1100,8 @@ class Template(object):
                                       col_labels=ax_xticks,
                                       ax=axes[i, j],
                                       cmap=ax_cbarcmap[j],
-                                      vmin=ax_ylim[j][0],
-                                      vmax=ax_ylim[j][1]
+                                      vmin=ax_zlim[j][0],
+                                      vmax=ax_zlim[j][1]
                                       )
                     texts = self.annotate_heatmap(im,
                                                   valfmt="{x:.2f}",
@@ -982,8 +1174,8 @@ class Template(object):
                                           col_labels=ax_xticks,
                                           ax=axes[i, j],
                                           cmap=ax_cbarcmap[j],
-                                          vmin=ax_ylim[k][0],
-                                          vmax=ax_ylim[k][1]
+                                          vmin=ax_zlim[k][0],
+                                          vmax=ax_zlim[k][1]
                                           )
                         texts = self.annotate_heatmap(im,
                                                       valfmt="{x:.2f}",
@@ -1017,6 +1209,9 @@ class Template(object):
         fig_title = fig_conf['title']
         print('{:>11s} {:>48s}'.format(name, fig_title))
 
+        fp_csv = open(os.path.join(self.workspace['csv'],
+                                   '{}_{}.csv'.format(name, 'yearly')), 'w+')
+
         # parse yaml
         fig_data = {}
         var_names = []
@@ -1039,24 +1234,25 @@ class Template(object):
                             else:
                                 var_opers.append('-')
                             var_names.append(sub_var)
-                            fig_data[sub_var] = self.data[sub_var]
+                            fig_data[sub_var] = self.csv[sub_var]
                             ipls += 1
                     else:
                         if isub > 0:
                             var_opers.append('-')
                         var_names.append(variable)
-                        fig_data[variable] = self.data[variable]
+                        fig_data[variable] = self.csv[variable]
                     isub += 1
             else:
                 if iagn > 0:
                     var_opers.append('.')
                 var_names.append(variable_root)
-                fig_data[variable_root] = self.data[variable_root]
+                fig_data[variable_root] = self.csv[variable_root]
             iagn += 1
         # print(var_names, var_opers)
+        fp_csv.write('Combination,P,ET,dS,P-ET-ds,Q,Diff,%Diff\n')
 
         ax_legends = ['Diff [Mm3/year]', 'Diff [%]']
-        ax_ylim = [[np.inf, -np.inf],
+        ax_zlim = [[np.inf, -np.inf],
                    [np.inf, -np.inf]]
 
         fig_nscr = len(ax_legends)
@@ -1109,9 +1305,9 @@ class Template(object):
 
                             df_col = []
                             df = pd.DataFrame(fig_data[var_name][prod_name],
-                                              columns=['{}'.format(self.hyd['id'])])
+                                              columns=[prod_name])
                             # df_col.append('var_{}'.format(ivar))
-                            df_col.append(prod_name)
+                            df_col.append(var_name)
                             for ioper in range(len(var_opers)):
                                 ivar = ioper + 1
                                 var_oper = var_opers[ioper]
@@ -1122,12 +1318,11 @@ class Template(object):
                                 df = pd.merge(df,
                                               pd.DataFrame(
                                                   fig_data[var_name][prod_name],
-                                                  columns=['{}'.format(
-                                                      self.hyd['id'])]),
+                                                  columns=[prod_name]),
                                               left_index=True, right_index=True,
                                               how='inner')
                                 # df_col.append('var_{}'.format(ivar))
-                                df_col.append(prod_name)
+                                df_col.append(var_name)
                             df.columns = df_col
 
                             # calculate data
@@ -1135,18 +1330,20 @@ class Template(object):
                             #       '{:>40s}'.format(ipix, ylabel))
 
                             ivar = 0
+                            var_name = var_names[ivar]
                             prod_name = prod_names[ivar][prod_list[ivar]]
                             # df[ylabel] = df['var_{}'.format(ivar)]
-                            df[ylabel] = df[prod_name]
+                            df[ylabel] = df[var_name]
                             for ioper in range(len(var_opers)):
                                 var_oper = var_opers[ioper]
                                 ivar = ioper + 1
+                                var_name = var_names[ivar]
                                 prod_name = prod_names[ivar][prod_list[ivar]]
 
                                 if var_oper == '-':
-                                    df[ylabel] = df[ylabel] - df[prod_name]
+                                    df[ylabel] = df[ylabel] - df[var_name]
                                 if var_oper == '+':
-                                    df[ylabel] = df[ylabel] + df[prod_name]
+                                    df[ylabel] = df[ylabel] + df[var_name]
                                 if var_oper == '.':
                                     yrow = i
                                     # yrow = icnt % fig_nrow
@@ -1154,7 +1351,7 @@ class Template(object):
 
                                     # yearly, % difference ((PCP-ETA-dS) - Q)
                                     # calculate data
-                                    df[ylabel] = df[ylabel] - df[prod_name]
+                                    df[ylabel] = df[ylabel] - df[var_name]
 
                                     df = df * self.hyd['area']
                                     df_yearly = df.groupby(df.index.year)
@@ -1162,9 +1359,9 @@ class Template(object):
 
                                     if j == 0:
                                         y[yrow, j, ypix] = df_yearly_sum[ylabel].mean()
-                                        ax_ylim[j] = [min(ax_ylim[j][0],
+                                        ax_zlim[j] = [min(ax_zlim[j][0],
                                                           np.min(y[yrow, j, ypix])),
-                                                      max(ax_ylim[j][1],
+                                                      max(ax_zlim[j][1],
                                                           np.max(y[yrow, j, ypix]))]
                                         # print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
                                         #       '{:>40s}'
@@ -1174,14 +1371,20 @@ class Template(object):
                                         #           ii, jj,
                                         #           ylabel,
                                         #           y[yrow, j, ypix]))
+
                                     if j == 1:
+                                        df_yearly_sum['wb'] = \
+                                            df_yearly_sum[ylabel] + \
+                                            df_yearly_sum[var_name]
+
+                                        df_yearly_sum['dif'] = df_yearly_sum[ylabel]
                                         df_yearly_sum['difp'] = \
-                                            df_yearly_sum[ylabel] / \
-                                            df_yearly_sum[prod_name] * 100.0
+                                            df_yearly_sum['dif'] / \
+                                            df_yearly_sum[var_name] * 100.0
                                         y[yrow, j, ypix] = df_yearly_sum['difp'].mean()
-                                        ax_ylim[j] = [min(ax_ylim[j][0],
+                                        ax_zlim[j] = [min(ax_zlim[j][0],
                                                           np.min(y[yrow, j, ypix])),
-                                                      max(ax_ylim[j][1],
+                                                      max(ax_zlim[j][1],
                                                           np.max(y[yrow, j, ypix]))]
                                         # print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
                                         #       '{:>40s}'
@@ -1192,12 +1395,27 @@ class Template(object):
                                         #           ylabel,
                                         #           y[yrow, j, ypix]))
 
-                                    df_yearly_sum.sort_index(axis=0). \
-                                        to_csv(os.path.join(self.workspace['csv'],
-                                                            '{}_{}-{}.csv'.format(
-                                                                name, 'yearly',
-                                                                ylabel)),
-                                               index=True)
+                                        df_yearly_sum.sort_index(axis=0). \
+                                            to_csv(os.path.join(self.workspace['csv'],
+                                                                '{}_{}-{}.csv'.format(
+                                                                    name, 'yearly',
+                                                                    ylabel)),
+                                                   index=True)
+                                        # fp_csv.write(
+                                        #     'Combination,P,ET,dS,P-ET-ds,Q,Diff,%Diff\n')
+                                        fp_csv.write('{},'
+                                                     '{:.2f},{:.2f},{:.2f},'
+                                                     '{:.2f},'
+                                                     '{:.2f},'
+                                                     '{:.2f},{:.2f}\n'.format(
+                                                         ylabel.split('.')[0],
+                                                         df_yearly_sum[var_names[0]].mean(),
+                                                         df_yearly_sum[var_names[1]].mean(),
+                                                         df_yearly_sum[var_names[2]].mean(),
+                                                         df_yearly_sum['wb'].mean(),
+                                                         df_yearly_sum[var_names[3]].mean(),
+                                                         df_yearly_sum['dif'].mean(),
+                                                         df_yearly_sum['difp'].mean()))
 
                                 # print(df)
                                 # print('{:>10d}'
@@ -1210,6 +1428,7 @@ class Template(object):
                                 #                        y[i, 2, ipix]))
 
                             icnt += 1
+            fp_csv.close()
 
             # plot combine
             fig = plt.figure(**fig_conf['figure'])
@@ -1242,8 +1461,8 @@ class Template(object):
                                       col_labels=ax_xticks,
                                       ax=axes[i, j],
                                       cmap=ax_cbarcmap[j],
-                                      vmin=ax_ylim[j][0],
-                                      vmax=ax_ylim[j][1]
+                                      vmin=ax_zlim[j][0],
+                                      vmax=ax_zlim[j][1]
                                       )
                     if j == 0:
                         texts = self.annotate_heatmap(im,
@@ -1295,7 +1514,7 @@ class Template(object):
         print('{:>11s} {:>48s}'.format(name, fig_title))
 
         # parse yaml
-        fig_data = self.data[fig_conf['data']]
+        fig_data = self.csv[fig_conf['data']]
 
         prod_names = list(fig_data.keys())
         prod_nprod = len(prod_names)
@@ -1322,15 +1541,15 @@ class Template(object):
                 ylabel = '{}'.format(prod_name)
 
                 # x = pd.DataFrame(fig_data[xlabel],
-                #                  columns=['{}'.format(self.hyd['id'])])
-                df = pd.DataFrame(fig_data[ylabel],
-                                  columns=['{}'.format(self.hyd['id'])])
+                #                  columns=[ylabel])
+                df = pd.DataFrame(fig_data[prod_name],
+                                  columns=[prod_name])
 
                 # calculate data
                 # print(df)
 
                 # plot data
-                axes[0, 0].plot(df.index, df['{}'.format(self.hyd['id'])],
+                axes[0, 0].plot(df.index, df[ylabel],
                                 linestyle='solid',
                                 linewidth=1,
                                 label='{}'.format(prod_name))
@@ -1351,7 +1570,7 @@ class Template(object):
                                       fontsize=ax_labelsize,
                                       labelpad=1)
 
-            axes[0, 0].legend()
+            axes[0, 0].legend(loc='upper right')
             axes[0, 0].grid(True, which='major',
                             color='#999999', linewidth=1, linestyle='-', alpha=0.2)
 
@@ -1382,19 +1601,19 @@ class Template(object):
                             else:
                                 var_opers.append('-')
                             var_names.append(sub_var)
-                            fig_data[sub_var] = self.data[sub_var]
+                            fig_data[sub_var] = self.csv[sub_var]
                             ipls += 1
                     else:
                         if isub > 0:
                             var_opers.append('-')
                         var_names.append(variable)
-                        fig_data[variable] = self.data[variable]
+                        fig_data[variable] = self.csv[variable]
                     isub += 1
             else:
                 if iagn > 0:
                     var_opers.append('.')
                 var_names.append(variable_root)
-                fig_data[variable_root] = self.data[variable_root]
+                fig_data[variable_root] = self.csv[variable_root]
             iagn += 1
         # print(var_names, var_opers)
 
@@ -1443,7 +1662,7 @@ class Template(object):
             ax_ticksize = 2
             ax_labelsize = 2
             ax_legendsize = 2
-        ax_ylim = [np.inf, -np.inf]
+        ax_zlim = [np.inf, -np.inf]
 
         # fig.suptitle(fig_title)
         if len(fig_comb) > 0:
@@ -1463,7 +1682,7 @@ class Template(object):
 
                         df_col = []
                         df = pd.DataFrame(fig_data[var_name][prod_name],
-                                          columns=['{}'.format(self.hyd['id'])])
+                                          columns=[prod_name])
                         df_col.append('var_{}'.format(ivar))
                         for ioper in range(len(var_opers)):
                             ivar = ioper + 1
@@ -1474,8 +1693,7 @@ class Template(object):
                             ylabel += '{}{}'.format(var_oper, prod_name)
                             df = pd.merge(df,
                                           pd.DataFrame(fig_data[var_name][prod_name],
-                                                       columns=['{}'.format(
-                                                           self.hyd['id'])]),
+                                                       columns=[prod_name]),
                                           left_index=True, right_index=True,
                                           how='inner')
                             df_col.append('var_{}'.format(ivar))
@@ -1507,10 +1725,10 @@ class Template(object):
                         # print(df)
 
                         # plot data
-                        ax_ylim[0] = min(ax_ylim[0],
+                        ax_zlim[0] = min(ax_zlim[0],
                                          min(np.min(df[ylabel]),
                                              np.min(df['var_{}'.format(ivar)])))
-                        ax_ylim[1] = max(ax_ylim[1],
+                        ax_zlim[1] = max(ax_zlim[1],
                                          max(np.max(df[ylabel]),
                                              np.max(df['var_{}'.format(ivar)])))
 
@@ -1614,12 +1832,175 @@ class Template(object):
                     for j in range(fig_ncol):
                         iplt = i * fig_ncol + j
                         if iplt < fig_naxe:
-                            axes[i, j].set_ylim(tuple(ax_ylim))
+                            axes[i, j].set_ylim(tuple(ax_zlim))
             if fig_nrow > 4:
                 fig.autofmt_xdate()
 
             self.saveas(fig, name)
             self.close(fig)
+
+    def plot_map_wb(self, name):
+        fig_conf = self.conf[name]
+        fig_title = fig_conf['title']
+        print('{:>11s} {:>48s}'.format(name, fig_title))
+
+        fig_data = {}
+        var_names = []
+        var_opers = []
+        tmp_names_root = fig_conf['data'].split('.')
+        iagn = 0
+        for variable_root in tmp_names_root:
+            # if len(variable_root.split('_')) > 1:
+            #     tmp_names_subroot = variable_root.split('_')
+            #     isub = 0
+            if len(variable_root.split('-')) > 1:
+                tmp_names = variable_root.split('-')
+                isub = 0
+                for variable in tmp_names:
+                    if len(variable.split('+')) > 1:
+                        ipls = 0
+                        for sub_var in variable.split('+'):
+                            if ipls > 0:
+                                var_opers.append('+')
+                            else:
+                                var_opers.append('-')
+                            var_names.append(sub_var)
+                            fig_data[sub_var] = self.tif[sub_var]
+                            ipls += 1
+                    else:
+                        if isub > 0:
+                            var_opers.append('-')
+                        var_names.append(variable)
+                        fig_data[variable] = self.tif[variable]
+                    isub += 1
+            else:
+                if iagn > 0:
+                    var_opers.append('.')
+                var_names.append(variable_root)
+                fig_data[variable_root] = self.tif[variable_root]
+            iagn += 1
+
+        prod_names = []
+        prod_nprod = []
+        for ivar in range(len(var_names)):
+            prod_names.append(list(fig_data[var_names[ivar]].keys()))
+            prod_nprod.append([i for i in range(len(fig_data[var_names[ivar]].keys()))])
+            if 'PCP' in var_names[ivar]:
+                ax_xticks = list(fig_data[var_names[ivar]].keys())
+                fig_pix_ncol = int(len(ax_xticks))
+            if 'ET' in var_names[ivar]:
+                ax_yticks = list(fig_data[var_names[ivar]].keys())
+                fig_pix_nrow = int(len(ax_yticks))
+            if 'dS' == var_names[ivar]:
+                ax_titles = list(fig_data[var_names[ivar]].keys())
+                fig_nrow = int(len(ax_titles))
+        fig_nrow = 1
+        fig_ncol = 1
+        fig_pix_comb = list(itertools.product(*prod_nprod))
+
+        if len(fig_pix_comb) > 0:
+            data = {}
+            ylabel = {}
+
+            ax_zlim = [np.inf, -np.inf]
+            for i in range(len(fig_pix_comb)):
+                prod_list = list(fig_pix_comb[i])
+
+                # prepare data
+                ivar = 0
+                var_name = var_names[ivar]
+                prod_name = prod_names[ivar][prod_list[ivar]]
+
+                ylabel[i] = '{}'.format(prod_name)
+                for ioper in range(len(var_opers)):
+                    ivar = ioper + 1
+                    var_oper = var_opers[ioper]
+                    var_name = var_names[ivar]
+                    prod_name = prod_names[ivar][prod_list[ivar]]
+
+                    ylabel[i] += '{}{}'.format(var_oper, prod_name)
+
+                # calculate data
+                ivar = 0
+                var_name = var_names[ivar]
+                prod_name = prod_names[ivar][prod_list[ivar]]
+
+                data[ylabel[i]] = fig_data[var_name][prod_name]
+                for ioper in range(len(var_opers)):
+                    ivar = ioper + 1
+                    var_oper = var_opers[ioper]
+                    var_name = var_names[ivar]
+                    prod_name = prod_names[ivar][prod_list[ivar]]
+
+                    if var_oper == '-':
+                        data[ylabel[i]] = \
+                            data[ylabel[i]] - fig_data[var_name][prod_name]
+                    if var_oper == '+':
+                        data[ylabel[i]] = \
+                            data[ylabel[i]] + fig_data[var_name][prod_name]
+                    if var_oper == '.':
+                        data[ylabel[i]] = \
+                            (data[ylabel[i]] - fig_data[var_name][prod_name]) / \
+                            fig_data[var_name][prod_name]
+                ax_zlim[0] = min(ax_zlim[0], np.nanmin(data[ylabel[i]]))
+                ax_zlim[1] = max(ax_zlim[1], np.nanmax(data[ylabel[i]]))
+
+            # plot
+            ax_cbarcmap = ['jet_r']
+
+            for i in range(len(fig_pix_comb)):
+                fig = plt.figure(**fig_conf['figure'])
+                fig.subplots_adjust(bottom=0.1, top=0.90,
+                                    left=0.15, right=0.80,
+                                    wspace=0.2, hspace=0.4)
+
+                axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
+                im = axes[0, 0].pcolor(self.tif['x'], self.tif['y'], data[ylabel[i]],
+                                       cmap=ax_cbarcmap[0],
+                                       vmin=ax_zlim[0],
+                                       vmax=ax_zlim[1])
+
+                if self.shp is not None:
+                    for igeom, geom in self.shp.items():
+                        axes[0, 0].plot(geom['x'], geom['y'],
+                                        label=geom['name'])
+                ax_leg = axes[0, 0].legend(loc='best',
+                                           markerscale=0.5,
+                                           markerfirst=True,
+                                           fontsize=4,
+                                           labelspacing=0.2,
+                                           fancybox=False,
+                                           shadow=False,
+                                           framealpha=1.0, frameon=False)
+                for ax_leg_line in ax_leg.get_lines():
+                    ax_leg_line.set_linewidth(0.5)
+
+                axes[0, 0].set_title(ylabel[i])
+                axes[0, 0].set_xlabel('Longitude')
+                axes[0, 0].set_ylabel('Latitude')
+                axes[0, 0].grid(True, which='major',
+                                color='#999999', linewidth=1, linestyle='-', alpha=0.2)
+                axes[0, 0].axis('equal')
+
+                # cmap = plt.get_cmap(ax_cbarcmap[0])
+                # clevs = np.linspace(ax_zlim[0], ax_zlim[1],
+                #                     (ax_zlim[1] - ax_zlim[0]) / 5.0)
+                #
+                # map = Basemap(resolution='f',
+                #               projection='cyl',
+                #               llcrnrlon=-75, llcrnrlat=-5,
+                #               urcrnrlon=-46, urcrnrlat=0)
+                # cs = map.contourf(self.tif['x'], self.tif['y'], data, clevs, cmap=cmap)
+                ax_cb_l = 0.82
+                ax_cb_b = 0.3
+                ax_cb_w = 0.03
+                ax_cb_h = 0.4
+                cax = fig.add_axes([ax_cb_l, ax_cb_b, ax_cb_w, ax_cb_h])
+                cbar = plt.colorbar(im, ax=axes.ravel().tolist(), cax=cax,
+                                    orientation="vertical")
+
+                self.saveas(fig, '{}_{}'.format(name, ylabel[i]))
+                self.close(fig)
 
     def plot_scatter_prod(self, name):
         fig_conf = self.conf[name]
@@ -1627,7 +2008,7 @@ class Template(object):
         print('{:>11s} {:>48s}'.format(name, fig_title))
 
         # parse yaml
-        fig_data = self.data[fig_conf['data']]
+        fig_data = self.csv[fig_conf['data']]
 
         prod_names = list(fig_data.keys())
         prod_nprod = len(prod_names)
@@ -1679,13 +2060,13 @@ class Template(object):
                         ylabel = prod_names[fig_comb[iplt][0]]
 
                         # x = pd.DataFrame(fig_data[xlabel],
-                        #                  columns=['date', '{}'.format(self.hyd['id'])])
+                        #                  columns=['date', ylabel])
                         # y = pd.DataFrame(fig_data[ylabel],
-                        #                  columns=['date', '{}'.format(self.hyd['id'])])
+                        #                  columns=['date', ylabel])
 
                         # calculate data
-                        df = pd.merge(fig_data[ylabel]['{}'.format(self.hyd['id'])],
-                                      fig_data[xlabel]['{}'.format(self.hyd['id'])],
+                        df = pd.merge(fig_data[ylabel],
+                                      fig_data[xlabel],
                                       left_index=True, right_index=True,
                                       how='outer',
                                       suffixes=('_l', '_r'))

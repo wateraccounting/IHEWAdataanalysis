@@ -1,190 +1,200 @@
-fig1a:
-  title: 'Precipitation [mm/month]'
-  data: 'PCP'
-  ptype: 'line_prod'
-  figure:
-    num: 1
-    # figsize: [6.4, 4.8]
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
+#fig1a:
+#  title: 'Precipitation [mm]'
+#  data: 'PCP'
+#  ptype: 'line_prod'
+#  figure:
+#    num: 1
+#    # figsize: [6.4, 4.8]
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig1b:
+#  title: 'Actual Evapotranspiration [mm]'
+#  data: 'ETA'
+#  ptype: 'line_prod'
+#  figure:
+#    num: 1
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig1c:
+#  title: 'Storage Change [mm]'
+#  data: 'dS'
+#  ptype: 'line_prod'
+#  figure:
+#    num: 1
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig1d:
+#  title: 'Runoff [mm]'
+#  data: 'RO'
+#  ptype: 'line_prod'
+#  figure:
+#    num: 1
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig1e:
+#  title: 'Discharge [m3/s]'
+#  data: 'Q'
+#  ptype: 'line_prod'
+#  figure:
+#    num: 1
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig2a:
+#  title: 'Precipitation [mm]'
+#  data: 'PCP'
+#  ptype: 'scatter_prod'
+#  figure:
+#    num: 2
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig2b:
+#  title: 'Actual Evapotranspiration [mm]'
+#  data: 'ETA'
+#  ptype: 'scatter_prod'
+#  figure:
+#    num: 2
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig2c:
+#  title: 'Storage Change [mm]'
+#  data: 'dS'
+#  ptype: 'scatter_prod'
+#  figure:
+#    num: 2
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig2d:
+#  title: 'Runoff [mm]'
+#  data: 'RO'
+#  ptype: 'scatter_prod'
+#  figure:
+#    num: 2
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig2e:
+#  title: 'Discharge [m3/s]'
+#  data: 'Q'
+#  ptype: 'scatter_prod'
+#  figure:
+#    num: 2
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig3a:
+#  title: 'Precipitation [mm]'
+#  data: 'PCP'
+#  ptype: 'bar_prod'
+#  figure:
+#    num: 3
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig3b:
+#  title: 'Actual Evapotranspiration [mm]'
+#  data: 'ETA'
+#  ptype: 'bar_prod'
+#  figure:
+#    num: 3
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig3c:
+#  title: 'Storage Change [mm]'
+#  data: 'dS'
+#  ptype: 'bar_prod'
+#  figure:
+#    num: 3
+#    figsize: [6.4, 3.2]
+#    dpi: 400
+#  #axes:
+#
+#fig3d:
+#  title: 'Runoff [mm]'
+#  data: 'RO'
+#  ptype: 'bar_prod'
+#  figure:
+#    num: 3
+#    figsize: [6.4, 4.8]
+#    dpi: 400
+#  #axes:
+#
+#fig3e:
+#  title: 'Discharge [m3/s]'
+#  data: 'Q'
+#  ptype: 'bar_prod'
+#  figure:
+#    num: 3
+#    figsize: [6.4, 4.8]
+#    dpi: 400
+#  #axes:
+#
+#fig4:
+#  title: 'P-ET-dS-RO [mm]'
+#  data: 'PCP-ETA-dS-RO'
+#  ptype: 'bar_wb'
+#  figure:
+#    num: 4
+#    figsize: [6.4, 4.8]
+#    dpi: 400
+#  #axes:
+#
+#fig5:
+#  title: 'P-ET-dS vs RO [mm]'
+#  data: 'PCP-ETA-dS.RO'
+#  ptype: 'line_wb'
+#  figure:
+#    num: 5
+#    figsize: [6.4, 4.8]
+#    dpi: 400
+#  #axes:
+#
+#fig6:
+#  title: 'P-ET-dS vs RO [PCC, R2, RMSE]'
+#  data: 'PCP-ETA-dS.RO'
+#  ptype: 'heatmap_score'
+#  figure:
+#    num: 6
+#    figsize: [6.4, 4.8]
+#    dpi: 400
+#  #axes:
+#
+#fig7:
+#  title: 'P-ET-dS vs RO [Diff, %Diff]'
+#  data: 'PCP-ETA-dS.RO'
+#  ptype: 'heatmap_wb'
+#  figure:
+#    num: 7
+#    figsize: [6.4, 4.8]
+#    dpi: 400
+#  #axes:
 
-fig1b:
-  title: 'Actual Evapotranspiration [mm/month]'
-  data: 'ETA'
-  ptype: 'line_prod'
+fig8:
+  title: 'P-ET-dS [Runoff]'
+  data: 'PCP-ETA-dS'
+  ptype: 'map_wb'
   figure:
-    num: 1
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
-
-fig1c:
-  title: 'Storage Change [mm/month]'
-  data: 'dS'
-  ptype: 'line_prod'
-  figure:
-    num: 1
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
-
-fig1d:
-  title: 'Runoff [mm/month]'
-  data: 'RO'
-  ptype: 'line_prod'
-  figure:
-    num: 1
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
-
-fig1e:
-  title: 'Discharge [m3/s]'
-  data: 'Q'
-  ptype: 'line_prod'
-  figure:
-    num: 1
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
-
-fig2a:
-  title: 'Precipitation [mm/month]'
-  data: 'PCP'
-  ptype: 'scatter_prod'
-  figure:
-    num: 2
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
-
-fig2b:
-  title: 'Actual Evapotranspiration [mm/month]'
-  data: 'ETA'
-  ptype: 'scatter_prod'
-  figure:
-    num: 2
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
-
-fig2c:
-  title: 'Storage Change [mm/month]'
-  data: 'dS'
-  ptype: 'scatter_prod'
-  figure:
-    num: 2
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
-
-fig2d:
-  title: 'Runoff [mm/month]'
-  data: 'RO'
-  ptype: 'scatter_prod'
-  figure:
-    num: 2
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
-
-fig2e:
-  title: 'Discharge [m3/s]'
-  data: 'Q'
-  ptype: 'scatter_prod'
-  figure:
-    num: 2
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
-
-fig3a:
-  title: 'Precipitation [mm/month]'
-  data: 'PCP'
-  ptype: 'bar_prod'
-  figure:
-    num: 3
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
-
-fig3b:
-  title: 'Actual Evapotranspiration [mm/month]'
-  data: 'ETA'
-  ptype: 'bar_prod'
-  figure:
-    num: 3
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
-
-fig3c:
-  title: 'Storage Change [mm/month]'
-  data: 'dS'
-  ptype: 'bar_prod'
-  figure:
-    num: 3
-    figsize: [6.4, 3.2]
-    dpi: 400
-  #axes:
-
-fig3d:
-  title: 'Runoff [mm/month]'
-  data: 'RO'
-  ptype: 'bar_prod'
-  figure:
-    num: 3
-    figsize: [6.4, 4.8]
-    dpi: 400
-  #axes:
-
-fig3e:
-  title: 'Discharge [m3/s]'
-  data: 'Q'
-  ptype: 'bar_prod'
-  figure:
-    num: 3
-    figsize: [6.4, 4.8]
-    dpi: 400
-  #axes:
-
-fig4:
-  title: 'P-ET-dS-RO [mm/month]'
-  data: 'PCP-ETA-dS-RO'
-  ptype: 'bar_wb'
-  figure:
-    num: 4
-    figsize: [6.4, 4.8]
-    dpi: 400
-  #axes:
-
-fig5:
-  title: 'P-ET-dS vs RO [mm/month]'
-  data: 'PCP-ETA-dS.RO'
-  ptype: 'line_wb'
-  figure:
-    num: 5
-    figsize: [6.4, 4.8]
-    dpi: 400
-  #axes:
-
-fig6:
-  title: 'P-ET-dS vs RO [PCC, R2, RMSE]'
-  data: 'PCP-ETA-dS.RO'
-  ptype: 'heatmap_score'
-  figure:
-    num: 6
-    figsize: [6.4, 4.8]
-    dpi: 400
-  #axes:
-
-fig7:
-  title: 'P-ET-dS vs RO [Diff, %Diff]'
-  data: 'PCP-ETA-dS.RO'
-  ptype: 'heatmap_wb'
-  figure:
-    num: 7
-    figsize: [6.4, 4.8]
+    num: 8
+    figsize: [4.8, 6.4]
     dpi: 400
   #axes:

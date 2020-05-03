@@ -2,69 +2,146 @@ template:
   provider: IHE
   name: ADB
 
-data:
+  # ftype: 'NetCDF'
+  # ftype: 'GTiff'
+  # ftype: 'CSV'
+areas:
   area1:
     hydrology:
-      # csv column [0, 1, 2, ...]
-      id: 1
       # km2 / 1000.0 = Mm2
       area: 21.503
       year: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2]
+      # csv column
+      date:
+        - start: '2005-01-01'
+        - end: '2012-12-31'
+      basin:
+        shp:
+          folder: 'data/Shapefile'
+          fname: 'Mindanao-RiverBasin.shp'
 
-    # ftype: 'NetCDF'
-    # ftype: 'GTiff'
-    # ftype: 'CSV'
-    data:
-      #Basin:
-      #  folder: 'data/Shapefile'
-      #  file: 'Mindanao-RiverBasin.shp'
+    directory:
       dS:
     #    GSFC:
-    #      folder: 'data/Output'
+    #      folder: 'data/Output/csv'
     #      ftype: 'CSV'
         CSR:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          tif:
+            folder: 'data/Output/tif'
+            fname: 'CSR_yearly.tif'
+          csv:
+            folder: 'data/Output/csv'
+            fname: 'dS-CSR-1.csv'
+            column: 'mean_1'
+            index: 'date'
         GFZ:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          tif:
+            folder: 'data/Output/tif'
+            fname: 'GFZ_yearly.tif'
+          csv:
+            folder: 'data/Output/csv'
+            fname: 'dS-GFZ-1.csv'
+            column: 'mean_1'
+            index: 'date'
         JPL:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          tif:
+            folder: 'data/Output/tif'
+            fname: 'JPL_yearly.tif'
+          csv:
+            folder: 'data/Output/csv'
+            fname: 'dS-JPL-1.csv'
+            column: 'mean_1'
+            index: 'date'
       ETA:
         ALEXI:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          tif:
+            folder: 'data/Output/tif'
+            fname: 'ALEXI_yearly.tif'
+          csv:
+            folder: 'data/Output/csv'
+            fname: 'ETA-ALEXI.csv'
+            column: 'mean_1'
+            index: 'date'
         CMRSET:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          tif:
+            folder: 'data/Output/tif'
+            fname: 'CMRSET_yearly.tif'
+          csv:
+            folder: 'data/Output/csv'
+            fname: 'ETA-CMRSET.csv'
+            column: 'mean_1'
+            index: 'date'
     #    GLDAS:
-    #      folder: 'data/Output'
-    #      ftype: 'CSV'
+    #      folder: 'data/Output/csv'
+    #       fname: 'ETA-GLDAS.csv'
+    #       column: 'mean_1'
+    #       index: 'date'
         GLEAM:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          tif:
+            folder: 'data/Output/tif'
+            fname: 'GLEAM_yearly.tif'
+          csv:
+            folder: 'data/Output/csv'
+            fname: 'ETA-GLEAM.csv'
+            column: 'mean_1'
+            index: 'date'
         MOD16A2:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          tif:
+            folder: 'data/Output/tif'
+            fname: 'MOD16A2_yearly.tif'
+          csv:
+            folder: 'data/Output/csv'
+            fname: 'ETA-MOD16A2.csv'
+            column: 'mean_1'
+            index: 'date'
         SSEBop:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          tif:
+            folder: 'data/Output/tif'
+            fname: 'SSEBop_yearly.tif'
+          csv:
+            folder: 'data/Output/csv'
+            fname: 'ETA-SSEBop.csv'
+            column: 'mean_1'
+            index: 'date'
       PCP:
         CHIRPS:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          tif:
+            folder: 'data/Output/tif'
+            fname: 'CHIRPS_yearly.tif'
+          csv:
+            folder: 'data/Output/csv'
+            fname: 'PCP-CHIRPS.csv'
+            column: 'mean_1'
+            index: 'date'
         GPM:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          tif:
+            folder: 'data/Output/tif'
+            fname: 'GPM_yearly.tif'
+          csv:
+            folder: 'data/Output/csv'
+            fname: 'PCP-GPM.csv'
+            column: 'mean_1'
+            index: 'date'
         TRMM:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          tif:
+            folder: 'data/Output/tif'
+            fname: 'TRMM_yearly.tif'
+          csv:
+            folder: 'data/Output/csv'
+            fname: 'PCP-TRMM.csv'
+            column: 'mean_1'
+            index: 'date'
       RO:
         FloodObservatory:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          csv:
+            folder: 'data/Output'
+            fname: 'RO-FloodObservatory.csv'
+            column: '1'
+            index: 'date'
       Q:
         FloodObservatory:
-          folder: 'data/Output'
-          ftype: 'CSV'
+          csv:
+            folder: 'data/Output'
+            fname: 'Q-FloodObservatory.csv'
+            column: '1'
+            index: 'date'
