@@ -1964,16 +1964,17 @@ class Template(object):
                     for igeom, geom in self.shp.items():
                         axes[0, 0].plot(geom['x'], geom['y'],
                                         label=geom['name'])
-                ax_leg = axes[0, 0].legend(loc='best',
-                                           markerscale=0.5,
-                                           markerfirst=True,
-                                           fontsize=4,
-                                           labelspacing=0.2,
-                                           fancybox=False,
-                                           shadow=False,
-                                           framealpha=1.0, frameon=False)
-                for ax_leg_line in ax_leg.get_lines():
-                    ax_leg_line.set_linewidth(0.5)
+                if len(self.shp.keys()) > 1:
+                    ax_leg = axes[0, 0].legend(loc='best',
+                                               markerscale=0.5,
+                                               markerfirst=True,
+                                               fontsize=5,
+                                               labelspacing=0.2,
+                                               fancybox=False,
+                                               shadow=False,
+                                               framealpha=1.0, frameon=False)
+                    for ax_leg_line in ax_leg.get_lines():
+                        ax_leg_line.set_linewidth(0.5)
 
                 axes[0, 0].set_title(ylabel[i])
                 axes[0, 0].set_xlabel('Longitude')
