@@ -611,25 +611,32 @@ class Template(object):
             prod_nprod.append([i for i in range(len(fig_data[var_names[ivar]].keys()))])
             fig_naxe *= np.prod(len(fig_data[var_names[ivar]].keys()))
 
-        fig_nrow = int(np.floor(np.sqrt(fig_naxe)))
-        fig_ncol = int(np.ceil(float(fig_naxe) / float(fig_nrow)))
+        # fig_nrow = int(np.floor(np.sqrt(fig_naxe)))
+        # fig_ncol = int(np.ceil(float(fig_naxe) / float(fig_nrow)))
+        fig_ncol = min(3, int(np.floor(np.sqrt(fig_naxe))))
+        fig_nrow = int(np.ceil(float(fig_naxe) / float(fig_ncol)))
         fig_comb = list(itertools.product(*prod_nprod))
         # print(len(fig_comb), prod_names)
 
         fig = plt.figure(**fig_conf['figure'])
-        if 0 < fig_nrow <= 2:
+        if 0 < fig_nrow <= 3:
             fig.subplots_adjust(bottom=0.15, top=0.8,
                                 left=0.075, right=0.95,
                                 wspace=0.2, hspace=0.4)
-        if 2 < fig_nrow <= 5:
+        if 3 < fig_nrow <= 5:
             fig.set_size_inches(6.4, 4.8, forward=True)
             fig.subplots_adjust(bottom=0.1, top=0.85,
                                 left=0.075, right=0.95,
                                 wspace=0.2, hspace=0.45)
-        if 5 < fig_nrow:
-            fig.set_size_inches(6.4, 4.8, forward=True)
+        if 5 < fig_nrow <= 10:
+            fig.set_size_inches(6.4, 4.8 * (fig_nrow // 5), forward=True)
             fig.subplots_adjust(bottom=0.05, top=0.95,
                                 left=0.05, right=0.9,
+                                wspace=0.2, hspace=0.45)
+        if 10 < fig_nrow:
+            fig.set_size_inches(6.4, 4.8 * (fig_nrow // 5), forward=True)
+            fig.subplots_adjust(bottom=0.05, top=0.95,
+                                left=0.05, right=0.95,
                                 wspace=0.2, hspace=0.45)
 
         axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
@@ -1249,7 +1256,7 @@ class Template(object):
                 fig_data[variable_root] = self.csv[variable_root]
             iagn += 1
         # print(var_names, var_opers)
-        fp_csv.write('Combination,P,ET,dS,P-ET-ds,Q,Diff,%Diff\n')
+        fp_csv.write('Combination,P,ET,$\\Delta S$,$P-ET-\\Delta S$,Q,Diff,\\%Diff\n')
 
         ax_legends = ['Diff [Mm3/year]', 'Diff [%]']
         ax_zlim = [[np.inf, -np.inf],
@@ -1395,12 +1402,32 @@ class Template(object):
                                         #           ylabel,
                                         #           y[yrow, j, ypix]))
 
+                                        # Year,P,ET,dS,P-ET-ds,Q,Diff,\\%Diff\
                                         df_yearly_sum.sort_index(axis=0). \
                                             to_csv(os.path.join(self.workspace['csv'],
                                                                 '{}_{}-{}.csv'.format(
                                                                     name, 'yearly',
                                                                     ylabel)),
-                                                   index=True)
+                                                   index=True,
+                                                   index_label='Year',
+                                                   columns=[
+                                                       var_names[0],
+                                                       var_names[1],
+                                                       var_names[2],
+                                                       'wb',
+                                                       var_names[3],
+                                                       'dif',
+                                                       'difp'
+                                                   ],
+                                                   header=[
+                                                       'P',
+                                                       'ET',
+                                                       '$\\Delta S$',
+                                                       '$P-ET-\\Delta S$',
+                                                       'Q',
+                                                       'Diff',
+                                                       '\\%Diff'
+                                                   ])
                                         # fp_csv.write(
                                         #     'Combination,P,ET,dS,P-ET-ds,Q,Diff,%Diff\n')
                                         fp_csv.write('{},'
@@ -1625,26 +1652,34 @@ class Template(object):
             prod_nprod.append([i for i in range(len(fig_data[var_names[ivar]].keys()))])
             fig_naxe *= np.prod(len(fig_data[var_names[ivar]].keys()))
 
-        fig_nrow = int(np.floor(np.sqrt(fig_naxe)))
-        fig_ncol = int(np.ceil(float(fig_naxe) / float(fig_nrow)))
+        # fig_nrow = int(np.floor(np.sqrt(fig_naxe)))
+        # fig_ncol = int(np.ceil(float(fig_naxe) / float(fig_nrow)))
+        fig_ncol = min(3, int(np.floor(np.sqrt(fig_naxe))))
+        fig_nrow = int(np.ceil(float(fig_naxe) / float(fig_ncol)))
         fig_comb = list(itertools.product(*prod_nprod))
         # print(len(fig_comb), prod_names)
 
         fig = plt.figure(**fig_conf['figure'])
-        if 0 < fig_nrow <= 2:
+        if 0 < fig_nrow <= 3:
             fig.subplots_adjust(bottom=0.15, top=0.8,
                                 left=0.075, right=0.95,
                                 wspace=0.2, hspace=0.4)
-        if 2 < fig_nrow <= 5:
+        if 3 < fig_nrow <= 5:
             fig.set_size_inches(6.4, 4.8, forward=True)
             fig.subplots_adjust(bottom=0.1, top=0.85,
                                 left=0.075, right=0.95,
                                 wspace=0.2, hspace=0.45)
-        if 5 < fig_nrow:
-            fig.set_size_inches(6.4, 4.8, forward=True)
+        if 5 < fig_nrow <= 10:
+            fig.set_size_inches(6.4, 4.8 * (fig_nrow // 5), forward=True)
             fig.subplots_adjust(bottom=0.05, top=0.95,
                                 left=0.05, right=0.9,
                                 wspace=0.2, hspace=0.45)
+        if 10 < fig_nrow:
+            fig.set_size_inches(6.4, 4.8 * (fig_nrow // 5), forward=True)
+            fig.subplots_adjust(bottom=0.05, top=0.95,
+                                left=0.05, right=0.95,
+                                wspace=0.2, hspace=0.45)
+
 
         axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
         if 0 < fig_naxe <= 10:
