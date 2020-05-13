@@ -31,15 +31,20 @@ import pandas as pd
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
+# import netCDF4
+
 from scipy.stats import gaussian_kde
 from sklearn.metrics import r2_score
-
-import netCDF4
 
 try:
     import ogr, osr, gdal
 except ImportError:
     from osgeo import ogr, osr, gdal
+
+try:
+    from ...utils.util import Plot
+except ImportError:
+    from IHEWAdataanalysis.utils.util import Plot
 
 try:
     # IHEClassInitError, IHEStringError, IHETypeError, IHEKeyError, IHEFileError
@@ -48,14 +53,14 @@ except ImportError:
     from IHEWAdataanalysis.exception import IHEClassInitError, IHEFileError
 
 try:
-    from .indicators import RMSE
+    from ...utils.indicators import RMSE
 except ImportError:
-    from IHEWAdataanalysis.indicators import RMSE
+    from IHEWAdataanalysis.utils.indicators import RMSE
 
 try:
-    from .topo import intersection
+    from ...utils.topo import intersection
 except ImportError:
-    from IHEWAdataanalysis.topo import intersection
+    from IHEWAdataanalysis.utils.topo import intersection
 
 
 class Template(object):

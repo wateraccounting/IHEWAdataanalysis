@@ -4,10 +4,10 @@ IHEWAdataanalysis.templates.IHE package
 Submodules
 ----------
 
-IHEWAdataanalysis.templates.IHE.FAO module
+IHEWAdataanalysis.templates.IHE.ADB module
 ------------------------------------------
 
-.. automodule:: IHEWAdataanalysis.templates.IHE.FAO
+.. automodule:: IHEWAdataanalysis.templates.IHE.ADB
    :members:
    :undoc-members:
    :show-inheritance:

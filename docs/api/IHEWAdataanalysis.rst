@@ -8,6 +8,7 @@ Subpackages
 
    IHEWAdataanalysis.scripts
    IHEWAdataanalysis.templates
+   IHEWAdataanalysis.utils
 
 Submodules
 ----------
@@ -24,14 +25,6 @@ IHEWAdataanalysis.exception module
 ----------------------------------
 
 .. automodule:: IHEWAdataanalysis.exception
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-IHEWAdataanalysis.indicators module
------------------------------------
-
-.. automodule:: IHEWAdataanalysis.indicators
    :members:
    :undoc-members:
    :show-inheritance:

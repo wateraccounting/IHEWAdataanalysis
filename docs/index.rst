@@ -15,13 +15,6 @@ This project is fully developed by Water Accounting team at IHE-Delft.
     - .bbl -> pdflatex -> .pdf 1st time
     - .bbl -> pdflatex -> .pdf 2ed time, make sure
 
-.. warning::
-
-    Set gdal executable files to system "PATH".
-
-    Must contain **config.yml** file,
-    see `config.yml-example <https://github.com/wateraccounting/IHEWAdataanalysis/tree/master/examples>`_.
-
 
 Installation
 ============
