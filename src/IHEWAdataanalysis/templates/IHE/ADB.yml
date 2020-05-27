@@ -180,9 +180,9 @@ fig6:
   #axes:
 
 fig7:
-  title: 'P-ET-dS vs RO [Diff, %Diff]'
+  title: 'P-ET-dS vs RO [Diff, %Diff of Observation]'
   data: 'PCP-ETA-dS.RO'
-  ptype: 'heatmap_wb'
+  ptype: 'heatmap_wb_obs'
   figure:
     num: 7
     figsize: [6.4, 4.8]
@@ -190,6 +190,16 @@ fig7:
   #axes:
 
 fig8:
+  title: 'P-ET-dS vs RO [Diff, %Diff of Precipitation]'
+  data: 'PCP-ETA-dS.RO'
+  ptype: 'heatmap_wb_pcp'
+  figure:
+    num: 7
+    figsize: [6.4, 4.8]
+    dpi: 400
+  #axes:
+
+fig9:
   title: 'P-ET-dS [Runoff]'
   data: 'PCP-ETA-dS'
   ptype: 'map_wb'

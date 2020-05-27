@@ -106,7 +106,8 @@ class Template(object):
             'bar_prod',
             'bar_wb',
             'heatmap_score',
-            'heatmap_wb',
+            'heatmap_wb_obs',
+            'heatmap_wb_pcp',
             'line_prod',
             'line_wb',
             'map_wb',
@@ -182,8 +183,10 @@ class Template(object):
                         self.plot_bar_wb(fig_name)
                     if ptype == 'heatmap_score':
                         self.plot_heatmap_score(fig_name)
-                    if ptype == 'heatmap_wb':
-                        self.plot_heatmap_wb(fig_name)
+                    if ptype == 'heatmap_wb_obs':
+                        self.plot_heatmap_wb_obs(fig_name)
+                    if ptype == 'heatmap_wb_pcp':
+                        self.plot_heatmap_wb_pcp(fig_name)
                     if ptype == 'line_prod':
                         self.plot_line_prod(fig_name)
                     if ptype == 'line_wb':
@@ -1178,7 +1181,7 @@ class Template(object):
                         tmp_y[:] = np.nan
                         for ii in range(fig_pix_nrow):
                             for jj in range(fig_pix_ncol):
-                                ipix = jj * fig_pix_nrow + ii
+                                ipix = ii * fig_pix_ncol + jj
                                 tmp_y[ii, jj] = y[i, k, ipix]
                         # print(iplt, i, k, tmp_y)
                         # print(ax_zlim[k])
@@ -1218,7 +1221,13 @@ class Template(object):
                 self.saveas(fig, '{}_{}'.format(name, ax_legends[k]))
                 self.close(fig)
 
-    def plot_heatmap_wb(self, name):
+    def plot_heatmap_wb_obs(self, name):
+        """PCP-ETA-dS-Q/Q
+        df_yearly_sum['difp']
+
+        :param name:
+        :return:
+        """
         fig_conf = self.conf[name]
         fig_title = fig_conf['title']
         print('{:>11s} {:>48s}'.format(name, fig_title))
@@ -1395,6 +1404,339 @@ class Template(object):
                                         df_yearly_sum['difp'] = \
                                             df_yearly_sum['dif'] / \
                                             df_yearly_sum[var_name] * 100.0
+                                        y[yrow, j, ypix] = df_yearly_sum['difp'].mean()
+                                        ax_zlim[j] = [min(ax_zlim[j][0],
+                                                          np.min(y[yrow, j, ypix])),
+                                                      max(ax_zlim[j][1],
+                                                          np.max(y[yrow, j, ypix]))]
+                                        # print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
+                                        #       '{:>40s}'
+                                        #       ', %Diff  = {:0.2f}'.format(
+                                        #           icnt,
+                                        #           yrow, j, ypix,
+                                        #           ii, jj,
+                                        #           ylabel,
+                                        #           y[yrow, j, ypix]))
+
+                                        # Year,P,ET,dS,P-ET-ds,Q,Diff,\\%Diff\
+                                        df_yearly_sum.sort_index(axis=0). \
+                                            to_csv(os.path.join(self.workspace['csv'],
+                                                                '{}_{}-{}.csv'.format(
+                                                                    name, 'yearly',
+                                                                    ylabel)),
+                                                   index=True,
+                                                   index_label='Year',
+                                                   columns=[
+                                                       var_names[0],
+                                                       var_names[1],
+                                                       var_names[2],
+                                                       'wb',
+                                                       var_names[3],
+                                                       'dif',
+                                                       'difp'
+                                                   ],
+                                                   header=[
+                                                       'P',
+                                                       'ET',
+                                                       '$\\Delta S$',
+                                                       '$P-ET-\\Delta S$',
+                                                       'Q',
+                                                       'Diff',
+                                                       '\\%Diff'
+                                                   ])
+                                        # fp_csv.write(
+                                        #     'Combination,P,ET,dS,P-ET-ds,Q,Diff,%Diff\n')
+                                        fp_csv.write('{},'
+                                                     '{:.2f},{:.2f},{:.2f},'
+                                                     '{:.2f},'
+                                                     '{:.2f},'
+                                                     '{:.2f},{:.2f}\n'.format(
+                                                         ylabel.split('.')[0],
+                                                         df_yearly_sum[var_names[0]].mean(),
+                                                         df_yearly_sum[var_names[1]].mean(),
+                                                         df_yearly_sum[var_names[2]].mean(),
+                                                         df_yearly_sum['wb'].mean(),
+                                                         df_yearly_sum[var_names[3]].mean(),
+                                                         df_yearly_sum['dif'].mean(),
+                                                         df_yearly_sum['difp'].mean()))
+
+                                # print(df)
+                                # print('{:>10d}'
+                                #       '{:>40s} '
+                                #       '{:0.2f} '
+                                #       '{:0.2f} '
+                                #       '{:0.2f}'.format(ipix, ylabel,
+                                #                        y[i, 0, ipix],
+                                #                        y[i, 1, ipix],
+                                #                        y[i, 2, ipix]))
+
+                            icnt += 1
+            fp_csv.close()
+
+            # plot combine
+            fig = plt.figure(**fig_conf['figure'])
+            fig.set_size_inches(6.4, 4.8 + 4.8 * (fig_nrow - 1.0) / 2.0, forward=True)
+            fig.subplots_adjust(bottom=0.15, top=0.95,
+                                left=0.1, right=0.9,)
+
+            axes = fig.subplots(nrows=fig_nrow, ncols=fig_ncol, squeeze=False)
+            ax_ticksize = max(9 - fig_nrow, 1)
+            ax_labelsize = max(11 - fig_nrow, 1)
+            ax_textsize = max(8 - fig_nrow, 1)
+            ax_cbarsize = max(8 - fig_nrow, 1)
+            # ax_cbarcmap = ['RdYlBu_r', 'RdYlGn_r', 'Reds_r']
+            ax_cbarcmap = ['Blues', 'Blues', 'Blues_r']
+            ax_textcolor = [('black', 'white'), ('black', 'white'), ('white', 'black')]
+
+            # fig.suptitle(fig_title)
+            for i in range(fig_nrow):
+                for j in range(fig_ncol):
+                    iplt = i * fig_ncol + j
+
+                    tmp_y = np.empty((fig_pix_nrow, fig_pix_ncol))
+                    tmp_y[:] = np.nan
+                    for ii in range(fig_pix_nrow):
+                        for jj in range(fig_pix_ncol):
+                            ipix = ii * fig_pix_ncol + jj
+                            tmp_y[ii, jj] = y[i, j, ipix]
+                    # print(iplt, i, j, tmp_y)
+                    im = self.heatmap(data=tmp_y,
+                                      row_labels=ax_yticks,
+                                      col_labels=ax_xticks,
+                                      ax=axes[i, j],
+                                      cmap=ax_cbarcmap[j],
+                                      vmin=ax_zlim[j][0],
+                                      vmax=ax_zlim[j][1]
+                                      )
+                    if j == 0:
+                        texts = self.annotate_heatmap(im,
+                                                      valfmt="{x:.2f}",
+                                                      textcolors=ax_textcolor[j],
+                                                      fontsize=ax_textsize)
+                    if j == 1:
+                        texts = self.annotate_heatmap(im,
+                                                      valfmt="{x:.2f}%",
+                                                      textcolors=ax_textcolor[j],
+                                                      fontsize=ax_textsize)
+
+                    axes[i, j].tick_params(axis='x', labelsize=ax_ticksize)
+                    axes[i, j].tick_params(axis='y', labelsize=ax_ticksize)
+                    axes[i, j].set_ylabel(ax_titles[i],
+                                          fontsize=ax_labelsize,
+                                          labelpad=1)
+                    axes[i, j].yaxis.set_label_position("right")
+
+                    # if i == 0:
+                    #     axes[i, j].set_title('{}'.format(ax_legends[j]),
+                    #                          fontsize=ax_labelsize)
+
+                    # Create colorbar
+                    if i == fig_nrow - 1:
+                        ax_pos = axes[i, j].get_position()
+
+                        ax_cb_l = ax_pos.x0
+                        ax_cb_b = max(0.05, ax_pos.y0 - 0.1)
+                        ax_cb_w = ax_pos.x1 - ax_pos.x0
+                        ax_cb_h = 0.02
+                        # print('cbar {:0.4f} {:0.4f} {:0.4f} {:0.4f}'.format(
+                        #     ax_cb_l, ax_cb_b, ax_cb_w, ax_cb_h))
+
+                        cax = fig.add_axes([ax_cb_l, ax_cb_b, ax_cb_w, ax_cb_h])
+                        cbar = plt.colorbar(im, ax=axes.ravel().tolist(), cax=cax,
+                                            orientation="horizontal")
+                        cbar.ax.set_title('{}'.format(ax_legends[j]),
+                                          fontsize=ax_labelsize)
+                        cbar.ax.tick_params(axis='x', which='major', direction='in',
+                                            pad=0.5, length=1,
+                                            labelsize=ax_cbarsize,
+                                            labelrotation=0)
+
+            self.saveas(fig, '{}'.format(name))
+            self.close(fig)
+
+    def plot_heatmap_wb_pcp(self, name):
+        """PCP-ETA-dS-Q/PCP
+        df_yearly_sum['difp']
+
+        :param name:
+        :return:
+        """
+        fig_conf = self.conf[name]
+        fig_title = fig_conf['title']
+        print('{:>11s} {:>48s}'.format(name, fig_title))
+
+        fp_csv = open(os.path.join(self.workspace['csv'],
+                                   '{}_{}.csv'.format(name, 'yearly')), 'w+')
+
+        # parse yaml
+        fig_data = {}
+        var_names = []
+        var_opers = []
+        tmp_names_root = fig_conf['data'].split('.')
+        iagn = 0
+        for variable_root in tmp_names_root:
+            # if len(variable_root.split('_')) > 1:
+            #     tmp_names_subroot = variable_root.split('_')
+            #     isub = 0
+            if len(variable_root.split('-')) > 1:
+                tmp_names = variable_root.split('-')
+                isub = 0
+                for variable in tmp_names:
+                    if len(variable.split('+')) > 1:
+                        ipls = 0
+                        for sub_var in variable.split('+'):
+                            if ipls > 0:
+                                var_opers.append('+')
+                            else:
+                                var_opers.append('-')
+                            var_names.append(sub_var)
+                            fig_data[sub_var] = self.csv[sub_var]
+                            ipls += 1
+                    else:
+                        if isub > 0:
+                            var_opers.append('-')
+                        var_names.append(variable)
+                        fig_data[variable] = self.csv[variable]
+                    isub += 1
+            else:
+                if iagn > 0:
+                    var_opers.append('.')
+                var_names.append(variable_root)
+                fig_data[variable_root] = self.csv[variable_root]
+            iagn += 1
+        # print(var_names, var_opers)
+        fp_csv.write('Combination,P,ET,$\\Delta S$,$P-ET-\\Delta S$,Q,Diff,\\%Diff\n')
+
+        ax_legends = ['Diff [Mm3/year]', 'Diff [%]']
+        ax_zlim = [[np.inf, -np.inf],
+                   [np.inf, -np.inf]]
+
+        fig_nscr = len(ax_legends)
+        fig_pix_naxe = 1
+        fig_naxe = 1
+        prod_names = []
+        prod_nprod = []
+        for ivar in range(len(var_names)):
+            prod_names.append(list(fig_data[var_names[ivar]].keys()))
+            prod_nprod.append([i for i in range(len(fig_data[var_names[ivar]].keys()))])
+
+            if 'PCP' in var_names[ivar]:
+                ax_xticks = list(fig_data[var_names[ivar]].keys())
+                fig_pix_ncol = int(len(ax_xticks))
+            if 'ET' in var_names[ivar]:
+                ax_yticks = list(fig_data[var_names[ivar]].keys())
+                fig_pix_nrow = int(len(ax_yticks))
+            if 'dS' == var_names[ivar]:
+                ax_titles = list(fig_data[var_names[ivar]].keys())
+                fig_nrow = int(len(ax_titles))
+            # if var_names[ivar] == 'Q':
+            #     fig_ncol = int(len(fig_data[var_names[ivar]].keys()))
+        # fig_ncol = int(1)
+        fig_ncol = fig_nscr
+        fig_pix_naxe = int(fig_pix_nrow * fig_pix_ncol)
+        fig_naxe = int(fig_nrow * fig_ncol)
+        fig_pix_comb = list(itertools.product(*prod_nprod))
+        # print(len(fig_comb), prod_names)
+
+        if len(fig_pix_comb) > 0:
+            y = np.empty((fig_nrow, fig_nscr, (fig_pix_nrow * fig_pix_ncol)))
+            y[:] = np.nan
+            icnt = 0
+            for i in range(fig_nrow):
+                for j in range(fig_ncol):
+                    iplt = i * fig_ncol + j
+
+                    for ii in range(fig_pix_nrow):
+                        for jj in range(fig_pix_ncol):
+                            ipix = jj * (fig_nrow * fig_pix_nrow) + ii * fig_nrow + i
+                            prod_list = list(fig_pix_comb[ipix])
+
+                            # prepare data
+                            ivar = 0
+                            var_name = var_names[ivar]
+                            prod_name = prod_names[ivar][prod_list[ivar]]
+
+                            xlabel = 'date'
+                            ylabel = '{}'.format(prod_name)
+
+                            df_col = []
+                            df = pd.DataFrame(fig_data[var_name][prod_name],
+                                              columns=[prod_name])
+                            # df_col.append('var_{}'.format(ivar))
+                            df_col.append(var_name)
+                            for ioper in range(len(var_opers)):
+                                ivar = ioper + 1
+                                var_oper = var_opers[ioper]
+                                var_name = var_names[ivar]
+                                prod_name = prod_names[ivar][prod_list[ivar]]
+
+                                ylabel += '{}{}'.format(var_oper, prod_name)
+                                df = pd.merge(df,
+                                              pd.DataFrame(
+                                                  fig_data[var_name][prod_name],
+                                                  columns=[prod_name]),
+                                              left_index=True, right_index=True,
+                                              how='inner')
+                                # df_col.append('var_{}'.format(ivar))
+                                df_col.append(var_name)
+                            df.columns = df_col
+
+                            # calculate data
+                            # print('{:>10d}'
+                            #       '{:>40s}'.format(ipix, ylabel))
+
+                            ivar = 0
+                            var_name = var_names[ivar]
+                            prod_name = prod_names[ivar][prod_list[ivar]]
+                            # df[ylabel] = df['var_{}'.format(ivar)]
+                            df[ylabel] = df[var_name]
+                            for ioper in range(len(var_opers)):
+                                var_oper = var_opers[ioper]
+                                ivar = ioper + 1
+                                var_name = var_names[ivar]
+                                prod_name = prod_names[ivar][prod_list[ivar]]
+
+                                if var_oper == '-':
+                                    df[ylabel] = df[ylabel] - df[var_name]
+                                if var_oper == '+':
+                                    df[ylabel] = df[ylabel] + df[var_name]
+                                if var_oper == '.':
+                                    yrow = i
+                                    # yrow = icnt % fig_nrow
+                                    ypix = ii * fig_pix_ncol + jj
+
+                                    # yearly, % difference ((PCP-ETA-dS) - Q)
+                                    # calculate data
+                                    df[ylabel] = df[ylabel] - df[var_name]
+
+                                    df = df * self.hyd['area']
+                                    df_yearly = df.groupby(df.index.year)
+                                    df_yearly_sum = df_yearly.sum()
+
+                                    if j == 0:
+                                        y[yrow, j, ypix] = df_yearly_sum[ylabel].mean()
+                                        ax_zlim[j] = [min(ax_zlim[j][0],
+                                                          np.min(y[yrow, j, ypix])),
+                                                      max(ax_zlim[j][1],
+                                                          np.max(y[yrow, j, ypix]))]
+                                        # print('{:>10d} - {:3d},{:3d},{:3d}; {:3d},{:3d}'
+                                        #       '{:>40s}'
+                                        #       ',  Diff  = {:0.2f}'.format(
+                                        #           icnt,
+                                        #           yrow, j, ypix,
+                                        #           ii, jj,
+                                        #           ylabel,
+                                        #           y[yrow, j, ypix]))
+
+                                    if j == 1:
+                                        df_yearly_sum['wb'] = \
+                                            df_yearly_sum[ylabel] + \
+                                            df_yearly_sum[var_name]
+
+                                        df_yearly_sum['dif'] = df_yearly_sum[ylabel]
+                                        df_yearly_sum['difp'] = \
+                                            df_yearly_sum['dif'] / \
+                                            df_yearly_sum['PCP'] * 100.0
                                         y[yrow, j, ypix] = df_yearly_sum['difp'].mean()
                                         ax_zlim[j] = [min(ax_zlim[j][0],
                                                           np.min(y[yrow, j, ypix])),
