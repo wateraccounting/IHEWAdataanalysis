@@ -1092,8 +1092,9 @@ class Template(object):
             ax_labelsize = max(11 - fig_nrow, 1)
             ax_textsize = max(8 - fig_nrow, 1)
             ax_cbarsize = max(8 - fig_nrow, 1)
-            ax_cbarcmap = ['Blues', 'Blues', 'Blues']
             # ax_cbarcmap = ['RdYlBu_r', 'RdYlGn_r', 'Reds_r']
+            ax_cbarcmap = ['Blues', 'Blues', 'Blues_r']
+            ax_textcolor = [('black', 'white'), ('black', 'white'), ('white', 'black')]
 
             # fig.suptitle(fig_title)
             for i in range(fig_nrow):
@@ -1117,6 +1118,7 @@ class Template(object):
                                       )
                     texts = self.annotate_heatmap(im,
                                                   valfmt="{x:.2f}",
+                                                  textcolors=ax_textcolor[j],
                                                   fontsize=ax_textsize)
 
                     axes[i, j].tick_params(axis='x', labelsize=ax_ticksize)
@@ -1166,8 +1168,6 @@ class Template(object):
                 ax_labelsize = 7
                 ax_textsize = 4
                 ax_cbarsize = 4
-                ax_cbarcmap = ['Blues', 'Blues', 'Blues']
-                # ax_cbarcmap = ['RdYlBu_r', 'RdYlGn_r', 'Reds_r']
 
                 # fig.suptitle(fig_title)
                 for i in range(fig_nrow):
@@ -1181,16 +1181,18 @@ class Template(object):
                                 ipix = jj * fig_pix_nrow + ii
                                 tmp_y[ii, jj] = y[i, k, ipix]
                         # print(iplt, i, k, tmp_y)
+                        # print(ax_zlim[k])
                         im = self.heatmap(data=tmp_y,
                                           row_labels=ax_yticks,
                                           col_labels=ax_xticks,
                                           ax=axes[i, j],
-                                          cmap=ax_cbarcmap[j],
+                                          cmap=ax_cbarcmap[k],
                                           vmin=ax_zlim[k][0],
                                           vmax=ax_zlim[k][1]
                                           )
                         texts = self.annotate_heatmap(im,
                                                       valfmt="{x:.2f}",
+                                                      textcolors=ax_textcolor[k],
                                                       fontsize=ax_textsize)
 
                         axes[i, j].tick_params(axis='x', labelsize=ax_ticksize)
@@ -1473,8 +1475,9 @@ class Template(object):
             ax_labelsize = max(11 - fig_nrow, 1)
             ax_textsize = max(8 - fig_nrow, 1)
             ax_cbarsize = max(8 - fig_nrow, 1)
-            ax_cbarcmap = ['Blues', 'Blues', 'Blues']
             # ax_cbarcmap = ['RdYlBu_r', 'RdYlGn_r', 'Reds_r']
+            ax_cbarcmap = ['Blues', 'Blues', 'Blues_r']
+            ax_textcolor = [('black', 'white'), ('black', 'white'), ('white', 'black')]
 
             # fig.suptitle(fig_title)
             for i in range(fig_nrow):
@@ -1499,10 +1502,12 @@ class Template(object):
                     if j == 0:
                         texts = self.annotate_heatmap(im,
                                                       valfmt="{x:.2f}",
+                                                      textcolors=ax_textcolor[j],
                                                       fontsize=ax_textsize)
                     if j == 1:
                         texts = self.annotate_heatmap(im,
                                                       valfmt="{x:.2f}%",
+                                                      textcolors=ax_textcolor[j],
                                                       fontsize=ax_textsize)
 
                     axes[i, j].tick_params(axis='x', labelsize=ax_ticksize)
