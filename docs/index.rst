@@ -4,16 +4,8 @@ IHEWAdataanalysis
 
 This is the documentation of **IHEWAdataanalysis**.
 
-**IHEWAdataanalysis** is a Reportion of tools to write standard report.
+**IHEWAdataanalysis** is a tool to write report by using templates.
 This project is fully developed by Water Accounting team at IHE-Delft.
-
-`MiKTeX <https://miktex.org/>`_ is required to generate tex and pdf file.
-
-    - .py  -> latexmk  -> .tex & .run.xml
-    - .tex -> pdflatex -> .bcf
-    - .bcf -> biber    -> .bbl
-    - .bbl -> pdflatex -> .pdf 1st time
-    - .bbl -> pdflatex -> .pdf 2ed time, make sure
 
 
 Installation

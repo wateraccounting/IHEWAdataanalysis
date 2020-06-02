@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+   IHEWAdataanalysis.prepare
    IHEWAdataanalysis.scripts
    IHEWAdataanalysis.templates
    IHEWAdataanalysis.utils
