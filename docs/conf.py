@@ -79,9 +79,6 @@ except Exception as e:
 # -- Updates --
 # 'matplotlib.sphinxext.only_directives',  # https://github.com/qutip/qutip-doc/issues/66
 extensions = [
-    'matplotlib.sphinxext.plot_directive',
-    # 'IPython.sphinxext.ipython_directive',
-    # 'IPython.sphinxext.ipython_console_highlighting',
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
@@ -96,6 +93,17 @@ extensions = [
     'sphinx_rtd_theme',
     'numpydoc'
 ]
+# Update readthedocs matplotlib error
+try:
+    import matplotlib
+except ImportError:
+    pass
+else:
+    extensions += [
+        # 'IPython.sphinxext.ipython_directive',
+        # 'IPython.sphinxext.ipython_console_highlighting',
+        'matplotlib.sphinxext.only_directives',
+        'matplotlib.sphinxext.plot_directive']
 
 # Active to do rst.
 todo_include_todos=True
