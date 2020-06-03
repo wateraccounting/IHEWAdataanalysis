@@ -10,8 +10,6 @@ FROM osgeo/gdal:ubuntu-full-latest
 
 MAINTAINER "Quan Pan" <quanpan302@hotmail.com>
 
-ADD requirements.txt .
-
 # ADD ./tzdata.sh /tzdata.sh
 # RUN ["chmod", "+x", "/tzdata.sh"]
 # RUN apt-get update -y
@@ -73,10 +71,15 @@ RUN apt-get install -y \
     python3-dev \
     python3-pip
 
+# git clone reporsitory
+RUN git clone --recursive https://github.com/wateraccounting/IHEWAdataanalysis.git
+RUN cd IHEWAdataanalysis
+
 # Install python dependencies
 RUN pip3 install -r requirements.txt
 
 # Workspace
+WORKDIR /
 RUN mkdir /notebooks
 
 # CMD gdalinfo --version

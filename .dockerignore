@@ -1,6 +1,5 @@
 .git
 .DS_Store
 
-tests/data/Products/*
-tests/data/Download/*
+# tests/data/*
 tests/IHEWAdataanalysis/*
