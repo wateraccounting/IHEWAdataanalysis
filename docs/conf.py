@@ -80,8 +80,8 @@ except Exception as e:
 # 'matplotlib.sphinxext.only_directives',  # https://github.com/qutip/qutip-doc/issues/66
 extensions = [
     'matplotlib.sphinxext.plot_directive',
-    'IPython.sphinxext.ipython_directive',
-    'IPython.sphinxext.ipython_console_highlighting',
+    # 'IPython.sphinxext.ipython_directive',
+    # 'IPython.sphinxext.ipython_console_highlighting',
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
