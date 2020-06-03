@@ -90,8 +90,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
     'sphinx.ext.inheritance_diagram',
-    'sphinx_rtd_theme',
-    'numpydoc'
+    'sphinx_rtd_theme'
+    # 'numpydoc'  # https://github.com/readthedocs/readthedocs.org/issues/995
 ]
 # Update readthedocs matplotlib error
 try:
