@@ -73,10 +73,10 @@ RUN apt-get install -y \
 
 # git clone reporsitory
 RUN git clone --recursive https://github.com/wateraccounting/IHEWAdataanalysis.git
-RUN cd IHEWAdataanalysis
 
 # Install python dependencies
-RUN pip3 install -r requirements.txt
+RUN cd IHEWAdataanalysis && \
+    pip3 install -r requirements.txt
 
 # Install package
 
