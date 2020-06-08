@@ -1,20 +1,6 @@
+# -*- coding: utf-8 -*-
 """
-cd "D:\IHEProjects\20200218-Philippines\Code"
-python IHEWAcollect_tif2cutline.py
-
-
-set in_path="D:\IHEProjects\20200218-Philippines\Data\Output\tmp"
-set out_path="D:\IHEProjects\20200218-Philippines\Data\Output\tif"
-
-set shapefile_path="D:\IHEProjects\20200218-Philippines\Data\Shapefile\Mindanao-RiverBasin.shp"
-
-
-if exist %out_path% (echo yes) else (echo no && mkdir %out_path%)
-
-FORFILES /p %in_path% /s ^
-/m *.tif ^
-/C "cmd /Q /c for %%I in (@file) do gdalwarp -of GTiff -overwrite -s_srs epsg:4326-t_srs epsg:4326 -r near -tr 0.05 0.05 -cutline %shapefile_path% -crop_to_cutline %in_path%\%%~I %out_path%\%%~I"
-
+GSFC functions
 """
 
 import inspect
@@ -23,9 +9,9 @@ from datetime import datetime
 
 import numpy as np
 import pandas as pd
-from rasterstats import zonal_stats
 
-import gdal, ogr, osr
+import gdal
+import osr
 
 
 def Open_array_info(filename=''):
@@ -75,12 +61,12 @@ def Save_as_tiff(name, data, geo, projection):
             else:
                 try:
                     srse.ImportFromEPSG(int(projection))
-                except:
+                except BaseException:
                     srse.ImportFromWkt(projection)
-        except:
+        except BaseException:
             try:
                 srse.ImportFromEPSG(int(projection))
-            except:
+            except BaseException:
                 srse.ImportFromWkt(projection)
 
     dst_ds.SetProjection(srse.ExportToWkt())
@@ -93,21 +79,21 @@ def Save_as_tiff(name, data, geo, projection):
 
 def main(dir_in, dir_out, tif, file_shp, cmd1, cmd2):
     date_fmt = '%Y-%m-%d'
-    
+
     for var in tif.keys():
         date_s = datetime.strptime(tif[var]['period']['s'], date_fmt)
-        date_s_year = date_s.year
-        date_s_month = date_s.month
-        date_s_day = date_s.day
+        # date_s_year = date_s.year
+        # date_s_month = date_s.month
+        # date_s_day = date_s.day
         date_e = datetime.strptime(tif[var]['period']['e'], date_fmt)
-        
-        date_year = date_s_year
+
+        # date_year = date_s_year
         data = None
         ds_cols, ds_rows = np.inf, np.inf
 
         dates = pd.date_range(date_s, date_e, freq='MS')
-        
-        nmonth = 0.0        
+
+        nmonth = 0.0
         for date in dates:
             fname_o = tif[var]['output'].format(dtime=date)
             file_i = os.path.join(dir_in, fname_o)
@@ -124,7 +110,7 @@ def main(dir_in, dir_out, tif, file_shp, cmd1, cmd2):
                 ds = gdal.Open(file_i)
                 ds_cols = int(np.min([ds_cols, ds.RasterXSize]))
                 ds_rows = int(np.min([ds_rows, ds.RasterYSize]))
-                
+
                 ds_band = ds.GetRasterBand(1)
                 ds_ndv = ds_band.GetNoDataValue()
                 ds_data = ds_band.ReadAsArray()
@@ -140,11 +126,13 @@ def main(dir_in, dir_out, tif, file_shp, cmd1, cmd2):
 
         data = data / nmonth * 12.0
         Save_as_tiff(name=file_o, data=data, geo=geo_trans, projection="WGS84")
-        
-        file_o_mean_tmp = os.path.join(dir_out, '{}_yearly_tmp.tif'.format(fname_o.split('-')[0]))
+
+        file_o_mean_tmp = os.path.join(dir_out, '{}_yearly_tmp.tif'.format(
+            fname_o.split('-')[0]))
         os.system(cmd1.format(fi=file_o, fo=file_o_mean_tmp))
 
-        file_o_mean = os.path.join(dir_out, '{}_yearly.tif'.format(fname_o.split('_')[0]))
+        file_o_mean = os.path.join(dir_out,
+                                   '{}_yearly.tif'.format(fname_o.split('_')[0]))
         os.system(cmd2.format(shp=file_shp, fi=file_o, fo=file_o_mean))
 
         os.remove(file_o)
@@ -157,9 +145,9 @@ if __name__ == "__main__":
     # WarpOptions()
     # https://gdal.org/python/osgeo.gdal-module.html#WarpOptions
     # https://gdal.org/python/osgeo.gdal-pysrc.html#WarpOptions
-    
+
     # gdal.Warp(r"%s" % filename, format='GTiff')
-    
+
     path = os.path.join(
         os.getcwd(),
         os.path.dirname(
@@ -167,7 +155,7 @@ if __name__ == "__main__":
                 inspect.currentframe())),
         '../'
     )
-    
+
     dir_tmp = os.path.join(path, 'Data', 'Output', 'tmp')
     if not os.path.exists(dir_tmp):
         os.makedirs(dir_tmp)
@@ -178,11 +166,16 @@ if __name__ == "__main__":
 
     file_shp = os.path.join(path, 'Data', 'Shapefile', 'Mindanao-RiverBasin.shp')
 
-    cmd1 = 'gdalwarp -of GTiff -overwrite -s_srs epsg:4326 -t_srs epsg:4326 -r near -tr 0.05 0.05 {fi} {fo}'
-    cmd2 = 'gdalwarp -of GTiff -overwrite -s_srs epsg:4326 -t_srs epsg:4326 -r near -tr 0.05 0.05 -cutline {shp} -crop_to_cutline {fi} {fo}'
+    cmd1 = 'gdalwarp -of GTiff -overwrite ' \
+           '-s_srs epsg:4326 -t_srs epsg:4326 ' \
+           '-r near -tr 0.05 0.05 {fi} {fo}'
+    cmd2 = 'gdalwarp -of GTiff -overwrite ' \
+           '-s_srs epsg:4326 -t_srs epsg:4326 ' \
+           '-r near -tr 0.05 0.05 ' \
+           '-cutline {shp} -crop_to_cutline {fi} {fo}'
 
     products = {
-        'ETA-1':{
+        'ETA-1': {
             'tif': {
                 'ETA': {
                     'name': 'ALEXI_v1_mm.d_D-{dtime:%Y%m%d}.tif',
@@ -200,7 +193,7 @@ if __name__ == "__main__":
                 'name': 'ETA-ALEXI.csv'
             }
         },
-        'ETA-2':{
+        'ETA-2': {
             'tif': {
                 'ETA': {
                     'name': 'CMRSET_v1_mm.m_MS-{dtime:%Y%m}.tif',
@@ -218,7 +211,7 @@ if __name__ == "__main__":
                 'name': 'ETA-CMRSET.csv'
             }
         },
-        'ETA-3':{
+        'ETA-3': {
             'tif': {
                 'ETA': {
                     'name': 'GLDAS_v2.1_mm.d_MS-{dtime:%Y%m}.tif',
@@ -236,7 +229,7 @@ if __name__ == "__main__":
                 'name': 'ETA-GLDAS.csv'
             }
         },
-        'ETA-4':{
+        'ETA-4': {
             'tif': {
                 'ETA': {
                     'name': 'GLEAM_v3.3b_mm.m_MS-{dtime:%Y%m}.tif',
@@ -254,7 +247,7 @@ if __name__ == "__main__":
                 'name': 'ETA-GLEAM.csv'
             }
         },
-        'ETA-5':{
+        'ETA-5': {
             'tif': {
                 'ETA': {
                     'name': 'MOD16A2_v6_mm.d_D-{dtime:%Y%m%d}.tif',
@@ -272,7 +265,7 @@ if __name__ == "__main__":
                 'name': 'ETA-MOD16A2.csv'
             }
         },
-        'ETA-6':{
+        'ETA-6': {
             'tif': {
                 'ETA': {
                     'name': 'SSEBop_v4_mm_MS-{dtime:%Y%m}.tif',
@@ -290,7 +283,7 @@ if __name__ == "__main__":
                 'name': 'ETA-SSEBop.csv'
             }
         },
-        'PCP-1':{
+        'PCP-1': {
             'tif': {
                 'PCP': {
                     'name': 'CHIRPS_v2.0_mm.m_MS-{dtime:%Y%m}.tif',
@@ -308,7 +301,7 @@ if __name__ == "__main__":
                 'name': 'PCP-CHIRPS.csv'
             }
         },
-        'PCP-2':{
+        'PCP-2': {
             'tif': {
                 'PCP': {
                     'name': 'GPM_v6_mm.d_MS-{dtime:%Y%m}.tif',
@@ -326,7 +319,7 @@ if __name__ == "__main__":
                 'name': 'PCP-GPM.csv'
             }
         },
-        'PCP-3':{
+        'PCP-3': {
             'tif': {
                 'PCP': {
                     'name': 'TRMM_v7_mm.d_MS-{dtime:%Y%m}.tif',
@@ -345,10 +338,9 @@ if __name__ == "__main__":
             }
         },
     }
-    
+
     for prod_key, prod_val in products.items():
         # print(prod_key, prod_val['tif'])
-        main(dir_tmp, dir_out, 
+        main(dir_tmp, dir_out,
              prod_val['tif'], file_shp,
              cmd1, cmd2)
-            
