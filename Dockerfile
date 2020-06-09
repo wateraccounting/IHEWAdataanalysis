@@ -76,7 +76,7 @@ RUN git clone --recursive https://github.com/wateraccounting/IHEWAdataanalysis.g
 
 # Install python dependencies
 RUN cd IHEWAdataanalysis && \
-    pip3 setup.py install
+    python3 setup.py install
 
 # Install package
 
