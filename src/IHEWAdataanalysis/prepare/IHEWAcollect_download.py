@@ -36,7 +36,9 @@ def main(path, test_args):
                               bbox=value['bbox'],
                               period=value['period'],
                               nodata=value['nodata'],
-                              is_status=False)
+                              is_status=True,
+                              is_save_temp=False,
+                              is_save_remote=False)
 
 
 if __name__ == "__main__":
@@ -49,8 +51,8 @@ if __name__ == "__main__":
     )
     
     period = {
-        's': '2005-01-01',
-        'e': '2012-12-31'
+        's': '2014-01-01',
+        'e': '2019-12-31'
     }
     bbox = {
         'w': 118.0642363480000085,
@@ -60,29 +62,29 @@ if __name__ == "__main__":
     }
 
     test_args = {
-        # evapotranspiration, ETA, daily
-        'ALEXI-daily': {
-            'product': 'ALEXI',
-            'version': 'v1',
-            'parameter': 'evapotranspiration',
-            'resolution': 'daily',
-            'variable': 'ETA',
-            'bbox': bbox,
-            'period': period,
-            'nodata': -9999
-        },
+        # # evapotranspiration, ETA, daily
+        # 'ALEXI-daily': {
+        #     'product': 'ALEXI',
+        #     'version': 'v1',
+        #     'parameter': 'evapotranspiration',
+        #     'resolution': 'daily',
+        #     'variable': 'ETA',
+        #     'bbox': bbox,
+        #     'period': period,
+        #     'nodata': -9999
+        # },
         
-        # evapotranspiration, ETA, monthly
-        'CMRSET-monthly': {
-            'product': 'CMRSET',
-            'version': 'v1',
-            'parameter': 'evapotranspiration',
-            'resolution': 'monthly',
-            'variable': 'ETA',
-            'bbox': bbox,
-            'period': period,
-            'nodata': -9999
-        },
+        # # evapotranspiration, ETA, monthly
+        # 'CMRSET-monthly': {
+        #     'product': 'CMRSET',
+        #     'version': 'v1',
+        #     'parameter': 'evapotranspiration',
+        #     'resolution': 'monthly',
+        #     'variable': 'ETA',
+        #     'bbox': bbox,
+        #     'period': period,
+        #     'nodata': -9999
+        # },
         'GLDAS-monthly': {
             'product': 'GLDAS',
             'version': 'v2.1',
@@ -93,16 +95,16 @@ if __name__ == "__main__":
             'period': period,
             'nodata': -9999
         },
-        'GLEAM-monthly': {
-            'product': 'GLEAM',
-            'version': 'v3.3b',
-            'parameter': 'evapotranspiration',
-            'resolution': 'monthly',
-            'variable': 'ETA',
-            'bbox': bbox,
-            'period': period,
-            'nodata': -9999
-        },
+        # 'GLEAM-monthly': {
+        #     'product': 'GLEAM',
+        #     'version': 'v3.3b',
+        #     'parameter': 'evapotranspiration',
+        #     'resolution': 'monthly',
+        #     'variable': 'ETA',
+        #     'bbox': bbox,
+        #     'period': period,
+        #     'nodata': -9999
+        # },
         'MOD16A2-eight_daily': {
             'product': 'MOD16A2',
             'version': 'v6',
@@ -175,16 +177,16 @@ if __name__ == "__main__":
         },
         
         # NDVI
-        'MOD13Q1-sixteen_daily': {
-            'product': 'MOD13Q1',
-            'version': 'v6',
-            'parameter': 'land',
-            'resolution': 'sixteen_daily',
-            'variable': 'NDVI',
-            'bbox': bbox,
-            'period': period,
-            'nodata': -9999
-        },
+        # 'MOD13Q1-sixteen_daily': {
+        #     'product': 'MOD13Q1',
+        #     'version': 'v6',
+        #     'parameter': 'land',
+        #     'resolution': 'sixteen_daily',
+        #     'variable': 'NDVI',
+        #     'bbox': bbox,
+        #     'period': period,
+        #     'nodata': -9999
+        # },
         # 'PROBAV-daily': {
         #     'product': 'PROBAV',
         #     'version': 'v1.01',
@@ -197,7 +199,7 @@ if __name__ == "__main__":
         # },
 
         # GRACE
-        'CSR-daily': {
+        'CSR-daily-v3.1': {
             'product': 'CSR',
             'version': 'v3.1',
             'parameter': 'grace',
@@ -205,12 +207,25 @@ if __name__ == "__main__":
             'variable': 'EWH',
             'bbox': bbox,
             'period': {
-                's': '2004-12-01',
-                'e': '2013-01-01'
+                's': '2013-11-01',
+                'e': '2018-01-01'
             },
             'nodata': -9999
         },
-        'GFZ-daily': {
+        'CSR-daily-v3.2': {
+            'product': 'CSR',
+            'version': 'v3.2',
+            'parameter': 'grace',
+            'resolution': 'daily',
+            'variable': 'EWH',
+            'bbox': bbox,
+            'period': {
+                's': '2017-12-01',
+                'e': '2020-01-01'
+            },
+            'nodata': -9999
+        },
+        'GFZ-daily-v3.1': {
             'product': 'GFZ',
             'version': 'v3.1',
             'parameter': 'grace',
@@ -218,12 +233,25 @@ if __name__ == "__main__":
             'variable': 'EWH',
             'bbox': bbox,
             'period': {
-                's': '2004-12-01',
-                'e': '2013-01-01'
+                's': '2013-11-01',
+                'e': '2018-01-01'
             },
             'nodata': -9999
         },
-        'JPL-daily': {
+        'GFZ-daily-v3.2': {
+            'product': 'GFZ',
+            'version': 'v3.2',
+            'parameter': 'grace',
+            'resolution': 'daily',
+            'variable': 'EWH',
+            'bbox': bbox,
+            'period': {
+                's': '2017-12-01',
+                'e': '2020-01-01'
+            },
+            'nodata': -9999
+        },
+        'JPL-daily-v3.1': {
             'product': 'JPL',
             'version': 'v3.1',
             'parameter': 'grace',
@@ -231,8 +259,21 @@ if __name__ == "__main__":
             'variable': 'EWH',
             'bbox': bbox,
             'period': {
-                's': '2004-12-01',
-                'e': '2013-01-01'
+                's': '2013-11-01',
+                'e': '2018-01-01'
+            },
+            'nodata': -9999
+        },
+        'JPL-daily-v3.2': {
+            'product': 'JPL',
+            'version': 'v3.2',
+            'parameter': 'grace',
+            'resolution': 'daily',
+            'variable': 'EWH',
+            'bbox': bbox,
+            'period': {
+                's': '2017-12-01',
+                'e': '2020-01-01'
             },
             'nodata': -9999
         },

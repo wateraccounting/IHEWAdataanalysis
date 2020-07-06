@@ -5,119 +5,323 @@ Created on Mon Aug 26 23:08:29 2019
 @author: sse
 """
 
-import numpy as np
-import datetime as dt
+import inspect
 import os
+from datetime import datetime
+
+import numpy as np
+import pandas as pd
+
 import gdal
 import netCDF4
-import re
-
-import time
-start = time.time()
 
 
-ds = gdal.Open(r"E:\sse\Test_nc\AET_WAPOR.v2.0_level2_mm-month-1_monthly_2009.01.tif")
-a = ds.ReadAsArray()
-band = ds.GetRasterBand(1)
-ndv = band.GetNoDataValue()
-print(ndv)
+def Open_array_info(filename=''):
+    """
+    Opening a tiff info, for example size of array, projection and transform matrix.
 
-nlat, nlon = np.shape(a)
+    Keyword Arguments:
+    filename -- 'C:/file/to/path/file.tif' or a gdal file (gdal.Open(filename))
+        string that defines the input tiff file or gdal file
 
-b = ds.GetGeoTransform()  # bbox, interval
-lon = np.arange(nlon)*b[1]+b[0]
-lat = np.arange(nlat)*b[5]+b[3]
+    """
+    f = gdal.Open(r"%s" % filename)
+    if f is None:
+        print('%s does not exists' % filename)
+    else:
+        geo_out = f.GetGeoTransform()
+        proj = f.GetProjection()
+        size_X = f.RasterXSize
+        size_Y = f.RasterYSize
+        f = None
+    return geo_out, proj, size_X, size_Y
 
 
-basedate = dt.datetime(2009,1,1,0,0,0)
-
-# create NetCDF file
-nco = netCDF4.Dataset('AETI_2009_Nile.nc','w',clobber=True)
-
-# chunking is optional, but can improve access a lot: 
-# (see: http://www.unidata.ucar.edu/blogs/developer/entry/chunking_data_choosing_shapes)
-chunk_x=5000
-chunk_y=5000
-chunk_time=1
-
-# create dimensions, variables and attributes:
-nco.createDimension('lon', nlon)
-nco.createDimension('lat', nlat)
-nco.createDimension('time', None)
+def main(dir_in, dir_out, tif, nc):
+    date_fmt = '%Y-%m-%d'
     
-timeo = nco.createVariable('time','f4',('time'))
-timeo.units = 'days since 2009-01-01 00:00'
-timeo.standard_name = 'time'
+    for var in tif.keys():
+        date_s = datetime.strptime(tif[var]['period']['s'], date_fmt)
+        date_e = datetime.strptime(tif[var]['period']['e'], date_fmt)
+        
+        data = None
+        ds_cols, ds_rows = np.inf, np.inf
 
-lono = nco.createVariable('lon', 'f4', ('lon',))
-lono.units = 'degree'
-lono.standard_name = 'longitude'
+        dates = pd.date_range(date_s, date_e, freq='MS')
+        ntime = len(dates)
 
-lato = nco.createVariable('lat', 'f4', ('lat',))
-lato.units = 'degree'
-lato.standard_name = 'latitude'
-
-
-# Create container variable for CRS: lon/lat WGS84 datum
-crso = nco.createVariable('crs', 'i4')
-crso.long_name = 'Lon/Lat Coords in WGS84'
-crso.grid_mapping_name = 'latitude_longitude'
-crso.longitude_of_prime_meridian = 0.0
-crso.semi_major_axis = 6378137.0
-crso.inverse_flattening = 298.257223563
+        fname_o = nc['name']
+        file_o = os.path.join(dir_out, fname_o)
+        
+        # get GeoTiff meta data
+        date = date_s
+        date_year = date.year
+        date_month = date.month
+        date_day = date.day
     
-# create  float variable for variable, with chunking
-AETIo = nco.createVariable('AETI', 'i2',  ('time', 'lat', 'lon'), 
-   zlib=True,complevel=9,chunksizes=[chunk_time,chunk_y,chunk_x],fill_value=-9999)
-AETIo.units = 'mm/month'
-AETIo.scale_factor = 0.1
-AETIo.add_offset = 0
-AETIo.grid_mapping = 'crs'
-AETIo.long_name = 'WAPOR AETI'
-AETIo.standard_name = 'AETI'
-AETIo.set_auto_maskandscale(False)
+        fname_i = tif[var]['output'].format(dtime=date)
+        file_i = os.path.join(dir_in, fname_i)
 
-nco.Conventions='CF-1.6'
+        if os.path.isfile(file_i):
+            geo_trans, geo_proj, size_x, size_y = Open_array_info(file_i)
 
-# Write lon,lat
-lono[:] = lon
-lato[:] = lat
-
-N = 1 ## number of files load at atime
-pat = re.compile('AET_WAPOR.v2.0_level2_mm-month-1_monthly_[0-9]{4}\.[0-9]{2}')
-itime=0
-written = 0
-data = np.zeros((N, nlat, nlon), dtype=np.int16)
-
-#step through data, writing time and data to NetCDF
-for root, dirs, files in os.walk('E:/sse/Test_nc/'):
-    dirs.sort()
-    files.sort()
-    for f in files:
-        if re.match(pat,f):
-           
-            # read the time values by parsing the filename
-            year=int(f[41:45])
-            mon=int(f[46:48])
-            date=dt.datetime(year,mon,1,0,0,0)
-            print(date)
-            dtime=(date-basedate).total_seconds()/86400.
-            timeo[itime]=dtime
-           # min temp
-            tmn_path = os.path.join(root,f)
-            print(tmn_path)
-            tmn=gdal.Open(tmn_path)
-            a=tmn.ReadAsArray()  #data
-            a = np.ma.masked_equal(a, ndv)
-            #a[a == -9999.0] = np.nan
-            a=np.round(a*10,0)
-            data[itime%N, :, :] = a.astype(int) 
+            ds = gdal.Open(file_i)
+            ds_cols = int(np.min([ds_cols, ds.RasterXSize]))
+            ds_rows = int(np.min([ds_rows, ds.RasterYSize]))
             
-            #AETIo[itime,:,:]=a
-            itime=itime+1
-            if itime  % N == 0 and itime != 0:
-                    AETIo[written:itime, :, :] = data
-                    written = itime
+            ds_band = ds.GetRasterBand(1)
+            ds_ndv = ds_band.GetNoDataValue()
+            ds_data = ds_band.ReadAsArray()
+            ds_data = np.where(ds_data == ds_ndv, 0.0, ds_data)
 
-nco.close()
-print('It took', time.time()-start, 'seconds.')
+            ds = None
+
+            nlon = ds_cols
+            nlat = ds_rows
+            lon = np.arange(nlon)*geo_trans[1]+geo_trans[0]
+            lat = np.arange(nlat)*geo_trans[5]+geo_trans[3]
+
+            data = np.zeros((1, ds_rows, ds_cols))
+            data[0, 0:ds_rows, 0:ds_cols] = ds_data[0:ds_rows, 0:ds_cols]
+        else:
+            print(file_i)
+
+        # create NetCDF file
+        nco = netCDF4.Dataset(file_o,'w',clobber=True)
+        if data is not None:
+            # create dimensions, variables and attributes:
+            nco.createDimension('lon', nlon)
+            nco.createDimension('lat', nlat)
+            nco.createDimension('time', ntime)
+                
+            nco_time = nco.createVariable('time','f4',('time'))
+            nco_time.units = 'days since {dtime:%Y}-01-01 00:00'.format(dtime=date_s)
+            nco_time.standard_name = 'time'
+
+            mco_lon = nco.createVariable('lon', 'f4', ('lon',))
+            mco_lon.units = 'degree'
+            mco_lon.standard_name = 'longitude'
+
+            nco_lat = nco.createVariable('lat', 'f4', ('lat',))
+            nco_lat.units = 'degree'
+            nco_lat.standard_name = 'latitude'
+
+
+            # Create container variable for CRS: lon/lat WGS84 datum
+            nco_crs = nco.createVariable('crs', 'i4')
+            nco_crs.long_name = 'Lon/Lat Coords in WGS84'
+            nco_crs.grid_mapping_name = 'latitude_longitude'
+            nco_crs.longitude_of_prime_meridian = 0.0
+            nco_crs.semi_major_axis = 6378137.0
+            nco_crs.inverse_flattening = 298.257223563
+                
+            # create  float variable for variable, with chunking
+            nco_var = nco.createVariable(tif[var]['variable'], 'i2',  ('time', 'lat', 'lon'), zlib=True, complevel=9, fill_value=-9999)
+            nco_var.units = 'mm/month'
+            nco_var.scale_factor = 1.0
+            nco_var.add_offset = 0
+            nco_var.grid_mapping = 'crs'
+            nco_var.long_name = tif[var]['variable']
+            nco_var.standard_name = tif[var]['variable']
+            nco_var.set_auto_maskandscale(False)
+
+            nco.Conventions='CF-1.6'
+
+            # Write lon,lat
+            mco_lon[:] = lon
+            nco_lat[:] = lat
+
+        itime = 0
+        for date in dates:
+            date_year = date.year
+            date_month = date.month
+            date_day = date.day
+        
+            fname_i = tif[var]['output'].format(dtime=date)
+            file_i = os.path.join(dir_in, fname_i)
+
+            if os.path.isfile(file_i):
+                geo_trans, geo_proj, size_x, size_y = Open_array_info(file_i)
+
+                ds = gdal.Open(file_i)
+                ds_cols = int(np.min([ds_cols, ds.RasterXSize]))
+                ds_rows = int(np.min([ds_rows, ds.RasterYSize]))
+                
+                nlon = ds_cols
+                nlat = ds_rows
+                
+                ds_band = ds.GetRasterBand(1)
+                ds_ndv = ds_band.GetNoDataValue()
+                ds_data = ds_band.ReadAsArray()
+                ds_data = np.where(ds_data == ds_ndv, 0.0, ds_data)
+
+                ds = None
+
+                data = np.zeros((1, ds_rows, ds_cols))
+                data[0, 0:ds_rows, 0:ds_cols] = ds_data[0:ds_rows, 0:ds_cols]
+            else:
+                print(file_i)
+            
+            if data is not None:
+                #step through data, writing time and data to NetCDF
+                dtime=(date-date_s).total_seconds()/86400.
+                nco_time[itime]=dtime
+                nco_var[itime:itime+1, :, :] = data
+            
+            itime += 1
+
+        nco.close()
+
+
+if __name__ == "__main__":
+    path = os.path.join(
+        os.getcwd(),
+        os.path.dirname(
+            inspect.getfile(
+                inspect.currentframe())),
+        '../'
+    )
+    
+    dir_tmp = os.path.join(path, 'Data', 'Output', 'tmp')
+    if not os.path.exists(dir_tmp):
+        os.makedirs(dir_tmp)
+
+    dir_out = os.path.join(path, 'Data', 'Output', 'nc')
+    if not os.path.exists(dir_out):
+        os.makedirs(dir_out)
+
+    # cmd1 = 'gdal_translate -of netCDF -co "FOMRAT=NC4" {fi} {fo}'
+
+    products = {
+        'ETA-3':{
+            'tif': {
+                'ETA': {
+                    'name': 'GLDAS_v2.1_mm.m_MS-{dtime:%Y%m}.tif',
+                    'version': 'v2.1',
+                    'resolution': 'monthly',
+                    'variable': 'ETA',
+                    'period': {
+                        's': '2014-01-01',
+                        'e': '2019-12-31'
+                    },
+                    'output': 'GLDAS_v2.1_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'ETA-GLDAS.csv'
+            },
+            'nc': {
+                'name': 'ETA-GLDAS.nc'
+            }
+        },
+        'ETA-5':{
+            'tif': {
+                'ETA': {
+                    'name': 'MOD16A2_v6_mm.d_D-{dtime:%Y%m%d}.tif',
+                    'version': 'v6',
+                    'resolution': 'eight_daily',
+                    'variable': 'ETA',
+                    'period': {
+                        's': '2014-01-01',
+                        'e': '2019-12-31'
+                    },
+                    'output': 'MOD16A2_v6_mm.m_MS-{dtime:%Y%m}.tif'
+                }
+            },
+            'csv': {
+                'name': 'ETA-MOD16A2.csv'
+            },
+            'nc': {
+                'name': 'ETA-MOD16A2.nc'
+            }
+        },
+        'ETA-6':{
+            'tif': {
+                'ETA': {
+                    'name': 'SSEBop_v4_mm.m_MS-{dtime:%Y%m}.tif',
+                    'version': 'v4',
+                    'resolution': 'monthly',
+                    'variable': 'ETA',
+                    'period': {
+                        's': '2014-01-01',
+                        'e': '2019-12-31'
+                    },
+                    'output': 'SSEBop_v4_mm.m_MS-{dtime:%Y%m}.tif'
+                }
+            },
+            'csv': {
+                'name': 'ETA-SSEBop.csv'
+            },
+            'nc': {
+                'name': 'ETA-SSEBop.nc'
+            }
+        },
+        'PCP-1':{
+            'tif': {
+                'PCP': {
+                    'name': 'CHIRPS_v2.0_mm.m_MS-{dtime:%Y%m}.tif',
+                    'version': 'v2.0',
+                    'resolution': 'monthly',
+                    'variable': 'PCP',
+                    'period': {
+                        's': '2014-01-01',
+                        'e': '2019-12-31'
+                    },
+                    'output': 'CHIRPS_v2.0_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'PCP-CHIRPS.csv'
+            },
+            'nc': {
+                'name': 'PCP-CHIRPS.nc'
+            }
+        },
+        'PCP-2':{
+            'tif': {
+                'PCP': {
+                    'name': 'GPM_v6_mm.d_MS-{dtime:%Y%m}.tif',
+                    'version': 'v6',
+                    'resolution': 'monthly',
+                    'variable': 'PCP',
+                    'period': {
+                        's': '2014-01-01',
+                        'e': '2019-12-31'
+                    },
+                    'output': 'GPM_v6_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'PCP-GPM.csv'
+            },
+            'nc': {
+                'name': 'PCP-GPM.nc'
+            }
+        },
+        'PCP-3':{
+            'tif': {
+                'PCP': {
+                    'name': 'TRMM_v7_mm.d_MS-{dtime:%Y%m}.tif',
+                    'version': 'v6',
+                    'resolution': 'monthly',
+                    'variable': 'PCP',
+                    'period': {
+                        's': '2014-01-01',
+                        'e': '2019-12-31'
+                    },
+                    'output': 'TRMM_v7_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'PCP-TRMM.csv'
+            },
+            'nc': {
+                'name': 'PCP-TRMM.nc'
+            }
+        },
+    }
+    
+    for prod_key, prod_val in products.items():
+        print(prod_key, prod_val['tif'])
+        main(dir_tmp, dir_out, prod_val['tif'], prod_val['nc'])
+            
