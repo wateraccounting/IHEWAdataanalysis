@@ -206,8 +206,11 @@ if __name__ == "__main__":
     cmd1 = 'gdalwarp -of GTiff -overwrite -s_srs epsg:4326 -t_srs epsg:4326 -r near -tr 0.05 0.05 {fi} {fo}'
     cmd2 = 'gdalwarp -of GTiff -overwrite -s_srs epsg:4326 -t_srs epsg:4326 -r near -tr 0.05 0.05 -cutline {shp} -crop_to_cutline {fi} {fo}'
 
+    date_s = '2014-01-01'
+    date_e = '2019-12-31'
+
     products = {
-        'EWH-1':{
+        'EWH-CSR-v3.1':{
             'tif': {
                 'EWH': {
                     'name': 'CSR_v3.1_mm_D-{dtime:%Y%m%d}.tif',
@@ -215,17 +218,35 @@ if __name__ == "__main__":
                     'resolution': 'daily',
                     'variable': 'EWH',
                     'period': {
-                        's': '2004-12-01',
-                        'e': '2013-01-01'
+                        's': date_s,
+                        'e': date_e
                     },
                     'output': 'CSR_v3.1_mm.m_MS-{dtime:%Y%m}.tif',
                 }
             },
             'csv': {
-                'name': 'EWH-CSR.csv'
+                'name': 'EWH-CSR-v3.1.csv'
             }
         },
-        'EWH-2':{
+        'EWH-CSR-v3.2':{
+            'tif': {
+                'EWH': {
+                    'name': 'CSR_v3.2_mm_D-{dtime:%Y%m%d}.tif',
+                    'version': 'v3.2',
+                    'resolution': 'daily',
+                    'variable': 'EWH',
+                    'period': {
+                        's': date_s,
+                        'e': date_e
+                    },
+                    'output': 'CSR_v3.2_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'EWH-CSR-v3.2.csv'
+            }
+        },
+        'EWH-GFZ-v3.1':{
             'tif': {
                 'EWH': {
                     'name': 'GFZ_v3.1_mm_D-{dtime:%Y%m%d}.tif',
@@ -233,17 +254,35 @@ if __name__ == "__main__":
                     'resolution': 'daily',
                     'variable': 'EWH',
                     'period': {
-                        's': '2004-12-01',
-                        'e': '2013-01-01'
+                        's': date_s,
+                        'e': date_e
                     },
                     'output': 'GFZ_v3.1_mm.m_MS-{dtime:%Y%m}.tif',
                 }
             },
             'csv': {
-                'name': 'EWH-GFZ.csv'
+                'name': 'EWH-GFZ-v3.1.csv'
             }
         },
-        'EWH-3':{
+        'EWH-GFZ-v3.2':{
+            'tif': {
+                'EWH': {
+                    'name': 'GFZ_v3.2_mm_D-{dtime:%Y%m%d}.tif',
+                    'version': 'v3.2',
+                    'resolution': 'daily',
+                    'variable': 'EWH',
+                    'period': {
+                        's': date_s,
+                        'e': date_e
+                    },
+                    'output': 'GFZ_v3.2_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'EWH-GFZ-v3.2.csv'
+            }
+        },
+        'EWH-JPL-v3.1':{
             'tif': {
                 'EWH': {
                     'name': 'JPL_v3.1_mm_D-{dtime:%Y%m%d}.tif',
@@ -251,14 +290,32 @@ if __name__ == "__main__":
                     'resolution': 'daily',
                     'variable': 'EWH',
                     'period': {
-                        's': '2004-12-01',
-                        'e': '2013-01-01'
+                        's': date_s,
+                        'e': date_e
                     },
                     'output': 'JPL_v3.1_mm.m_MS-{dtime:%Y%m}.tif',
                 }
             },
             'csv': {
-                'name': 'EWH-JPL.csv'
+                'name': 'EWH-JPL-v3.1.csv'
+            }
+        },
+        'EWH-JPL-v3.2':{
+            'tif': {
+                'EWH': {
+                    'name': 'JPL_v3.2_mm_D-{dtime:%Y%m%d}.tif',
+                    'version': 'v3.2',
+                    'resolution': 'daily',
+                    'variable': 'EWH',
+                    'period': {
+                        's': date_s,
+                        'e': date_e
+                    },
+                    'output': 'JPL_v3.2_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'EWH-JPL-v3.2.csv'
             }
         },
     }

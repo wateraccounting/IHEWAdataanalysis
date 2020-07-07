@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 pip install IHEWAcollect
-cd "D:\IHEProjects\20200218-Philippines\Code"
+cd "D:\IHEProjects\20200703-Philippines\Code"
 python IHEWAcollect_download.py
 pip uninstall IHEWAcollect
 """
@@ -54,6 +54,15 @@ if __name__ == "__main__":
         's': '2014-01-01',
         'e': '2019-12-31'
     }
+    period_EWH_v31 = {
+        's': '2013-11-01',
+        'e': '2018-01-01'
+    }
+    period_EWH_v32 = {
+        's': '2017-12-01',
+        'e': '2020-01-01'
+    }
+    # 124.0493200000000087,6.0558990000000010 : 126.3163450000000125,9.1265750000000008
     bbox = {
         'w': 118.0642363480000085,
         'n':  10.4715946960000679,
@@ -206,10 +215,7 @@ if __name__ == "__main__":
             'resolution': 'daily',
             'variable': 'EWH',
             'bbox': bbox,
-            'period': {
-                's': '2013-11-01',
-                'e': '2018-01-01'
-            },
+            'period': period_EWH_v31,
             'nodata': -9999
         },
         'CSR-daily-v3.2': {
@@ -219,10 +225,7 @@ if __name__ == "__main__":
             'resolution': 'daily',
             'variable': 'EWH',
             'bbox': bbox,
-            'period': {
-                's': '2017-12-01',
-                'e': '2020-01-01'
-            },
+            'period': period_EWH_v32,
             'nodata': -9999
         },
         'GFZ-daily-v3.1': {
@@ -232,10 +235,7 @@ if __name__ == "__main__":
             'resolution': 'daily',
             'variable': 'EWH',
             'bbox': bbox,
-            'period': {
-                's': '2013-11-01',
-                'e': '2018-01-01'
-            },
+            'period': period_EWH_v31,
             'nodata': -9999
         },
         'GFZ-daily-v3.2': {
@@ -245,10 +245,7 @@ if __name__ == "__main__":
             'resolution': 'daily',
             'variable': 'EWH',
             'bbox': bbox,
-            'period': {
-                's': '2017-12-01',
-                'e': '2020-01-01'
-            },
+            'period': period_EWH_v32,
             'nodata': -9999
         },
         'JPL-daily-v3.1': {
@@ -258,10 +255,7 @@ if __name__ == "__main__":
             'resolution': 'daily',
             'variable': 'EWH',
             'bbox': bbox,
-            'period': {
-                's': '2013-11-01',
-                'e': '2018-01-01'
-            },
+            'period': period_EWH_v31,
             'nodata': -9999
         },
         'JPL-daily-v3.2': {
@@ -271,10 +265,7 @@ if __name__ == "__main__":
             'resolution': 'daily',
             'variable': 'EWH',
             'bbox': bbox,
-            'period': {
-                's': '2017-12-01',
-                'e': '2020-01-01'
-            },
+            'period': period_EWH_v32,
             'nodata': -9999
         },
     }

@@ -192,6 +192,9 @@ if __name__ == "__main__":
 
     # cmd1 = 'gdal_translate -of netCDF -co "FOMRAT=NC4" {fi} {fo}'
 
+    date_s = '2014-01-01'
+    date_e = '2019-12-31'
+
     products = {
         'ETA-3':{
             'tif': {
@@ -201,8 +204,8 @@ if __name__ == "__main__":
                     'resolution': 'monthly',
                     'variable': 'ETA',
                     'period': {
-                        's': '2014-01-01',
-                        'e': '2019-12-31'
+                        's': date_s,
+                        'e': date_e
                     },
                     'output': 'GLDAS_v2.1_mm.m_MS-{dtime:%Y%m}.tif',
                 }
@@ -222,8 +225,8 @@ if __name__ == "__main__":
                     'resolution': 'eight_daily',
                     'variable': 'ETA',
                     'period': {
-                        's': '2014-01-01',
-                        'e': '2019-12-31'
+                        's': date_s,
+                        'e': date_e
                     },
                     'output': 'MOD16A2_v6_mm.m_MS-{dtime:%Y%m}.tif'
                 }
@@ -243,8 +246,8 @@ if __name__ == "__main__":
                     'resolution': 'monthly',
                     'variable': 'ETA',
                     'period': {
-                        's': '2014-01-01',
-                        'e': '2019-12-31'
+                        's': date_s,
+                        'e': date_e
                     },
                     'output': 'SSEBop_v4_mm.m_MS-{dtime:%Y%m}.tif'
                 }
@@ -264,8 +267,8 @@ if __name__ == "__main__":
                     'resolution': 'monthly',
                     'variable': 'PCP',
                     'period': {
-                        's': '2014-01-01',
-                        'e': '2019-12-31'
+                        's': date_s,
+                        'e': date_e
                     },
                     'output': 'CHIRPS_v2.0_mm.m_MS-{dtime:%Y%m}.tif',
                 }
@@ -285,8 +288,8 @@ if __name__ == "__main__":
                     'resolution': 'monthly',
                     'variable': 'PCP',
                     'period': {
-                        's': '2014-01-01',
-                        'e': '2019-12-31'
+                        's': date_s,
+                        'e': date_e
                     },
                     'output': 'GPM_v6_mm.m_MS-{dtime:%Y%m}.tif',
                 }
@@ -306,8 +309,8 @@ if __name__ == "__main__":
                     'resolution': 'monthly',
                     'variable': 'PCP',
                     'period': {
-                        's': '2014-01-01',
-                        'e': '2019-12-31'
+                        's': date_s,
+                        'e': date_e
                     },
                     'output': 'TRMM_v7_mm.m_MS-{dtime:%Y%m}.tif',
                 }
@@ -317,6 +320,132 @@ if __name__ == "__main__":
             },
             'nc': {
                 'name': 'PCP-TRMM.nc'
+            }
+        },
+        'EWH-CSR-v3.1':{
+            'tif': {
+                'EWH': {
+                    'name': 'CSR_v3.1_mm_D-{dtime:%Y%m%d}.tif',
+                    'version': 'v3.1',
+                    'resolution': 'daily',
+                    'variable': 'EWH',
+                    'period': {
+                        's': date_s,
+                        'e': date_e
+                    },
+                    'output': 'CSR_v3.1_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'EWH-CSR-v3.1.csv'
+            },
+            'nc': {
+                'name': 'EWH-CSR-v3.1.nc'
+            }
+        },
+        'EWH-CSR-v3.2':{
+            'tif': {
+                'EWH': {
+                    'name': 'CSR_v3.2_mm_D-{dtime:%Y%m%d}.tif',
+                    'version': 'v3.2',
+                    'resolution': 'daily',
+                    'variable': 'EWH',
+                    'period': {
+                        's': date_s,
+                        'e': date_e
+                    },
+                    'output': 'CSR_v3.2_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'EWH-CSR-v3.2.csv'
+            },
+            'nc': {
+                'name': 'EWH-CSR-v3.2.nc'
+            }
+        },
+        'EWH-GFZ-v3.1':{
+            'tif': {
+                'EWH': {
+                    'name': 'GFZ_v3.1_mm_D-{dtime:%Y%m%d}.tif',
+                    'version': 'v3.1',
+                    'resolution': 'daily',
+                    'variable': 'EWH',
+                    'period': {
+                        's': date_s,
+                        'e': date_e
+                    },
+                    'output': 'GFZ_v3.1_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'EWH-GFZ-v3.1.csv'
+            },
+            'nc': {
+                'name': 'EWH-GFZ-v3.1.nc'
+            }
+        },
+        'EWH-GFZ-v3.2':{
+            'tif': {
+                'EWH': {
+                    'name': 'GFZ_v3.2_mm_D-{dtime:%Y%m%d}.tif',
+                    'version': 'v3.2',
+                    'resolution': 'daily',
+                    'variable': 'EWH',
+                    'period': {
+                        's': date_s,
+                        'e': date_e
+                    },
+                    'output': 'GFZ_v3.2_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'EWH-GFZ-v3.2.csv'
+            },
+            'nc': {
+                'name': 'EWH-GFZ-v3.2.nc'
+            }
+        },
+        'EWH-JPL-v3.1':{
+            'tif': {
+                'EWH': {
+                    'name': 'JPL_v3.1_mm_D-{dtime:%Y%m%d}.tif',
+                    'version': 'v3.1',
+                    'resolution': 'daily',
+                    'variable': 'EWH',
+                    'period': {
+                        's': date_s,
+                        'e': date_e
+                    },
+                    'output': 'JPL_v3.1_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'EWH-JPL-v3.1.csv'
+            },
+            'nc': {
+                'name': 'EWH-JPL-v3.1.nc'
+            }
+        },
+        'EWH-JPL-v3.2':{
+            'tif': {
+                'EWH': {
+                    'name': 'JPL_v3.2_mm_D-{dtime:%Y%m%d}.tif',
+                    'version': 'v3.2',
+                    'resolution': 'daily',
+                    'variable': 'EWH',
+                    'period': {
+                        's': date_s,
+                        'e': date_e
+                    },
+                    'output': 'JPL_v3.2_mm.m_MS-{dtime:%Y%m}.tif',
+                }
+            },
+            'csv': {
+                'name': 'EWH-JPL-v3.2.csv'
+            },
+            'nc': {
+                'name': 'EWH-JPL-v3.2.nc'
             }
         },
     }
