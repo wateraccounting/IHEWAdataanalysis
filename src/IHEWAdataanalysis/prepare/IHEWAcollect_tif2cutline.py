@@ -112,12 +112,16 @@ def main(dir_in, dir_out, tif, file_shp, cmd1, cmd2):
             fname_o = tif[var]['output'].format(dtime=date)
             file_i = os.path.join(dir_in, fname_o)
             file_o = os.path.join(dir_out, fname_o)
+
             if os.path.isfile(file_i):
                 nmonth += 1.0
                 # if date_year != date_o.year:
                 #     iyear += 1.0
                 #     date_year = date_o.year
                 #     # os.system(cmd.format(shp=file_shp, fi=file_i, fo=file_o))
+
+                file_o_cutline = os.path.join(dir_out, '{}_cutline.tif'.format(fname_o[:-4]))
+                os.system(cmd2.format(shp=file_shp, fi=file_i, fo=file_o_cutline))
 
                 geo_trans, geo_proj, size_x, size_y = Open_array_info(file_i)
 

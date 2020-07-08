@@ -107,8 +107,9 @@ def main(dir_in, dir_out, tif, file_shp, cmd1,cmd2):
 
         dates = pd.date_range(date_s, date_e, freq='MS')
         
-        nmonth = 0.0        
-        for idate in range(1, len(dates) - 1):
+        nmonth = 0.0
+        # for idate in range(1, len(dates) - 1):
+        for idate in range(len(dates)):
             date_o = dates[idate]
             date_l = dates[idate] - pd.tseries.offsets.DateOffset(months=1)
             date_r = dates[idate] + pd.tseries.offsets.DateOffset(months=1)
@@ -120,6 +121,7 @@ def main(dir_in, dir_out, tif, file_shp, cmd1,cmd2):
             file_i_l = os.path.join(dir_in, fname_l)
             file_i_r = os.path.join(dir_in, fname_r)
             file_o = os.path.join(dir_out, fname_o)
+            
             if os.path.isfile(file_i_l) and os.path.isfile(file_i_r):
                 nmonth += 1.0
                 # if date_year != date_o.year:
@@ -158,6 +160,12 @@ def main(dir_in, dir_out, tif, file_shp, cmd1,cmd2):
                 if data is None:
                     data = np.zeros((ds_rows, ds_cols))
                 data[0:ds_rows, 0:ds_cols] += (ds_data_r[0:ds_rows, 0:ds_cols] - ds_data_l[0:ds_rows, 0:ds_cols]) / 2.0
+
+                file_o_ds = os.path.join(dir_in, 'dS-{}.tif'.format(fname_o[:-4]))
+                Save_as_tiff(name=file_o_ds, data=data, geo=geo_trans, projection="WGS84")
+
+                file_o_cutline = os.path.join(dir_out, '{}_cutline.tif'.format(fname_o[:-4]))
+                os.system(cmd2.format(shp=file_shp, fi=file_o_ds, fo=file_o_cutline))
             else:
                 if os.path.isfile(file_i_r) == False:
                     print(file_i_r)
